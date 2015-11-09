@@ -63,7 +63,20 @@ namespace Bla
 		OIC,
 		WTF,
 		OMG, 
-		OMGWTF
+		OMGWTF,
+		STRING_DELIMETER
+	}
+	public class TokenStream {
+		string input;
+		long currentPosition;
+		public TokenStream (string input) {
+			this.input = input;
+			currentPosition = 0;
+		}
+		public Token get() {
+			for (; currentPosition < input.Length; currentPosition++) {
+			}
+		}
 	}
 }
 
