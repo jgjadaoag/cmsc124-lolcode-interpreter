@@ -14,14 +14,14 @@ public partial class MainWindow
 	private global::Gtk.ScrolledWindow GtkScrolledWindow2;
 	private global::Gtk.TreeView symbolTableTree;
 	private global::Gtk.Label symbolTable;
-	private global::Gtk.Button button3;
 	private global::Gtk.ScrolledWindow GtkScrolledWindow3;
 	private global::Gtk.TextView console;
 	private global::Gtk.Label label4;
-	private global::Gtk.Label label1;
 	private global::Gtk.Label lexemes;
 	private global::Gtk.Label label2;
 	private global::Gtk.Button OpenFileButton;
+	private global::Gtk.Label label1;
+	private global::Gtk.Button button3;
 
 	protected virtual void Build ()
 	{
@@ -104,17 +104,6 @@ public partial class MainWindow
 		w9.X = 707;
 		w9.Y = 59;
 		// Container child fixed1.Gtk.Fixed+FixedChild
-		this.button3 = new global::Gtk.Button ();
-		this.button3.WidthRequest = 800;
-		this.button3.CanFocus = true;
-		this.button3.Name = "button3";
-		this.button3.UseUnderline = true;
-		this.button3.Label = global::Mono.Unix.Catalog.GetString ("EXECUTE");
-		this.fixed1.Add (this.button3);
-		global::Gtk.Fixed.FixedChild w10 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.button3]));
-		w10.X = 52;
-		w10.Y = 364;
-		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.GtkScrolledWindow3 = new global::Gtk.ScrolledWindow ();
 		this.GtkScrolledWindow3.WidthRequest = 800;
 		this.GtkScrolledWindow3.HeightRequest = 200;
@@ -126,41 +115,33 @@ public partial class MainWindow
 		this.console.Name = "console";
 		this.GtkScrolledWindow3.Add (this.console);
 		this.fixed1.Add (this.GtkScrolledWindow3);
-		global::Gtk.Fixed.FixedChild w12 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.GtkScrolledWindow3]));
-		w12.X = 52;
-		w12.Y = 440;
+		global::Gtk.Fixed.FixedChild w11 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.GtkScrolledWindow3]));
+		w11.X = 52;
+		w11.Y = 440;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.label4 = new global::Gtk.Label ();
 		this.label4.Name = "label4";
 		this.label4.LabelProp = global::Mono.Unix.Catalog.GetString ("Console");
 		this.fixed1.Add (this.label4);
-		global::Gtk.Fixed.FixedChild w13 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label4]));
-		w13.X = 54;
-		w13.Y = 409;
-		// Container child fixed1.Gtk.Fixed+FixedChild
-		this.label1 = new global::Gtk.Label ();
-		this.label1.Name = "label1";
-		this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("ANG GANDA NI MA'AM KAT LOLTERPRETER");
-		this.fixed1.Add (this.label1);
-		global::Gtk.Fixed.FixedChild w14 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label1]));
-		w14.X = 313;
-		w14.Y = 12;
+		global::Gtk.Fixed.FixedChild w12 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label4]));
+		w12.X = 54;
+		w12.Y = 409;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.lexemes = new global::Gtk.Label ();
 		this.lexemes.Name = "lexemes";
 		this.lexemes.LabelProp = global::Mono.Unix.Catalog.GetString ("Lexemes");
 		this.fixed1.Add (this.lexemes);
-		global::Gtk.Fixed.FixedChild w15 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.lexemes]));
-		w15.X = 427;
-		w15.Y = 62;
+		global::Gtk.Fixed.FixedChild w13 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.lexemes]));
+		w13.X = 427;
+		w13.Y = 62;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.label2 = new global::Gtk.Label ();
 		this.label2.Name = "label2";
 		this.label2.LabelProp = global::Mono.Unix.Catalog.GetString ("Code");
 		this.fixed1.Add (this.label2);
-		global::Gtk.Fixed.FixedChild w16 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label2]));
-		w16.X = 40;
-		w16.Y = 61;
+		global::Gtk.Fixed.FixedChild w14 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label2]));
+		w14.X = 40;
+		w14.Y = 61;
 		// Container child fixed1.Gtk.Fixed+FixedChild
 		this.OpenFileButton = new global::Gtk.Button ();
 		this.OpenFileButton.CanFocus = true;
@@ -168,9 +149,28 @@ public partial class MainWindow
 		this.OpenFileButton.UseUnderline = true;
 		this.OpenFileButton.Label = global::Mono.Unix.Catalog.GetString ("Open File...");
 		this.fixed1.Add (this.OpenFileButton);
-		global::Gtk.Fixed.FixedChild w17 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.OpenFileButton]));
-		w17.X = 116;
-		w17.Y = 56;
+		global::Gtk.Fixed.FixedChild w15 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.OpenFileButton]));
+		w15.X = 116;
+		w15.Y = 56;
+		// Container child fixed1.Gtk.Fixed+FixedChild
+		this.label1 = new global::Gtk.Label ();
+		this.label1.Name = "label1";
+		this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("ANG GANDA NI MA'AM KAT LOLTERPRETER");
+		this.fixed1.Add (this.label1);
+		global::Gtk.Fixed.FixedChild w16 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.label1]));
+		w16.X = 17;
+		w16.Y = 14;
+		// Container child fixed1.Gtk.Fixed+FixedChild
+		this.button3 = new global::Gtk.Button ();
+		this.button3.WidthRequest = 800;
+		this.button3.CanFocus = true;
+		this.button3.Name = "button3";
+		this.button3.UseUnderline = true;
+		this.button3.Label = global::Mono.Unix.Catalog.GetString ("EXECUTE");
+		this.fixed1.Add (this.button3);
+		global::Gtk.Fixed.FixedChild w17 = ((global::Gtk.Fixed.FixedChild)(this.fixed1 [this.button3]));
+		w17.X = 47;
+		w17.Y = 368;
 		this.Add (this.fixed1);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
@@ -179,8 +179,8 @@ public partial class MainWindow
 		this.DefaultHeight = 667;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
-		//this.OpenFileAction1.Activated += new global::System.EventHandler (this.OnOpenFileAction1Activated);
-		this.button3.Clicked += new global::System.EventHandler (this.OnButton3Clicked);
+	//	this.OpenFileAction1.Activated += new global::System.EventHandler (this.OnOpenFileAction1Activated);
 		this.OpenFileButton.Clicked += new global::System.EventHandler (this.OnOpenFileButtonClicked);
+		this.button3.Clicked += new global::System.EventHandler (this.OnButton3Clicked);
 	}
 }

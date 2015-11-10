@@ -10,6 +10,8 @@ public partial class MainWindow: Gtk.Window
 		Build ();
 		lexemesInit ();
 		symbolTableInit ();
+
+		//change console background color
 		console.ModifyBase(StateType.Normal, new Gdk.Color(0000,0000,0000));
 	}
 
@@ -71,18 +73,20 @@ public partial class MainWindow: Gtk.Window
 		lexemeStore.Clear();
 
 		string str = codeField.Buffer.Text;
-		//console.Buffer.Text += str + "\n";
+		displayTextToConsole (str);
+	}
 
+	protected void displayTextToConsole (String stringText)
+	{
+		//change console text color
 		var consoleTextColorTag = new TextTag ("colorTag");
 		consoleTextColorTag.Foreground = "white";
 		console.Buffer.TagTable.Add (consoleTextColorTag);
 
-		TextIter insertIter = console.Buffer.StartIter;
-		console.Buffer.InsertWithTagsByName (ref insertIter, str + "\n", "colorTag");
+		TextIter insertIter = console.Buffer.EndIter;
+		console.Buffer.InsertWithTagsByName (ref insertIter, stringText + "\n", "colorTag");
 		console.Buffer.ApplyTag ("word_wrap", console.Buffer.StartIter, console.Buffer.EndIter);
-
 	}
-
 
 	protected void OnOpenFileButtonClicked (object sender, EventArgs e)
 	{
