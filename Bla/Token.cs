@@ -3,22 +3,6 @@ using System.Text.RegularExpressions;
 
 namespace Bla
 {
-	public class Token
-	{
-		string value;
-		TokenType type;
-		public Token (string value, TokenType type)
-		{
-			this.value = value;
-			this.type = type;
-		}
-		public string getValue() {
-			return value;
-		}
-		public TokenType getType() {
-			return type;
-		}
-	}
 	public enum TokenType 
 	{
 		VARIABLE_IDENTIFIER,
@@ -64,17 +48,85 @@ namespace Bla
 		WTF,
 		OMG, 
 		OMGWTF,
-		STRING_DELIMETER
+		STRING_DELIMETER,
+		COMMENT
+	}
+	public class Token
+	{
+		string value;
+		TokenType type;
+		List<Tuple<TokenType, string>> tokenDetails;
+		public Token (string value, TokenType type)
+		{
+			this.value = value;
+			this.type = type;
+			tokenDetails.add(Tuple.Create(TokenType.VARIABLE_IDENTIFIER, "[a-zA-Z](\\w | _)*"));
+			tokenDetails.add(Tuple.Create(TokenType.NUMBR_LITERAL, "[-+]?\\d+"));
+			tokenDetails.add(Tuple.Create(TokenType.NUMBAR_LITERAL, "[-+]?\\d*\\.\\d+", ));
+			/*
+			tokenDetails.add(Tuple.Create(TokenType.YARN_LITERAL,
+			tokenDetails.add(Tuple.Create(TokenType.TROOF_LITERAL,
+			tokenDetails.add(Tuple.Create(TokenType.TYPE_LITERAL,
+				tokenDetails.add(Tuple.Create(TokenType.HAI,
+				tokenDetails.add(Tuple.Create(TokenType.KTHXBYE,
+				tokenDetails.add(Tuple.Create(TokenType.BTW,
+				tokenDetails.add(Tuple.Create(TokenType.OBTW,
+				tokenDetails.add(Tuple.Create(TokenType.TLDR,
+				tokenDetails.add(Tuple.Create(TokenType.I_HAS_A,
+				tokenDetails.add(Tuple.Create(TokenType.ITZ,
+				tokenDetails.add(Tuple.Create(TokenType.R,
+				tokenDetails.add(Tuple.Create(TokenType.SUM_OF,
+				tokenDetails.add(Tuple.Create(TokenType.DIFF_OF,
+				tokenDetails.add(Tuple.Create(TokenType.PRODUKT_OF,
+				tokenDetails.add(Tuple.Create(TokenType.QUOSHUNT_OF,
+				tokenDetails.add(Tuple.Create(TokenType.MOD_OF,
+				tokenDetails.add(Tuple.Create(TokenType.BIGGR_OF,
+				tokenDetails.add(Tuple.Create(TokenType.SMALLR_OF,
+				tokenDetails.add(Tuple.Create(TokenType.BOTH_OF,
+				tokenDetails.add(Tuple.Create(TokenType.EITHER_OF,
+				tokenDetails.add(Tuple.Create(TokenType.WON_OF,
+				tokenDetails.add(Tuple.Create(TokenType.NOT,
+				tokenDetails.add(Tuple.Create(TokenType.ALL_OF,
+				tokenDetails.add(Tuple.Create(TokenType.ANY_OF,
+				tokenDetails.add(Tuple.Create(TokenType.BOTH_SAEM,
+				tokenDetails.add(Tuple.Create(TokenType.DIFFRINT,
+				tokenDetails.add(Tuple.Create(TokenType.SMOOSH,
+				tokenDetails.add(Tuple.Create(TokenType.MAEK,
+				tokenDetails.add(Tuple.Create(TokenType.A,
+				tokenDetails.add(Tuple.Create(TokenType.IS_NOW_A,
+				tokenDetails.add(Tuple.Create(TokenType.VISIBLE,
+				tokenDetails.add(Tuple.Create(TokenType.GIMMEH,
+				tokenDetails.add(Tuple.Create(TokenType.O_RLY,
+				tokenDetails.add(Tuple.Create(TokenType.YA_RLY,
+				tokenDetails.add(Tuple.Create(TokenType.MEBBE,
+				tokenDetails.add(Tuple.Create(TokenType.NO_WAI,
+				tokenDetails.add(Tuple.Create(TokenType.OIC,
+				tokenDetails.add(Tuple.Create(TokenType.WTF,
+				tokenDetails.add(Tuple.Create(TokenType.OMG, 
+				tokenDetails.add(Tuple.Create(TokenType.OMGWTF,
+				tokenDetails.add(Tuple.Create(TokenType.STRING_DELIMETER,
+				tokenDetails.add(Tuple.Create(TokenType.COMMENT,
+*/
+		}
+		public string getValue() {
+			return value;
+		}
+		public TokenType getType() {
+			return type;
+		}
 	}
 	public class TokenStream {
-		string input;
+		readonly string input;
 		long currentPosition;
 		public TokenStream (string input) {
 			this.input = input;
 			currentPosition = 0;
 		}
 		public Token get() {
-			for (; currentPosition < input.Length; currentPosition++) {
+			long startPosition = currentPosition;
+			long endPosition = currentPosition;
+			string scannedToken = "";
+			for (; endPosition < input.Length; endPosition++) {
 			}
 		}
 	}
