@@ -80,53 +80,52 @@ namespace Bla
 
 			//Filling up token details
 			tokenDetails = new Dictionary<TokenType, Regex> ();
+			tokenDetails.Add (TokenType.HAI, new Regex (@"^HAI"));
+			tokenDetails.Add (TokenType.KTHXBYE, new Regex (@"^KTHXBYE"));
+			tokenDetails.Add(TokenType.BTW,new Regex(@"^BTW$"));
+			tokenDetails.Add(TokenType.OBTW,new Regex(@"^OBTW$"));
+			tokenDetails.Add(TokenType.TLDR,new Regex(@"^TLDR$"));
+			tokenDetails.Add(TokenType.I_HAS_A,new Regex(@"^I HAS A$"));
+			tokenDetails.Add(TokenType.ITZ,new Regex(@"ITZ^$"));
+			tokenDetails.Add(TokenType.R,new Regex(@"^R$"));
+			tokenDetails.Add(TokenType.SUM_OF,new Regex(@"^SUM OF$"));
+			tokenDetails.Add(TokenType.DIFF_OF,new Regex(@"^DIFF OF$"));
+			tokenDetails.Add(TokenType.PRODUKT_OF,new Regex(@"^PRODUKT OF$"));
+			tokenDetails.Add(TokenType.QUOSHUNT_OF,new Regex(@"^QUOSHUNT OF$"));
+			tokenDetails.Add(TokenType.MOD_OF, new Regex(@"^MOD OF$"));
+			tokenDetails.Add(TokenType.BIGGR_OF, new Regex(@"^BIGGR OF$"));
+			tokenDetails.Add(TokenType.SMALLR_OF, new Regex(@"^SMALLR OF$"));
+			tokenDetails.Add(TokenType.BOTH_OF, new Regex(@"^BOTH OF$"));
+			tokenDetails.Add(TokenType.EITHER_OF, new Regex(@"^EITHER OF$"));
+			tokenDetails.Add(TokenType.WON_OF, new Regex(@"^WON OF$"));
+			tokenDetails.Add(TokenType.NOT, new Regex(@"^NOT$"));
+			tokenDetails.Add(TokenType.ALL_OF,new Regex(@"^ALL OF$"));
+			tokenDetails.Add(TokenType.ANY_OF, new Regex(@"^ANY OF$"));
+			tokenDetails.Add(TokenType.BOTH_SAEM, new Regex(@"^BOTH SAEM$"));
+			tokenDetails.Add(TokenType.DIFFRINT, new Regex(@"^DIFFRINT$"));
+			tokenDetails.Add(TokenType.SMOOSH, new Regex(@"^SMOOSH$"));
+			tokenDetails.Add(TokenType.MAEK, new Regex(@"^MAEK$"));
+			tokenDetails.Add(TokenType.A, new Regex(@"^A$"));
+			tokenDetails.Add(TokenType.IS_NOW_A, new Regex(@"^IS NOW A$"));
+			tokenDetails.Add(TokenType.VISIBLE, new Regex(@"^VISIBLE$"));
+			tokenDetails.Add(TokenType.GIMMEH, new Regex(@"^GIMMEH$"));
+			tokenDetails.Add(TokenType.O_RLY, new Regex(@"^O RLY$"));
+			tokenDetails.Add(TokenType.YA_RLY, new Regex(@"^YA RLY$"));
+			tokenDetails.Add(TokenType.MEBBE, new Regex(@"^MEBBE$"));
+			tokenDetails.Add(TokenType.NO_WAI, new Regex(@"^NO WAI$"));
+			tokenDetails.Add(TokenType.OIC, new Regex(@"^OIC$"));
+			tokenDetails.Add(TokenType.WTF, new Regex(@"^WTF$"));
+			tokenDetails.Add(TokenType.OMG,  new Regex(@"^OMG$"));
+			tokenDetails.Add(TokenType.OMGWTF, new Regex(@"^OMGWTF$"));
+			tokenDetails.Add(TokenType.STRING_DELIMETER, new Regex(@"^$"));
+			tokenDetails.Add (TokenType.COMMENT, new Regex (@"^COMMENT$"));
 			tokenDetails.Add(TokenType.VARIABLE_IDENTIFIER, new Regex(@"^[a-zA-Z](\w|_)*$"));
 			tokenDetails.Add(TokenType.NUMBR_LITERAL, new Regex(@"^[-+]?\d+$"));
 			tokenDetails.Add(TokenType.NUMBAR_LITERAL, new Regex(@"^[-+]?\d*\.\d+$"));
-			/*
-			tokenDetails.add(Tuple.Create(TokenType.YARN_LITERAL, "[a-zA-Z](\w | _)*"));
-			tokenDetails.add(Tuple.Create(TokenType.TROOF_LITERAL, "(WIN|FAIL)"));
-			tokenDetails.add(Tuple.Create(TokenType.TYPE_LITERAL, "(YARN|NUMBR|NUMBAR|TROOF|NOOB)"));
-				tokenDetails.add(Tuple.Create(TokenType.HAI, "HAI"));
-				tokenDetails.add(Tuple.Create(TokenType.KTHXBYE, 
-				tokenDetails.add(Tuple.Create(TokenType.BTW,
-				tokenDetails.add(Tuple.Create(TokenType.OBTW,
-				tokenDetails.add(Tuple.Create(TokenType.TLDR,
-				tokenDetails.add(Tuple.Create(TokenType.I_HAS_A,
-				tokenDetails.add(Tuple.Create(TokenType.ITZ,
-				tokenDetails.add(Tuple.Create(TokenType.R,
-				tokenDetails.add(Tuple.Create(TokenType.SUM_OF,
-				tokenDetails.add(Tuple.Create(TokenType.DIFF_OF,
-				tokenDetails.add(Tuple.Create(TokenType.PRODUKT_OF,
-				tokenDetails.add(Tuple.Create(TokenType.QUOSHUNT_OF,
-				tokenDetails.add(Tuple.Create(TokenType.MOD_OF,
-				tokenDetails.add(Tuple.Create(TokenType.BIGGR_OF,
-				tokenDetails.add(Tuple.Create(TokenType.SMALLR_OF,
-				tokenDetails.add(Tuple.Create(TokenType.BOTH_OF,
-				tokenDetails.add(Tuple.Create(TokenType.EITHER_OF,
-				tokenDetails.add(Tuple.Create(TokenType.WON_OF,
-				tokenDetails.add(Tuple.Create(TokenType.NOT,
-				tokenDetails.add(Tuple.Create(TokenType.ALL_OF,
-				tokenDetails.add(Tuple.Create(TokenType.ANY_OF,
-				tokenDetails.add(Tuple.Create(TokenType.BOTH_SAEM,
-				tokenDetails.add(Tuple.Create(TokenType.DIFFRINT,
-				tokenDetails.add(Tuple.Create(TokenType.SMOOSH,
-				tokenDetails.add(Tuple.Create(TokenType.MAEK,
-				tokenDetails.add(Tuple.Create(TokenType.A,
-				tokenDetails.add(Tuple.Create(TokenType.IS_NOW_A,
-				tokenDetails.add(Tuple.Create(TokenType.VISIBLE,
-				tokenDetails.add(Tuple.Create(TokenType.GIMMEH,
-				tokenDetails.add(Tuple.Create(TokenType.O_RLY,
-				tokenDetails.add(Tuple.Create(TokenType.YA_RLY,
-				tokenDetails.add(Tuple.Create(TokenType.MEBBE,
-				tokenDetails.add(Tuple.Create(TokenType.NO_WAI,
-				tokenDetails.add(Tuple.Create(TokenType.OIC,
-				tokenDetails.add(Tuple.Create(TokenType.WTF,
-				tokenDetails.add(Tuple.Create(TokenType.OMG, 
-				tokenDetails.add(Tuple.Create(TokenType.OMGWTF,
-				tokenDetails.add(Tuple.Create(TokenType.STRING_DELIMETER,
-				tokenDetails.add(Tuple.Create(TokenType.COMMENT,
-*/
+			tokenDetails.Add(TokenType.YARN_LITERAL, new Regex(@"^[a-zA-Z](\w | _)*"));
+			tokenDetails.Add (TokenType.TROOF_LITERAL, new Regex (@"^(WIN|FAIL)"));
+			tokenDetails.Add (TokenType.TYPE_LITERAL, new Regex (@"^(YARN|NUMBR|NUMBAR|TROOF|NOOB)"));
+			skipSpace ();
 		}
 		public Token get() {
 			int endPosition = currentPosition;
@@ -145,9 +144,24 @@ namespace Bla
 					}
 				}
 			}
+
+			skipSpace ();
+
 			return new Token (scannedString, scannedType);
 		}
 
+		public bool end() {
+			if (currentPosition == input.Length)
+				return true;
+			else
+				return false;
+		}
+
+		private void skipSpace(){
+			while (currentPosition < input.Length && Char.IsWhiteSpace (input [currentPosition])) {
+				currentPosition++;
+			}
+		}
 		private TokenType identifyToken(string str) {
 			Console.WriteLine ("Matching " + str);
 			foreach (KeyValuePair<TokenType, Regex> kvp in tokenDetails) {

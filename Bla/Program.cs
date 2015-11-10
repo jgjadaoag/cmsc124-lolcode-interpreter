@@ -16,8 +16,11 @@ namespace Bla
 
 		public static void runInterpreter(string input) {
 			TokenStream ts = new TokenStream (input);
-			Token t = ts.get ();
-			win.addLexemes (t.getValue(), t.getType ().ToString());
+			Token t;
+			while (!ts.end ()) {
+				t = ts.get ();
+				win.addLexemes (t.getValue (), t.getType ().ToString ());
+			}
 		}
 	}
 }
