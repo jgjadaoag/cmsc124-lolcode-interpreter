@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace Bla
 {
@@ -60,9 +61,9 @@ namespace Bla
 		{
 			this.value = value;
 			this.type = type;
-			tokenDetails.add(Tuple.Create(TokenType.VARIABLE_IDENTIFIER, "[a-zA-Z](\\w | _)*"));
-			tokenDetails.add(Tuple.Create(TokenType.NUMBR_LITERAL, "[-+]?\\d+"));
-			tokenDetails.add(Tuple.Create(TokenType.NUMBAR_LITERAL, "[-+]?\\d*\\.\\d+", ));
+			tokenDetails.Add(Tuple.Create(TokenType.VARIABLE_IDENTIFIER, "[a-zA-Z](\\w | _)*"));
+			tokenDetails.Add(Tuple.Create(TokenType.NUMBR_LITERAL, "[-+]?\\d+"));
+			tokenDetails.Add(Tuple.Create(TokenType.NUMBAR_LITERAL, "[-+]?\\d*\\.\\d+"));
 			/*
 			tokenDetails.add(Tuple.Create(TokenType.YARN_LITERAL,
 			tokenDetails.add(Tuple.Create(TokenType.TROOF_LITERAL,
@@ -128,6 +129,7 @@ namespace Bla
 			string scannedToken = "";
 			for (; endPosition < input.Length; endPosition++) {
 			}
+			return new Token ("", TokenType.VARIABLE_IDENTIFIER);
 		}
 	}
 }

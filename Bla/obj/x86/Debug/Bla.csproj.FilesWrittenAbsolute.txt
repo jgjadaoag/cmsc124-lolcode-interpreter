@@ -1,6 +1,0 @@
-/home/joseph/GitHub/cmsc124-lolcode-interpreter/Bla/obj/x86/Debug/.NETFramework,Version=v4.0.AssemblyAttribute.cs
-/home/joseph/GitHub/cmsc124-lolcode-interpreter/Bla/obj/x86/Debug/Bla.gtk-gui.gui.stetic
-/home/joseph/GitHub/cmsc124-lolcode-interpreter/Bla/bin/Debug/Bla.exe.mdb
-/home/joseph/GitHub/cmsc124-lolcode-interpreter/Bla/bin/Debug/Bla.exe
-/home/joseph/GitHub/cmsc124-lolcode-interpreter/Bla/obj/x86/Debug/Bla.exe
-/home/joseph/GitHub/cmsc124-lolcode-interpreter/Bla/obj/x86/Debug/Bla.exe.mdb
