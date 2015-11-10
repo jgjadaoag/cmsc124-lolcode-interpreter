@@ -50,7 +50,8 @@ namespace Bla
 		OMG, 
 		OMGWTF,
 		STRING_DELIMETER,
-		COMMENT
+		COMMENT,
+		UNKNOWN
 	}
 	public class Token
 	{
@@ -71,65 +72,84 @@ namespace Bla
 	public class TokenStream {
 		readonly string input;
 		long currentPosition;
-		List<Tuple<TokenType, string>> tokenDetails;
+		Dictionary<TokenType, Regex> tokenDetails;
 		public TokenStream (string input) {
 			this.input = input;
 			currentPosition = 0;
-			tokenDetails.Add(Tuple.Create(TokenType.VARIABLE_IDENTIFIER, "[a-zA-Z](\\w | _)*"));
-			tokenDetails.Add(Tuple.Create(TokenType.NUMBR_LITERAL, "[-+]?\\d+"));
-			tokenDetails.Add(Tuple.Create(TokenType.NUMBAR_LITERAL, "[-+]?\\d*\\.\\d+"));
+
+			//Filling up token details
+			tokenDetails = new Dictionary<TokenType, string> ();
+			tokenDetails.Add(TokenType.VARIABLE_IDENTIFIER, new Regex(@"^[a-zA-Z](\w |_)*$"));
+			tokenDetails.Add(TokenType.NUMBR_LITERAL, new Regex(@"[-+]?\d+"));
+			tokenDetails.Add(TokenType.NUMBAR_LITERAL, new Regex(@"[-+]?\d*\.\d+"));
 			/*
-			tokenDetails.add(Tuple.Create(TokenType.YARN_LITERAL,
-			tokenDetails.add(Tuple.Create(TokenType.TROOF_LITERAL,
-			tokenDetails.add(Tuple.Create(TokenType.TYPE_LITERAL,
-				tokenDetails.add(Tuple.Create(TokenType.HAI,
-				tokenDetails.add(Tuple.Create(TokenType.KTHXBYE,
-				tokenDetails.add(Tuple.Create(TokenType.BTW,
-				tokenDetails.add(Tuple.Create(TokenType.OBTW,
-				tokenDetails.add(Tuple.Create(TokenType.TLDR,
-				tokenDetails.add(Tuple.Create(TokenType.I_HAS_A,
-				tokenDetails.add(Tuple.Create(TokenType.ITZ,
-				tokenDetails.add(Tuple.Create(TokenType.R,
-				tokenDetails.add(Tuple.Create(TokenType.SUM_OF,
-				tokenDetails.add(Tuple.Create(TokenType.DIFF_OF,
-				tokenDetails.add(Tuple.Create(TokenType.PRODUKT_OF,
-				tokenDetails.add(Tuple.Create(TokenType.QUOSHUNT_OF,
-				tokenDetails.add(Tuple.Create(TokenType.MOD_OF,
-				tokenDetails.add(Tuple.Create(TokenType.BIGGR_OF,
-				tokenDetails.add(Tuple.Create(TokenType.SMALLR_OF,
-				tokenDetails.add(Tuple.Create(TokenType.BOTH_OF,
-				tokenDetails.add(Tuple.Create(TokenType.EITHER_OF,
-				tokenDetails.add(Tuple.Create(TokenType.WON_OF,
-				tokenDetails.add(Tuple.Create(TokenType.NOT,
-				tokenDetails.add(Tuple.Create(TokenType.ALL_OF,
-				tokenDetails.add(Tuple.Create(TokenType.ANY_OF,
-				tokenDetails.add(Tuple.Create(TokenType.BOTH_SAEM,
-				tokenDetails.add(Tuple.Create(TokenType.DIFFRINT,
-				tokenDetails.add(Tuple.Create(TokenType.SMOOSH,
-				tokenDetails.add(Tuple.Create(TokenType.MAEK,
-				tokenDetails.add(Tuple.Create(TokenType.A,
-				tokenDetails.add(Tuple.Create(TokenType.IS_NOW_A,
-				tokenDetails.add(Tuple.Create(TokenType.VISIBLE,
-				tokenDetails.add(Tuple.Create(TokenType.GIMMEH,
-				tokenDetails.add(Tuple.Create(TokenType.O_RLY,
-				tokenDetails.add(Tuple.Create(TokenType.YA_RLY,
-				tokenDetails.add(Tuple.Create(TokenType.MEBBE,
-				tokenDetails.add(Tuple.Create(TokenType.NO_WAI,
-				tokenDetails.add(Tuple.Create(TokenType.OIC,
-				tokenDetails.add(Tuple.Create(TokenType.WTF,
-				tokenDetails.add(Tuple.Create(TokenType.OMG, 
-				tokenDetails.add(Tuple.Create(TokenType.OMGWTF,
-				tokenDetails.add(Tuple.Create(TokenType.STRING_DELIMETER,
-				tokenDetails.add(Tuple.Create(TokenType.COMMENT,
+			tokenDetails.add(TokenType.YARN_LITERAL,
+			tokenDetails.add(TokenType.TROOF_LITERAL,
+			tokenDetails.add(TokenType.TYPE_LITERAL,
+				tokenDetails.add(TokenType.HAI,
+				tokenDetails.add(TokenType.KTHXBYE,
+				tokenDetails.add(TokenType.BTW,
+				tokenDetails.add(TokenType.OBTW,
+				tokenDetails.add(TokenType.TLDR,
+				tokenDetails.add(TokenType.I_HAS_A,
+				tokenDetails.add(TokenType.ITZ,
+				tokenDetails.add(TokenType.R,
+				tokenDetails.add(TokenType.SUM_OF,
+				tokenDetails.add(TokenType.DIFF_OF,
+				tokenDetails.add(TokenType.PRODUKT_OF,
+				tokenDetails.add(TokenType.QUOSHUNT_OF,
+				tokenDetails.add(TokenType.MOD_OF,
+				tokenDetails.add(TokenType.BIGGR_OF,
+				tokenDetails.add(TokenType.SMALLR_OF,
+				tokenDetails.add(TokenType.BOTH_OF,
+				tokenDetails.add(TokenType.EITHER_OF,
+				tokenDetails.add(TokenType.WON_OF,
+				tokenDetails.add(TokenType.NOT,
+				tokenDetails.add(TokenType.ALL_OF,
+				tokenDetails.add(TokenType.ANY_OF,
+				tokenDetails.add(TokenType.BOTH_SAEM,
+				tokenDetails.add(TokenType.DIFFRINT,
+				tokenDetails.add(TokenType.SMOOSH,
+				tokenDetails.add(TokenType.MAEK,
+				tokenDetails.add(TokenType.A,
+				tokenDetails.add(TokenType.IS_NOW_A,
+				tokenDetails.add(TokenType.VISIBLE,
+				tokenDetails.add(TokenType.GIMMEH,
+				tokenDetails.add(TokenType.O_RLY,
+				tokenDetails.add(TokenType.YA_RLY,
+				tokenDetails.add(TokenType.MEBBE,
+				tokenDetails.add(TokenType.NO_WAI,
+				tokenDetails.add(TokenType.OIC,
+				tokenDetails.add(TokenType.WTF,
+				tokenDetails.add(TokenType.OMG, 
+				tokenDetails.add(TokenType.OMGWTF,
+				tokenDetails.add(TokenType.STRING_DELIMETER,
+				tokenDetails.add(TokenType.COMMENT,
 */
 		}
 		public Token get() {
 			long startPosition = currentPosition;
 			long endPosition = currentPosition;
-			string scannedToken = "";
+			string scannedString = "";
+			TokenType scannedType;
 			for (; endPosition < input.Length; endPosition++) {
+				scannedString += this.input [endPosition];
+				scannedType = identifyToken (scannedString);
+				if (scannedType != TokenType.UNKNOWN) {
+					if (Char.IsWhiteSpace (this.input [endPosition + 1])) {
+						break;
+					}
+				}
 			}
-			return new Token ("", TokenType.VARIABLE_IDENTIFIER);
+			return new Token ("", scannedType);
+		}
+
+		private TokenType identifyToken(string str) {
+			foreach (KeyValuePair<TokenType, Regex> kvp in tokenDetails) {
+				if(kvp.Value.IsMatch (str))
+					return kvp.Key;
+			}
+			return TokenType.UNKNOWN;
 		}
 	}
 }
