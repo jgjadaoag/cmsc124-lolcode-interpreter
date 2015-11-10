@@ -79,11 +79,11 @@ namespace Bla
 			tokenDetails.Add(Tuple.Create(TokenType.NUMBR_LITERAL, "[-+]?\\d+"));
 			tokenDetails.Add(Tuple.Create(TokenType.NUMBAR_LITERAL, "[-+]?\\d*\\.\\d+"));
 			/*
-			tokenDetails.add(Tuple.Create(TokenType.YARN_LITERAL,
-			tokenDetails.add(Tuple.Create(TokenType.TROOF_LITERAL,
-			tokenDetails.add(Tuple.Create(TokenType.TYPE_LITERAL,
-				tokenDetails.add(Tuple.Create(TokenType.HAI,
-				tokenDetails.add(Tuple.Create(TokenType.KTHXBYE,
+			tokenDetails.add(Tuple.Create(TokenType.YARN_LITERAL, "[a-zA-Z](\w | _)*"));
+			tokenDetails.add(Tuple.Create(TokenType.TROOF_LITERAL, "(WIN|FAIL)"));
+			tokenDetails.add(Tuple.Create(TokenType.TYPE_LITERAL, "(YARN|NUMBR|NUMBAR|TROOF|NOOB)"));
+				tokenDetails.add(Tuple.Create(TokenType.HAI, "HAI"));
+				tokenDetails.add(Tuple.Create(TokenType.KTHXBYE, 
 				tokenDetails.add(Tuple.Create(TokenType.BTW,
 				tokenDetails.add(Tuple.Create(TokenType.OBTW,
 				tokenDetails.add(Tuple.Create(TokenType.TLDR,

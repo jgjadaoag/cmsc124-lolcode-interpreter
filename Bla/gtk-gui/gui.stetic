@@ -106,21 +106,6 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.Button" id="button3">
-            <property name="MemberName" />
-            <property name="WidthRequest">800</property>
-            <property name="CanFocus">True</property>
-            <property name="Type">TextOnly</property>
-            <property name="Label" translatable="yes">EXECUTE</property>
-            <property name="UseUnderline">True</property>
-            <signal name="Clicked" handler="OnButton3Clicked" />
-          </widget>
-          <packing>
-            <property name="X">52</property>
-            <property name="Y">364</property>
-          </packing>
-        </child>
-        <child>
           <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow3">
             <property name="MemberName" />
             <property name="WidthRequest">800</property>
@@ -148,16 +133,6 @@
           <packing>
             <property name="X">54</property>
             <property name="Y">409</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Label" id="label1">
-            <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">ANG GANDA NI MA'AM KAT LOLTERPRETER</property>
-          </widget>
-          <packing>
-            <property name="X">313</property>
-            <property name="Y">12</property>
           </packing>
         </child>
         <child>
@@ -192,6 +167,31 @@
           <packing>
             <property name="X">116</property>
             <property name="Y">56</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="label1">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">ANG GANDA NI MA'AM KAT LOLTERPRETER</property>
+          </widget>
+          <packing>
+            <property name="X">17</property>
+            <property name="Y">14</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Button" id="button3">
+            <property name="MemberName" />
+            <property name="WidthRequest">800</property>
+            <property name="CanFocus">True</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">EXECUTE</property>
+            <property name="UseUnderline">True</property>
+            <signal name="Clicked" handler="OnButton3Clicked" />
+          </widget>
+          <packing>
+            <property name="X">47</property>
+            <property name="Y">368</property>
           </packing>
         </child>
       </widget>
