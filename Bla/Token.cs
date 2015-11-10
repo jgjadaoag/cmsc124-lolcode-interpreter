@@ -71,17 +71,18 @@ namespace Bla
 	}
 	public class TokenStream {
 		readonly string input;
-		long currentPosition;
+		int currentPosition;
 		Dictionary<TokenType, Regex> tokenDetails;
 		public TokenStream (string input) {
 			this.input = input;
+			Console.WriteLine ("Input Length: " + input.Length.ToString ());
 			currentPosition = 0;
 
 			//Filling up token details
-			tokenDetails = new Dictionary<TokenType, string> ();
-			tokenDetails.Add(TokenType.VARIABLE_IDENTIFIER, new Regex(@"^[a-zA-Z](\w |_)*$"));
-			tokenDetails.Add(TokenType.NUMBR_LITERAL, new Regex(@"[-+]?\d+"));
-			tokenDetails.Add(TokenType.NUMBAR_LITERAL, new Regex(@"[-+]?\d*\.\d+"));
+			tokenDetails = new Dictionary<TokenType, Regex> ();
+			tokenDetails.Add(TokenType.VARIABLE_IDENTIFIER, new Regex(@"^[a-zA-Z](\w|_)*$"));
+			tokenDetails.Add(TokenType.NUMBR_LITERAL, new Regex(@"^[-+]?\d+$"));
+			tokenDetails.Add(TokenType.NUMBAR_LITERAL, new Regex(@"^[-+]?\d*\.\d+$"));
 			/*
 			tokenDetails.add(Tuple.Create(TokenType.YARN_LITERAL, "[a-zA-Z](\w | _)*"));
 			tokenDetails.add(Tuple.Create(TokenType.TROOF_LITERAL, "(WIN|FAIL)"));
@@ -128,27 +129,34 @@ namespace Bla
 */
 		}
 		public Token get() {
-			long startPosition = currentPosition;
-			long endPosition = currentPosition;
+			int endPosition = currentPosition;
 			string scannedString = "";
-			TokenType scannedType;
+			TokenType scannedType = TokenType.UNKNOWN;
 			for (; endPosition < input.Length; endPosition++) {
+				Console.WriteLine ("endPosition: " + endPosition.ToString ());
 				scannedString += this.input [endPosition];
 				scannedType = identifyToken (scannedString);
 				if (scannedType != TokenType.UNKNOWN) {
-					if (Char.IsWhiteSpace (this.input [endPosition + 1])) {
+					if ((endPosition == input.Length - 1) || 
+						(Char.IsWhiteSpace (this.input [endPosition + 1]))) {
+						Console.WriteLine ("aa endPosition: " + endPosition.ToString ());
+						currentPosition = endPosition + 1;
 						break;
 					}
 				}
 			}
-			return new Token ("", scannedType);
+			return new Token (scannedString, scannedType);
 		}
 
 		private TokenType identifyToken(string str) {
+			Console.WriteLine ("Matching " + str);
 			foreach (KeyValuePair<TokenType, Regex> kvp in tokenDetails) {
-				if(kvp.Value.IsMatch (str))
+				if (kvp.Value.IsMatch (str)) {
+					Console.WriteLine ("Matched to " + kvp.Key.ToString());
 					return kvp.Key;
+				}
 			}
+			Console.WriteLine ("Matched to " + TokenType.UNKNOWN.ToString());
 			return TokenType.UNKNOWN;
 		}
 	}

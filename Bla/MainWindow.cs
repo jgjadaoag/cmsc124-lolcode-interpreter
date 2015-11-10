@@ -1,5 +1,6 @@
 using System;
 using Gtk;
+using Bla;
 
 public partial class MainWindow: Gtk.Window
 {	
@@ -44,6 +45,10 @@ public partial class MainWindow: Gtk.Window
 		lexemeStore.AppendValues ("HAI", "Code Delimiter"); //test sample
 	}
 
+	public void addLexemes(string value, string classification) {
+		lexemeStore.AppendValues (value, classification);
+	}
+
 	protected void symbolTableInit ()
 	{
 		Gtk.TreeViewColumn indentifierColumn = new Gtk.TreeViewColumn ();
@@ -71,9 +76,10 @@ public partial class MainWindow: Gtk.Window
 	protected void OnButton3Clicked (object sender, EventArgs e)
 	{
 		lexemeStore.Clear();
-
+		
 		string str = codeField.Buffer.Text;
-		displayTextToConsole (str);
+		//displayTextToConsole (str);
+		MainClass.runInterpreter(str);
 	}
 
 	protected void displayTextToConsole (String stringText)
