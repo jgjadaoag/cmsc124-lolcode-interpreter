@@ -30,12 +30,66 @@
     <child>
       <widget class="Gtk.Fixed" id="fixed1">
         <property name="MemberName" />
-        <property name="HasWindow">False</property>
+        <property name="HasWindow">True</property>
         <child>
           <widget class="Gtk.Fixed" id="fixed3">
             <property name="MemberName" />
             <property name="HasWindow">False</property>
           </widget>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="label1">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">ANG GANDA NI MA'AM KAT LOLTERPRETER</property>
+          </widget>
+          <packing>
+            <property name="X">17</property>
+            <property name="Y">14</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="label2">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Code</property>
+          </widget>
+          <packing>
+            <property name="X">41</property>
+            <property name="Y">50</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Button" id="OpenFileButton">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">Open File...</property>
+            <property name="UseUnderline">True</property>
+            <signal name="Clicked" handler="OnOpenFileButtonClicked" />
+          </widget>
+          <packing>
+            <property name="X">117</property>
+            <property name="Y">43</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="lexemes">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Lexemes</property>
+          </widget>
+          <packing>
+            <property name="X">426</property>
+            <property name="Y">50</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="symbolTable">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Symbol Table</property>
+          </widget>
+          <packing>
+            <property name="X">710</property>
+            <property name="Y">45</property>
+          </packing>
         </child>
         <child>
           <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
@@ -54,7 +108,7 @@
           </widget>
           <packing>
             <property name="X">30</property>
-            <property name="Y">91</property>
+            <property name="Y">79</property>
           </packing>
         </child>
         <child>
@@ -72,8 +126,8 @@
             </child>
           </widget>
           <packing>
-            <property name="X">325</property>
-            <property name="Y">92</property>
+            <property name="X">330</property>
+            <property name="Y">76</property>
           </packing>
         </child>
         <child>
@@ -91,18 +145,33 @@
             </child>
           </widget>
           <packing>
-            <property name="X">617</property>
-            <property name="Y">89</property>
+            <property name="X">624</property>
+            <property name="Y">71</property>
           </packing>
         </child>
         <child>
-          <widget class="Gtk.Label" id="symbolTable">
+          <widget class="Gtk.Button" id="executeButton">
             <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">Symbol Table</property>
+            <property name="WidthRequest">800</property>
+            <property name="CanFocus">True</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">EXECUTE</property>
+            <property name="UseUnderline">True</property>
+            <signal name="Clicked" handler="OnButton3Clicked" />
           </widget>
           <packing>
-            <property name="X">707</property>
-            <property name="Y">59</property>
+            <property name="X">50</property>
+            <property name="Y">351</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="label4">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Console</property>
+          </widget>
+          <packing>
+            <property name="X">54</property>
+            <property name="Y">396</property>
           </packing>
         </child>
         <child>
@@ -121,77 +190,8 @@
             </child>
           </widget>
           <packing>
-            <property name="X">52</property>
-            <property name="Y">440</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Label" id="label4">
-            <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">Console</property>
-          </widget>
-          <packing>
-            <property name="X">54</property>
-            <property name="Y">409</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Label" id="lexemes">
-            <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">Lexemes</property>
-          </widget>
-          <packing>
-            <property name="X">427</property>
-            <property name="Y">62</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Label" id="label2">
-            <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">Code</property>
-          </widget>
-          <packing>
-            <property name="X">40</property>
-            <property name="Y">61</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Button" id="OpenFileButton">
-            <property name="MemberName" />
-            <property name="CanFocus">True</property>
-            <property name="Type">TextOnly</property>
-            <property name="Label" translatable="yes">Open File...</property>
-            <property name="UseUnderline">True</property>
-            <signal name="Clicked" handler="OnOpenFileButtonClicked" />
-          </widget>
-          <packing>
-            <property name="X">116</property>
-            <property name="Y">56</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Label" id="label1">
-            <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">ANG GANDA NI MA'AM KAT LOLTERPRETER</property>
-          </widget>
-          <packing>
-            <property name="X">17</property>
-            <property name="Y">14</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Button" id="button3">
-            <property name="MemberName" />
-            <property name="WidthRequest">800</property>
-            <property name="CanFocus">True</property>
-            <property name="Type">TextOnly</property>
-            <property name="Label" translatable="yes">EXECUTE</property>
-            <property name="UseUnderline">True</property>
-            <signal name="Clicked" handler="OnButton3Clicked" />
-          </widget>
-          <packing>
             <property name="X">47</property>
-            <property name="Y">368</property>
+            <property name="Y">420</property>
           </packing>
         </child>
       </widget>

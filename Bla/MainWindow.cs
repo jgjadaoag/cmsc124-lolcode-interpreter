@@ -14,6 +14,8 @@ public partial class MainWindow: Gtk.Window
 
 		//change console background color
 		console.ModifyBase(StateType.Normal, new Gdk.Color(0000,0000,0000));
+		//change window color
+		fixed1.ModifyBg (StateType.Normal, new Gdk.Color (0240, 0240, 0240));
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
