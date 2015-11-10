@@ -6,6 +6,7 @@ namespace Bla
 {
 	public enum TokenType 
 	{
+		UNKNOWN,
 		VARIABLE_IDENTIFIER,
 		NUMBR_LITERAL,
 		NUMBAR_LITERAL,
@@ -50,8 +51,7 @@ namespace Bla
 		OMG, 
 		OMGWTF,
 		STRING_DELIMETER,
-		COMMENT,
-		UNKNOWN
+		COMMENT
 	}
 	public class Token
 	{
@@ -85,10 +85,10 @@ namespace Bla
 			tokenDetails.Add(TokenType.BTW,new Regex(@"^BTW$"));
 			tokenDetails.Add(TokenType.OBTW,new Regex(@"^OBTW$"));
 			tokenDetails.Add(TokenType.TLDR,new Regex(@"^TLDR$"));
-			tokenDetails.Add(TokenType.I_HAS_A,new Regex(@"^I HAS A$"));
-			tokenDetails.Add(TokenType.ITZ,new Regex(@"ITZ^$"));
+			tokenDetails.Add(TokenType.I_HAS_A,new Regex(@"^I HAS A"));
+			tokenDetails.Add(TokenType.ITZ,new Regex(@"^ITZ$"));
 			tokenDetails.Add(TokenType.R,new Regex(@"^R$"));
-			tokenDetails.Add(TokenType.SUM_OF,new Regex(@"^SUM OF$"));
+			tokenDetails.Add(TokenType.SUM_OF,new Regex(@"^SUM OF"));
 			tokenDetails.Add(TokenType.DIFF_OF,new Regex(@"^DIFF OF$"));
 			tokenDetails.Add(TokenType.PRODUKT_OF,new Regex(@"^PRODUKT OF$"));
 			tokenDetails.Add(TokenType.QUOSHUNT_OF,new Regex(@"^QUOSHUNT OF$"));
@@ -117,7 +117,7 @@ namespace Bla
 			tokenDetails.Add(TokenType.WTF, new Regex(@"^WTF$"));
 			tokenDetails.Add(TokenType.OMG,  new Regex(@"^OMG$"));
 			tokenDetails.Add(TokenType.OMGWTF, new Regex(@"^OMGWTF$"));
-			tokenDetails.Add(TokenType.STRING_DELIMETER, new Regex(@"^$"));
+			tokenDetails.Add(TokenType.STRING_DELIMETER, new Regex(@"^\""$"));
 			tokenDetails.Add (TokenType.COMMENT, new Regex (@"^COMMENT$"));
 			tokenDetails.Add(TokenType.VARIABLE_IDENTIFIER, new Regex(@"^[a-zA-Z](\w|_)*$"));
 			tokenDetails.Add(TokenType.NUMBR_LITERAL, new Regex(@"^[-+]?\d+$"));
@@ -131,17 +131,26 @@ namespace Bla
 			int endPosition = currentPosition;
 			string scannedString = "";
 			TokenType scannedType = TokenType.UNKNOWN;
+			scannedType = identifyToken (input.Substring (currentPosition));
+			if (scannedType > TokenType.TYPE_LITERAL ) {
+				Console.WriteLine ("length of asdsa " + tokenDetails [scannedType].ToString ().Length);
+
+				scannedString = input.Substring (currentPosition, tokenDetails [scannedType].ToString ().Length - 1);
+				currentPosition += tokenDetails [scannedType].ToString ().Length - 1;
+				skipSpace ();
+				return new Token (scannedString, scannedType);
+			}
 			for (; endPosition < input.Length; endPosition++) {
+				
 				Console.WriteLine ("endPosition: " + endPosition.ToString ());
 				scannedString += this.input [endPosition];
 				scannedType = identifyToken (scannedString);
-				if (scannedType != TokenType.UNKNOWN) {
-					if ((endPosition == input.Length - 1) || 
-						(Char.IsWhiteSpace (this.input [endPosition + 1]))) {
-						Console.WriteLine ("aa endPosition: " + endPosition.ToString ());
-						currentPosition = endPosition + 1;
-						break;
-					}
+
+				if ((endPosition == input.Length - 1) ||
+				    (Char.IsWhiteSpace (this.input [endPosition + 1]))) {
+					Console.WriteLine ("aa endPosition: " + endPosition.ToString ());
+					currentPosition = endPosition + 1;
+					break;
 				}
 			}
 
@@ -162,6 +171,7 @@ namespace Bla
 				currentPosition++;
 			}
 		}
+			
 		private TokenType identifyToken(string str) {
 			Console.WriteLine ("Matching " + str);
 			foreach (KeyValuePair<TokenType, Regex> kvp in tokenDetails) {
