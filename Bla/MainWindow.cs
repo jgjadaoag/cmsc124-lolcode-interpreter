@@ -10,6 +10,7 @@ public partial class MainWindow: Gtk.Window
 		Build ();
 		lexemesInit ();
 		symbolTableInit ();
+		console.ModifyBase(StateType.Normal, new Gdk.Color(0000,0000,0000));
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
@@ -65,11 +66,35 @@ public partial class MainWindow: Gtk.Window
 		symbolTableStore.AppendValues ("HAI", "KTHXBYE"); //test sample
 	}
 
-	protected void executeOnClick ()
+	protected void OnButton3Clicked (object sender, EventArgs e)
 	{
 		lexemeStore.Clear();
 
-		string str = codeField.Buffer.Text;  // test sample
-		console.Buffer.Text = str;
+		string str = codeField.Buffer.Text;
+		//console.Buffer.Text += str + "\n";
+
+		var consoleTextColorTag = new TextTag ("colorTag");
+		consoleTextColorTag.Foreground = "white";
+		console.Buffer.TagTable.Add (consoleTextColorTag);
+
+		TextIter insertIter = console.Buffer.StartIter;
+		console.Buffer.InsertWithTagsByName (ref insertIter, str + "\n", "colorTag");
+		console.Buffer.ApplyTag ("word_wrap", console.Buffer.StartIter, console.Buffer.EndIter);
+
+	}
+
+
+	protected void OnOpenFileButtonClicked (object sender, EventArgs e)
+	{
+		using (FileChooserDialog fileChooser = new FileChooserDialog (null,"Open File", // pang- gawa nung pang open na window
+		                                                              null, FileChooserAction.Open,"Cancel", ResponseType.Cancel, 
+		                                                              "Open", ResponseType.Accept)) {
+			if (fileChooser.Run () == (int)ResponseType.Accept) {
+				System.IO.StreamReader file = System.IO.File.OpenText (fileChooser.Filename);
+				codeField.Buffer.Text = "  " + file.ReadToEnd ();		// pag lagay dun sa text view
+				file.Close ();
+				fileChooser.Destroy ();		//pang close nung window
+			}
+		}
 	}
 }
