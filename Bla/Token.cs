@@ -56,11 +56,25 @@ namespace Bla
 	{
 		string value;
 		TokenType type;
-		List<Tuple<TokenType, string>> tokenDetails;
 		public Token (string value, TokenType type)
 		{
 			this.value = value;
 			this.type = type;
+		}
+		public string getValue() {
+			return value;
+		}
+		public TokenType getType() {
+			return type;
+		}
+	}
+	public class TokenStream {
+		readonly string input;
+		long currentPosition;
+		List<Tuple<TokenType, string>> tokenDetails;
+		public TokenStream (string input) {
+			this.input = input;
+			currentPosition = 0;
 			tokenDetails.Add(Tuple.Create(TokenType.VARIABLE_IDENTIFIER, "[a-zA-Z](\\w | _)*"));
 			tokenDetails.Add(Tuple.Create(TokenType.NUMBR_LITERAL, "[-+]?\\d+"));
 			tokenDetails.Add(Tuple.Create(TokenType.NUMBAR_LITERAL, "[-+]?\\d*\\.\\d+"));
@@ -108,20 +122,6 @@ namespace Bla
 				tokenDetails.add(Tuple.Create(TokenType.STRING_DELIMETER,
 				tokenDetails.add(Tuple.Create(TokenType.COMMENT,
 */
-		}
-		public string getValue() {
-			return value;
-		}
-		public TokenType getType() {
-			return type;
-		}
-	}
-	public class TokenStream {
-		readonly string input;
-		long currentPosition;
-		public TokenStream (string input) {
-			this.input = input;
-			currentPosition = 0;
 		}
 		public Token get() {
 			long startPosition = currentPosition;
