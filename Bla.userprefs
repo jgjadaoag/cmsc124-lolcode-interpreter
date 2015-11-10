@@ -2,10 +2,20 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Bla/Token.cs">
     <Files>
-      <File FileName="Bla/Program.cs" Line="13" Column="16" />
-      <File FileName="Bla/MainWindow.cs" Line="69" Column="1" />
-      <File FileName="Bla/Token.cs" Line="91" Column="57" />
+      <File FileName="Bla/Program.cs" Line="14" Column="23" />
+      <File FileName="Bla/MainWindow.cs" Line="79" Column="3" />
+      <File FileName="Bla/Token.cs" Line="144" Column="5" />
+      <File FileName="Bla/gtk-gui/MainWindow.cs" Line="168" Column="53" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Bla" expanded="True">
+            <Node name="Token.cs" selected="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

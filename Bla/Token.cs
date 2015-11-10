@@ -115,7 +115,7 @@ namespace Bla
 			tokenDetails.Add(TokenType.NO_WAI, new Regex(@"^NO WAI$"));
 			tokenDetails.Add(TokenType.OIC, new Regex(@"^OIC$"));
 			tokenDetails.Add(TokenType.WTF, new Regex(@"^WTF$"));
-			tokenDetails.Add(TokenType.OMG,  new Regex(@"^OMG$"));
+			tokenDetails.Add(TokenType.OMG, new Regex(@"^OMG$"));
 			tokenDetails.Add(TokenType.OMGWTF, new Regex(@"^OMGWTF$"));
 			tokenDetails.Add(TokenType.STRING_DELIMETER, new Regex(@"^\""$"));
 			tokenDetails.Add (TokenType.COMMENT, new Regex (@"^COMMENT$"));
