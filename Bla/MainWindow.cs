@@ -44,7 +44,7 @@ public partial class MainWindow: Gtk.Window
 		lexemeColumn.AddAttribute (lexemeCell, "text", 0);
 		classificationColumn.AddAttribute (classificationCell, "text", 1);
 
-		lexemeStore.AppendValues ("HAI", "Code Delimiter"); //test sample
+		//lexemeStore.AppendValues ("HAI", "Code Delimiter"); //test sample
 	}
 
 	public void addLexemes(string value, string classification) {
@@ -72,7 +72,7 @@ public partial class MainWindow: Gtk.Window
 		indentifierColumn.AddAttribute (indentifierCell, "text", 0);
 		valueColumn.AddAttribute (classificationCell, "text", 1);
 
-		symbolTableStore.AppendValues ("HAI", "KTHXBYE"); //test sample
+		//symbolTableStore.AppendValues ("HAI", "KTHXBYE"); //test sample
 	}
 
 	protected void OnButton3Clicked (object sender, EventArgs e)
@@ -84,7 +84,7 @@ public partial class MainWindow: Gtk.Window
 		MainClass.runInterpreter(str);
 	}
 
-	protected void displayTextToConsole (String stringText)
+	public void displayTextToConsole (String stringText)
 	{
 		//change console text color
 		var consoleTextColorTag = new TextTag ("colorTag");
