@@ -9,19 +9,6 @@
     <widget-library name="../bin/Debug/Bla.exe" internal="true" />
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="906 667">
-    <action-group name="Default">
-      <action id="OpenFileAction">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Open File...</property>
-        <property name="ShortLabel" translatable="yes">Open File</property>
-      </action>
-      <action id="OpenFileAction1">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Open File</property>
-        <property name="ShortLabel" translatable="yes">Open File</property>
-        <signal name="Activated" handler="OnOpenFileAction1Activated" />
-      </action>
-    </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">ʕノ•ᴥ•ʔノ ︵ ┻━┻</property>
     <property name="Icon">stock:gtk-about Menu</property>
