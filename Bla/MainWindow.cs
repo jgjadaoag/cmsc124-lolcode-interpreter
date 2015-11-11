@@ -5,6 +5,7 @@ using Bla;
 public partial class MainWindow: Gtk.Window
 {	
 	Gtk.ListStore lexemeStore = new Gtk.ListStore (typeof (string), typeof (string));
+	Gtk.ListStore symbolTableStore = new Gtk.ListStore (typeof (string), typeof (string));
 
 	public MainWindow (): base (Gtk.WindowType.Toplevel)
 	{
@@ -62,7 +63,6 @@ public partial class MainWindow: Gtk.Window
 		symbolTableTree.AppendColumn (indentifierColumn);
 		symbolTableTree.AppendColumn (valueColumn);
 
-		Gtk.ListStore symbolTableStore = new Gtk.ListStore (typeof (string), typeof (string));
 		symbolTableTree.Model = symbolTableStore;
 		Gtk.CellRendererText indentifierCell = new Gtk.CellRendererText ();
 		indentifierColumn.PackStart (indentifierCell, true);
@@ -73,6 +73,11 @@ public partial class MainWindow: Gtk.Window
 		valueColumn.AddAttribute (classificationCell, "text", 1);
 
 		//symbolTableStore.AppendValues ("HAI", "KTHXBYE"); //test sample
+	}
+
+	public void addSymbol(string value, string classification) {
+		symbolTableStore.AppendValues (value, classification);
+
 	}
 
 	protected void OnButton3Clicked (object sender, EventArgs e)

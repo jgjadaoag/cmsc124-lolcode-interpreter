@@ -15,6 +15,8 @@ namespace Bla
 		TYPE_LITERAL,
 		HAI,
 		KTHXBYE,
+		BTW,
+		OBTW,
 		TLDR,
 		I_HAS_A,
 		ITZ,
@@ -88,8 +90,8 @@ namespace Bla
 
 			//Filling up token details
 			tokenDetails = new Dictionary<TokenType, Regex> ();
-			tokenDetails.Add(TokenType.HAI, new Regex (@"^HAI"));
-			tokenDetails.Add(TokenType.KTHXBYE, new Regex (@"^KTHXBYE"));
+			tokenDetails.Add(TokenType.HAI, new Regex (@"^HAI$"));
+			tokenDetails.Add(TokenType.KTHXBYE, new Regex (@"^KTHXBYE$"));
 			tokenDetails.Add(TokenType.BTW,new Regex(@"^BTW$"));
 			tokenDetails.Add(TokenType.OBTW,new Regex(@"^OBTW$"));
 			tokenDetails.Add(TokenType.TLDR,new Regex(@"^TLDR$"));
@@ -152,8 +154,10 @@ namespace Bla
 
 			if (scannedType > TokenType.TYPE_LITERAL) {
 				string rgx = tokenDetails [scannedType].ToString ();
+				Console.WriteLine (scannedString);
 				if (rgx [rgx.Length - 1] != '$') {
-				
+					Console.WriteLine (rgx [rgx.Length - 1]);
+					Console.WriteLine ("Pumasok");
 					scannedString = input.Substring (currentPosition, Math.Max (currentPosition, tokenDetails [scannedType].ToString ().Length - 1));
 					currentPosition += tokenDetails [scannedType].ToString ().Length - 1;
 					skipSpace ();
