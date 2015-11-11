@@ -15,12 +15,28 @@ namespace Bla
 		TYPE_LITERAL,
 		HAI,
 		KTHXBYE,
-		BTW,
-		OBTW,
 		TLDR,
-		I_HAS_A,
 		ITZ,
 		R,
+		NOT,
+		DIFFRINT,
+		SMOOSH,
+		MAEK,
+		A,
+		VISIBLE,
+		GIMMEH,
+		MEBBE,
+		OIC,
+		WTF,
+		OMG, 
+		OMGWTF,
+		STRING_DELIMETER,
+		AN,
+		LINE_COMMENT,
+		BLOCK_COMMENT,
+		BTW,
+		OBTW,
+		I_HAS_A,
 		SUM_OF,
 		DIFF_OF,
 		PRODUKT_OF,
@@ -31,29 +47,13 @@ namespace Bla
 		BOTH_OF,
 		EITHER_OF,
 		WON_OF,
-		NOT,
 		ALL_OF,
 		ANY_OF,
-		BOTH_SAEM,
-		DIFFRINT,
-		SMOOSH,
-		MAEK,
-		A,
 		IS_NOW_A,
-		VISIBLE,
-		GIMMEH,
+		BOTH_SAEM,
 		O_RLY,
 		YA_RLY,
-		MEBBE,
-		NO_WAI,
-		OIC,
-		WTF,
-		OMG, 
-		OMGWTF,
-		STRING_DELIMETER,
-		AN,
-		LINE_COMMENT,
-		BLOCK_COMMENT
+		NO_WAI
 	}
 	public class Token
 	{
@@ -75,18 +75,13 @@ namespace Bla
 		readonly string input;
 		int currentPosition;
 		public readonly Dictionary<TokenType, Regex> tokenDetails;
-		StringFlag stringFlag;
-		private enum StringFlag {
-			OUTSIDE_STRING,
-			START_DELIMETER,
-			INSIDE_STRING,
-			END_DELIMITER
-		}
+		bool stringFlag;
+
 		public TokenStream (string input) {
 			this.input = input;
 			Console.WriteLine ("Input Length: " + input.Length.ToString ());
 			currentPosition = 0;
-			stringFlag = StringFlag.OUTSIDE_STRING;
+			stringFlag = false;
 
 			//Filling up token details
 			tokenDetails = new Dictionary<TokenType, Regex> ();
@@ -144,27 +139,33 @@ namespace Bla
 		public Token get() {
 			int endPosition = currentPosition;
 			string scannedString = "";
-			TokenType scannedType = identifyToken (input.Substring (currentPosition));
-			if (scannedType == TokenType.YARN_LITERAL) {
-				Console.WriteLine ("found string");
-				while (input [currentPosition] != '"')
+
+			if (stringFlag ) {
+				if (!(input [currentPosition] == '"')) {
+					return readString (input.Substring (currentPosition));
+				} else {
 					currentPosition++;
-				return new Token (input.Substring (endPosition, currentPosition - endPosition), scannedType);
+					stringFlag = false;
+					skipSpace ();
+					return new Token ("\"", TokenType.STRING_DELIMETER);
+				}
 			}
 
-			if (scannedType > TokenType.TYPE_LITERAL) {
+			TokenType scannedType = identifyToken (input.Substring (currentPosition));
+
+			if (scannedType > TokenType.OBTW) {
 				string rgx = tokenDetails [scannedType].ToString ();
 				Console.WriteLine (scannedString);
 				if (rgx [rgx.Length - 1] != '$') {
-					Console.WriteLine (rgx [rgx.Length - 1]);
-					Console.WriteLine ("Pumasok");
-					scannedString = input.Substring (currentPosition, Math.Max (currentPosition, tokenDetails [scannedType].ToString ().Length - 1));
-					currentPosition += tokenDetails [scannedType].ToString ().Length - 1;
-					skipSpace ();
-					return new Token (scannedString, scannedType);
+					try{
+						scannedString = input.Substring (currentPosition, tokenDetails [scannedType].ToString ().Length - 1);
+						currentPosition += tokenDetails [scannedType].ToString ().Length - 1;
+						skipSpace ();
+						return new Token (scannedString, scannedType);
+					} catch (Exception a){}
 				}
 			}
-			if (stringFlag == StringFlag.OUTSIDE_STRING) {
+			if (stringFlag == false) {
 				for (; endPosition < input.Length; endPosition++) {
 				
 					Console.WriteLine ("endPosition: " + endPosition.ToString ());
@@ -198,30 +199,38 @@ namespace Bla
 			}
 		}
 			
+		private Token readString(string str){
+			string holder = "";
+
+			foreach(char c in str){
+				if(c == '"'){
+					currentPosition += holder.Length;
+					return new Token(holder, TokenType.YARN_LITERAL);
+				} else if(c == '\n'){
+					throw new System.InvalidOperationException ("unterminated yarn");
+				} else {
+					holder += c;
+				}
+				Console.WriteLine (holder);
+			}
+
+			return new Token ("", TokenType.UNKNOWN);
+		}
+
 		private TokenType identifyToken(string str) {
 			Console.WriteLine ("Matching " + str);
 			Console.WriteLine("string flag: " +  stringFlag);
-			if (stringFlag == StringFlag.START_DELIMETER) {
-				if (!tokenDetails [TokenType.YARN_LITERAL].IsMatch (str)) {
-					Console.WriteLine (str + "is not a string");
-					throw new System.InvalidOperationException ("unterminated yarn");
-				}
-				Console.WriteLine (str + "is a string");
-				stringFlag = StringFlag.END_DELIMITER;
-				return TokenType.YARN_LITERAL;
-			} else if (stringFlag == StringFlag.END_DELIMITER) {
-				stringFlag = StringFlag.OUTSIDE_STRING;
+
+			if (stringFlag == true) {
+				stringFlag = false;
 				return TokenType.STRING_DELIMETER;
 			}
+
 			foreach (KeyValuePair<TokenType, Regex> kvp in tokenDetails) {
 				if (kvp.Value.IsMatch (str)) {
 					Console.WriteLine ("Matched to " + kvp.Key.ToString());
 					if (kvp.Key == TokenType.STRING_DELIMETER) {
-						if (stringFlag == StringFlag.OUTSIDE_STRING) {
-							stringFlag = StringFlag.START_DELIMETER;
-						} else if (stringFlag == StringFlag.END_DELIMITER) {
-							stringFlag = StringFlag.OUTSIDE_STRING;
-						}
+						stringFlag = true;
 					}
 					if (kvp.Key == TokenType.YARN_LITERAL)
 						continue;

@@ -83,7 +83,7 @@ public partial class MainWindow: Gtk.Window
 	protected void OnButton3Clicked (object sender, EventArgs e)
 	{
 		lexemeStore.Clear();
-		
+		symbolTableStore.Clear ();
 		string str = codeField.Buffer.Text;
 		//displayTextToConsole (str);
 		MainClass.runInterpreter(str);
