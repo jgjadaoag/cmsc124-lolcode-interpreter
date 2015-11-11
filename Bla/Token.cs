@@ -89,24 +89,24 @@ namespace Bla
 			tokenDetails.Add(TokenType.ITZ,new Regex(@"^ITZ$"));
 			tokenDetails.Add(TokenType.R,new Regex(@"^R$"));
 			tokenDetails.Add(TokenType.SUM_OF,new Regex(@"^SUM OF"));
-			tokenDetails.Add(TokenType.DIFF_OF,new Regex(@"^DIFF OF$"));
-			tokenDetails.Add(TokenType.PRODUKT_OF,new Regex(@"^PRODUKT OF$"));
-			tokenDetails.Add(TokenType.QUOSHUNT_OF,new Regex(@"^QUOSHUNT OF$"));
-			tokenDetails.Add(TokenType.MOD_OF, new Regex(@"^MOD OF$"));
-			tokenDetails.Add(TokenType.BIGGR_OF, new Regex(@"^BIGGR OF$"));
-			tokenDetails.Add(TokenType.SMALLR_OF, new Regex(@"^SMALLR OF$"));
-			tokenDetails.Add(TokenType.BOTH_OF, new Regex(@"^BOTH OF$"));
-			tokenDetails.Add(TokenType.EITHER_OF, new Regex(@"^EITHER OF$"));
-			tokenDetails.Add(TokenType.WON_OF, new Regex(@"^WON OF$"));
+			tokenDetails.Add(TokenType.DIFF_OF,new Regex(@"^DIFF OF"));
+			tokenDetails.Add(TokenType.PRODUKT_OF,new Regex(@"^PRODUKT OF"));
+			tokenDetails.Add(TokenType.QUOSHUNT_OF,new Regex(@"^QUOSHUNT OF"));
+			tokenDetails.Add(TokenType.MOD_OF, new Regex(@"^MOD OF"));
+			tokenDetails.Add(TokenType.BIGGR_OF, new Regex(@"^BIGGR OF"));
+			tokenDetails.Add(TokenType.SMALLR_OF, new Regex(@"^SMALLR OF"));
+			tokenDetails.Add(TokenType.BOTH_OF, new Regex(@"^BOTH OF"));
+			tokenDetails.Add(TokenType.EITHER_OF, new Regex(@"^EITHER OF"));
+			tokenDetails.Add(TokenType.WON_OF, new Regex(@"^WON OF"));
 			tokenDetails.Add(TokenType.NOT, new Regex(@"^NOT$"));
-			tokenDetails.Add(TokenType.ALL_OF,new Regex(@"^ALL OF$"));
-			tokenDetails.Add(TokenType.ANY_OF, new Regex(@"^ANY OF$"));
+			tokenDetails.Add(TokenType.ALL_OF,new Regex(@"^ALL OF"));
+			tokenDetails.Add(TokenType.ANY_OF, new Regex(@"^ANY OF"));
 			tokenDetails.Add(TokenType.BOTH_SAEM, new Regex(@"^BOTH SAEM$"));
 			tokenDetails.Add(TokenType.DIFFRINT, new Regex(@"^DIFFRINT$"));
 			tokenDetails.Add(TokenType.SMOOSH, new Regex(@"^SMOOSH$"));
 			tokenDetails.Add(TokenType.MAEK, new Regex(@"^MAEK$"));
 			tokenDetails.Add(TokenType.A, new Regex(@"^A$"));
-			tokenDetails.Add(TokenType.IS_NOW_A, new Regex(@"^IS NOW A$"));
+			tokenDetails.Add(TokenType.IS_NOW_A, new Regex(@"^IS NOW A"));
 			tokenDetails.Add(TokenType.VISIBLE, new Regex(@"^VISIBLE$"));
 			tokenDetails.Add(TokenType.GIMMEH, new Regex(@"^GIMMEH$"));
 			tokenDetails.Add(TokenType.O_RLY, new Regex(@"^O RLY$"));
@@ -123,10 +123,11 @@ namespace Bla
 			tokenDetails.Add(TokenType.NUMBR_LITERAL, new Regex(@"^[-+]?\d+$"));
 			tokenDetails.Add(TokenType.NUMBAR_LITERAL, new Regex(@"^[-+]?\d*\.\d+$"));
 			tokenDetails.Add(TokenType.YARN_LITERAL, new Regex(@"^[a-zA-Z](\w | _)*"));
-			tokenDetails.Add (TokenType.TROOF_LITERAL, new Regex (@"^(WIN|FAIL)"));
-			tokenDetails.Add (TokenType.TYPE_LITERAL, new Regex (@"^(YARN|NUMBR|NUMBAR|TROOF|NOOB)"));
+			tokenDetails.Add(TokenType.TROOF_LITERAL, new Regex (@"^(WIN|FAIL)"));
+			tokenDetails.Add(TokenType.TYPE_LITERAL, new Regex (@"^(YARN|NUMBR|NUMBAR|TROOF|NOOB)"));
 			skipSpace ();
 		}
+
 		public Token get() {
 			int endPosition = currentPosition;
 			string scannedString = "";
@@ -140,6 +141,7 @@ namespace Bla
 				skipSpace ();
 				return new Token (scannedString, scannedType);
 			}
+
 			for (; endPosition < input.Length; endPosition++) {
 				
 				Console.WriteLine ("endPosition: " + endPosition.ToString ());
