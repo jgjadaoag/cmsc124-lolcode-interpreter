@@ -80,8 +80,8 @@ namespace Bla
 
 			//Filling up token details
 			tokenDetails = new Dictionary<TokenType, Regex> ();
-			tokenDetails.Add (TokenType.HAI, new Regex (@"^HAI"));
-			tokenDetails.Add (TokenType.KTHXBYE, new Regex (@"^KTHXBYE"));
+			tokenDetails.Add(TokenType.HAI, new Regex (@"^HAI"));
+			tokenDetails.Add(TokenType.KTHXBYE, new Regex (@"^KTHXBYE"));
 			tokenDetails.Add(TokenType.BTW,new Regex(@"^BTW$"));
 			tokenDetails.Add(TokenType.OBTW,new Regex(@"^OBTW$"));
 			tokenDetails.Add(TokenType.TLDR,new Regex(@"^TLDR$"));
@@ -118,7 +118,7 @@ namespace Bla
 			tokenDetails.Add(TokenType.OMG, new Regex(@"^OMG$"));
 			tokenDetails.Add(TokenType.OMGWTF, new Regex(@"^OMGWTF$"));
 			tokenDetails.Add(TokenType.STRING_DELIMETER, new Regex(@"^\""$"));
-			tokenDetails.Add (TokenType.COMMENT, new Regex (@"^COMMENT$"));
+			tokenDetails.Add(TokenType.COMMENT, new Regex (@"^COMMENT$"));
 			tokenDetails.Add(TokenType.VARIABLE_IDENTIFIER, new Regex(@"^[a-zA-Z](\w|_)*$"));
 			tokenDetails.Add(TokenType.NUMBR_LITERAL, new Regex(@"^[-+]?\d+$"));
 			tokenDetails.Add(TokenType.NUMBAR_LITERAL, new Regex(@"^[-+]?\d*\.\d+$"));
