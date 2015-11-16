@@ -178,6 +178,77 @@ namespace Bla
 			return term (TokenType.SMALLR_OF) && expression() && term(TokenType.AN) && expression();
 		}
 
+		bool compareOperator(){
+			int save = currentPosition;
+			return (((currentPosition = save) == save & equality()) ||
+				((currentPosition = save) == save & inequality()) ||
+				((currentPosition = save) == save & greaterThan()) ||
+				((currentPosition = save) == save & lessThan ()) ||
+				((currentPosition = save) == save & greaterThanOrEqual ()) ||
+				((currentPosition = save) == save & lessThanOrEqual ())
+				);
+		}
+
+		bool equality(){
+			return term (TokenType.BOTH_SAEM) && expression () && term (TokenType.AN) && expression ();
+		}
+
+		bool inequality(){
+			return term (TokenType.DIFFRINT) && expression () && term (TokenType.AN) && expression ();
+		}
+
+		bool greaterThan(){
+			return term (TokenType.DIFFRINT) && expression () && term (TokenType.AN) && minimum ();
+		}
+
+		bool lessThan(){
+			return term (TokenType.DIFFRINT) && expression () && term (TokenType.AN) && maximum ();
+		}
+
+		bool greaterThanOrEqual(){
+			return term (TokenType.BOTH_SAEM) && expression () && term (TokenType.AN) && maximum ();
+		}
+
+		bool lessThanOrEqual(){
+			return term (TokenType.BOTH_SAEM) && expression () && term (TokenType.AN) && minimum ();
+		}
+
+		bool infiniteArityAnd(){
+			return term (TokenType.ALL_OF) && expression () && term (TokenType.AN) && expression () && term (TokenType.AN) && infiniteExpression () && term (TokenType.MKAY);
+		}
+
+		bool infiniteArityOr(){
+			return term (TokenType.ANY_OF) && expression () && term (TokenType.AN) && expression () && term (TokenType.AN) && infiniteExpression () && term (TokenType.MKAY);
+		}
+
+		bool infiniteExpression(){
+			int save = currentPosition;
+			return (((currentPosition = save) == save & expression() && term(TokenType.AN) && infiniteExpression()) ||
+				((currentPosition = save) == save & expression()));
+		}
+
+		bool booleanOperation(){
+			int save = currentPosition;
+			return (((currentPosition = save) == save & andOperator()) ||
+				((currentPosition = save) == save & orOperator ()) ||
+				((currentPosition = save) == save & xorOperator ()) ||
+				((currentPosition = save) == save & infiniteArityAnd ()) ||
+				((currentPosition = save) == save & infiniteArityOr ())
+				);
+		}
+
+		bool andOperator(){
+			return term (TokenType.BOTH_OF) && expression () && term (TokenType.AN) && expression ();
+		}
+
+		bool orOperator(){
+			return term (TokenType.EITHER_OF) && expression () && term (TokenType.AN) && expression ();
+		}
+
+		bool xorOperator(){
+			return term (TokenType.WON_OF) && expression () && term (TokenType.AN) && expression ();
+		}
+
 		bool vardec(){
 			int save = currentPosition;
 			return (((currentPosition = save) == save & term(TokenType.I_HAS_A) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.ITZ) && assignRHS()) ||
