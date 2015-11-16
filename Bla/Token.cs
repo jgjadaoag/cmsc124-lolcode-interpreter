@@ -179,10 +179,27 @@ namespace Bla
 						break;
 					}
 				}
-
-				skipSpace ();
+					
 			}
 
+			if(scannedType == TokenType.BTW){
+				while(currentPosition < input.Length && input [currentPosition++] != '\n'){
+					
+				}
+			} else if(scannedType == TokenType.OBTW){
+				int tldrPosition = input.Substring (currentPosition).IndexOf ("TLDR");
+
+				if (tldrPosition < 0) {
+					currentPosition = input.Length;
+				} else {
+					currentPosition += 4 + tldrPosition;
+
+				}
+
+
+			}
+
+			skipSpace ();
 			return new Token (scannedString, scannedType);
 		}
 

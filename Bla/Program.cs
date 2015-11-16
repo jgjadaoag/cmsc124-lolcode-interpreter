@@ -24,7 +24,7 @@ namespace Bla
 				//try {
 					t = ts.get ();
 				win.addLexemes (t.getValue (), t.getType ().ToString ());
-				if (t.getType() == TokenType.I_HAS_A) {
+				/**if (t.getType() == TokenType.I_HAS_A) {
 					t = ts.get ();
 					if (!variableList.ContainsKey (t.getValue ())) {
 						variableList.Add (t.getValue (), "NOOB");
@@ -35,9 +35,9 @@ namespace Bla
 						return;
 					}
 
-				}
-
+				}**/
 					string rex = ts.tokenDetails[t.getType()].ToString();
+					
 					Console.WriteLine(rex[rex.Length - 1]);
 				/*} catch(Exception e) {	
 					win.displayTextToConsole (e.Source);
@@ -45,6 +45,12 @@ namespace Bla
 					break;
 				}*/
 			}
+
+			Parser p = new Parser (input);
+			if (p.parse () == false) {
+				win.displayTextToConsole ("Syntax error :(");
+			}
+
 		}
 	}
 }
