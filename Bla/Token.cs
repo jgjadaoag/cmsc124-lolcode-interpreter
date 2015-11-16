@@ -31,6 +31,7 @@ namespace Bla
 		OMG, 
 		OMGWTF,
 		STRING_DELIMETER,
+		STATEMENT_DELIMETER,
 		AN,
 		LINE_COMMENT,
 		BLOCK_COMMENT,
@@ -134,6 +135,7 @@ namespace Bla
 			tokenDetails.Add(TokenType.YARN_LITERAL, new Regex(@"[\S 	]*\"""));
 			tokenDetails.Add (TokenType.TROOF_LITERAL, new Regex (@"^(WIN|FAIL)"));
 			tokenDetails.Add (TokenType.TYPE_LITERAL, new Regex (@"^(YARN|NUMBR|NUMBAR|TROOF|NOOB)"));
+			tokenDetails.Add (TokenType.STATEMENT_DELIMETER, new Regex (@"^(\n|,)$"));
 
 			skipSpace ();
 		}
@@ -176,7 +178,9 @@ namespace Bla
 
 					if ((endPosition == input.Length - 1) ||
 					   (Char.IsWhiteSpace (this.input [endPosition + 1])) ||
-					   (scannedType == TokenType.STRING_DELIMETER)) {
+					   (scannedType == TokenType.STRING_DELIMETER) ||
+						(scannedType == TokenType.STATEMENT_DELIMETER) ||
+						(input[endPosition + 1] == ',')) {
 						currentPosition = endPosition + 1;
 						break;
 					}
@@ -213,7 +217,7 @@ namespace Bla
 		}
 
 		private void skipSpace(){
-			while (currentPosition < input.Length && Char.IsWhiteSpace (input [currentPosition])) {
+			while (currentPosition < input.Length && Char.IsWhiteSpace (input [currentPosition]) && input[currentPosition] != '\n') {
 				currentPosition++;
 			}
 		}
