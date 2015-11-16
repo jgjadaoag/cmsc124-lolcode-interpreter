@@ -34,6 +34,7 @@ namespace Bla
 		AN,
 		LINE_COMMENT,
 		BLOCK_COMMENT,
+		MKAY,
 		BTW,
 		OBTW,
 		I_HAS_A,
@@ -126,6 +127,7 @@ namespace Bla
 			tokenDetails.Add (TokenType.LINE_COMMENT, new Regex (@"^BTW.*\n$"));
 			tokenDetails.Add (TokenType.BLOCK_COMMENT, new Regex (@"^OBTW.*TLDR$"));
 			tokenDetails.Add (TokenType.AN, new Regex (@"^AN$"));
+			tokenDetails.Add (TokenType.MKAY, new Regex (@"^MKAY$"));
 			tokenDetails.Add(TokenType.VARIABLE_IDENTIFIER, new Regex(@"^[a-zA-Z](\w|_)*$"));
 			tokenDetails.Add(TokenType.NUMBR_LITERAL, new Regex(@"^[-+]?\d+$"));
 			tokenDetails.Add(TokenType.NUMBAR_LITERAL, new Regex(@"^[-+]?\d*\.\d+$"));
