@@ -16,6 +16,10 @@ namespace Bla
 			Application.Run ();
 		}
 
+		public static void writeToConsole(string str) {
+			win.displayTextToConsole (str);
+		}
+
 		public static void runInterpreter(string input) {
 			variableList = new Dictionary <string, string> ();
 			TokenStream ts = new TokenStream (input);

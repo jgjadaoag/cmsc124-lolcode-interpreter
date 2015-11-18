@@ -3,10 +3,18 @@ using System.Collections.Generic;
 
 namespace Bla
 {
+	public enum LOLType {
+		NOOB,
+		NUMBR,
+		NUMBAR,
+		YARN,
+		TROOF
+	}
 	public class Parser
 	{
 		List<Token> tokenList;
 		int currentPosition;
+		Tuple<LOLType, string> accumulator; //Tuple<type, value>
 
 		public Parser (string value)
 		{
@@ -65,11 +73,24 @@ namespace Bla
 		}
 
 		bool input(){
-			return term (TokenType.GIMMEH) && term (TokenType.VARIABLE_IDENTIFIER);
+			if (term (TokenType.GIMMEH) && term (TokenType.VARIABLE_IDENTIFIER)) {
+		//		CreateMyForm ();
+				Console.WriteLine ("After CreateMyForm()");
+				return true;
+			} 
+			return false;
 		}
 
 		bool output(){
-			return term (TokenType.VISIBLE) && expression();
+			int save = currentPosition;
+			if ((currentPosition = save) == save & term (TokenType.VISIBLE) && expression ()) {
+				MainClass.writeToConsole (accumulator.Item2 + '\n');
+				Console.WriteLine ("\n\n\nprinting: " + accumulator.Item2 + "\n\n\n");
+			} else {
+				return false;
+			}
+
+			return true;
 		}
 
 		bool concatenation(){
@@ -263,12 +284,20 @@ namespace Bla
 
 		bool literal(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & term (TokenType.NUMBR_LITERAL)) || 
-					((currentPosition = save) == save & term(TokenType.NUMBAR_LITERAL)) || 
-					((currentPosition = save) == save & term(TokenType.YARN_LITERAL)) || 
-					((currentPosition = save) == save & term(TokenType.TROOF_LITERAL)) );
+			if ((currentPosition = save) == save & term (TokenType.NUMBR_LITERAL)) {
+				accumulator = createValue (LOLType.NUMBR, tokenList [save + 1].getValue ());
+			} else if ((currentPosition = save) == save & term (TokenType.NUMBAR_LITERAL)) {
+			} else if ((currentPosition = save) == save & term (TokenType.YARN_LITERAL)) {
+			} else if ((currentPosition = save) == save & term (TokenType.TROOF_LITERAL)) {
+			} else {
+				return false;
+			}
+			return true;
 		}
-			
+
+		private Tuple<LOLType, string> createValue(LOLType type, string value) {
+			return new Tuple<LOLType, string> (type, value);
+		}
 	}
 }
 	
