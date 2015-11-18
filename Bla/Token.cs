@@ -202,10 +202,7 @@ namespace Bla
 					currentPosition = input.Length;
 				} else {
 					currentPosition += 4 + tldrPosition;
-
 				}
-
-
 			}
 
 			skipSpace ();

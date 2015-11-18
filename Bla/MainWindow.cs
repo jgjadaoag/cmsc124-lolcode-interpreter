@@ -75,6 +75,7 @@ public partial class MainWindow: Gtk.Window
 	}
 
 	public void refreshSymbol(SymbolTable st) {
+		symbolTableStore.Clear ();
 		foreach(KeyValuePair<string, Tuple<LOLType, string>> kvp in st.getVariableList()) {
 			symbolTableStore.AppendValues (kvp.Key, kvp.Value.Item2);
 		}

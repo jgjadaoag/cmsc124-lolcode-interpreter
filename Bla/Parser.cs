@@ -5,13 +5,13 @@ namespace Bla
 {
 	public class Parser
 	{
-		List<Token> tokenList;
+		List<Tuple<Token, bool>> tokenList;
 		int currentPosition;
 		Tuple<LOLType, string> accumulator; //Tuple<type, value>
 
 		public Parser (string value)
 		{
-			tokenList = new List<Token> ();
+			tokenList = new List<Tuple<Token, bool>> ();
 			TokenStream ts = new TokenStream (value);
 			Token t;
 			currentPosition = 0;
@@ -19,12 +19,12 @@ namespace Bla
 			while(!ts.end()){
 				t = ts.get ();
 				if (t.getType() != TokenType.UNKNOWN && (t.getType() != TokenType.BTW || t.getType() != TokenType.OBTW)) {
-					tokenList.Add (t);
+					tokenList.Add (new Tuple<Token, bool> (t, false));
 				}
 			}
 
-			foreach (Token tk in tokenList) {
-				Console.WriteLine (tk.getType());
+			foreach (Tuple<Token, bool> tk in tokenList) {
+				Console.WriteLine (tk.Item1.getType());
 			}
 		}
 
@@ -39,9 +39,9 @@ namespace Bla
 		bool term(TokenType tokType){
 			if (currentPosition == tokenList.Count)
 				return false;
-			Console.WriteLine ("Current Token: "+tokenList[currentPosition].getType());
+			Console.WriteLine ("Current Token: "+tokenList[currentPosition].Item1.getType());
 			Console.WriteLine ("Ask token: "+tokType);
-			return tokenList[currentPosition++].getType() == tokType;
+			return tokenList[currentPosition++].Item1.getType() == tokType;
 		}
 
 		bool codeBlock(){
@@ -72,7 +72,8 @@ namespace Bla
 
 		bool input(){
 			if (term (TokenType.GIMMEH) && term (TokenType.VARIABLE_IDENTIFIER)) {
-				new Dialog ( tokenList[currentPosition-1].getValue());
+				new Dialog ( tokenList[currentPosition-1].Item1.getValue());
+				MainClass.win.refreshSymbol (MainClass.st);
 				return true;
 			}
 			return false;
@@ -81,7 +82,11 @@ namespace Bla
 		bool output(){
 			int save = currentPosition;
 			if ((currentPosition = save) == save & term (TokenType.VISIBLE) && expression ()) {
-				MainClass.writeToConsole (accumulator.Item2 + '\n');
+				Console.WriteLine (tokenList [save].Item1.getType ());
+				if (tokenList [save].Item2 == false) {
+					MainClass.writeToConsole (accumulator.Item2);
+					tokenList [save] = new Tuple<Token, bool> (tokenList [save].Item1, true);
+				}
 				Console.WriteLine ("\n\n\nprinting: " + accumulator.Item2 + "\n\n\n");
 			} else {
 				return false;
@@ -269,8 +274,22 @@ namespace Bla
 
 		bool vardec(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & term(TokenType.I_HAS_A) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.ITZ) && assignRHS()) ||
-				((currentPosition = save) == save & term(TokenType.I_HAS_A) && term(TokenType.VARIABLE_IDENTIFIER)) );
+			if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.ITZ) && assignRHS ()) {
+				if (tokenList [save].Item2 == false) {
+					MainClass.st.createVar (tokenList [save + 1].Item1.getValue (), new Tuple<LOLType, string> (LOLType.NOOB, ""));
+					tokenList [save] = new Tuple<Token, bool> (tokenList [save].Item1, true);
+				}
+
+			} else if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER)) {
+				if (tokenList [save].Item2 == false) {
+					MainClass.st.createVar (tokenList [save + 1].Item1.getValue (), new Tuple<LOLType, string> (LOLType.NOOB, ""));
+					tokenList [save] = new Tuple<Token, bool> (tokenList [save].Item1, true);
+				}
+			} else {
+				return false;
+			}
+			MainClass.win.refreshSymbol (MainClass.st);
+			return true;
 		}
 
 		bool assignRHS(){
@@ -282,13 +301,13 @@ namespace Bla
 		bool literal(){
 			int save = currentPosition;
 			if ((currentPosition = save) == save & term (TokenType.NUMBR_LITERAL)) {
-				accumulator = createValue (LOLType.NUMBR, tokenList [save].getValue ());
+				accumulator = createValue (LOLType.NUMBR, tokenList [save].Item1.getValue ());
 			} else if ((currentPosition = save) == save & term (TokenType.NUMBAR_LITERAL)) {
-				accumulator = createValue (LOLType.NUMBAR, tokenList [save].getValue ());
+				accumulator = createValue (LOLType.NUMBAR, tokenList [save].Item1.getValue ());
 			} else if ((currentPosition = save) == save & term(TokenType.STRING_DELIMETER) && term (TokenType.YARN_LITERAL) && term(TokenType.STRING_DELIMETER)) {
-				accumulator = createValue (LOLType.YARN, tokenList [save+1].getValue ());
+				accumulator = createValue (LOLType.YARN, tokenList [save+1].Item1.getValue ());
 			} else if ((currentPosition = save) == save & term (TokenType.TROOF_LITERAL)) {
-				accumulator = createValue (LOLType.TROOF, tokenList [save].getValue ());
+				accumulator = createValue (LOLType.TROOF, tokenList [save].Item1.getValue ());
 			} else {
 				return false;
 			}

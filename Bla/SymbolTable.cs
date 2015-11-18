@@ -13,7 +13,7 @@ namespace Bla
 
 		public void setVar(string name, Tuple<LOLType, string> value)
 		{
-
+			variableList [name] = value;
 		}
 
 		public void createVar(string name, Tuple<LOLType, string> value) {

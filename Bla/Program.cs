@@ -14,9 +14,6 @@ namespace Bla
 			Application.Init ();
 			win = new MainWindow ();
 			win.Show ();
-			st = new SymbolTable ();
-			st.createVar ("a", new Tuple<LOLType, string> (LOLType.YARN, "hello"));
-			win.refreshSymbol (st);
 			Application.Run ();
 		}
 
@@ -29,6 +26,7 @@ namespace Bla
 		public static void runInterpreter(string input) {
 			TokenStream ts = new TokenStream (input);
 			Token t;
+			st = new SymbolTable ();
 			while (!ts.end ()) {
 				//try {
 					t = ts.get ();
