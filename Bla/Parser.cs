@@ -61,6 +61,7 @@ namespace Bla
 		bool statement(){
 			int save = currentPosition;
 			return (((currentPosition = save) == save & vardec()) ||
+			        ((currentPosition = save) == save & variableAssignment()) ||
 					((currentPosition = save) == save & expression()) ||
 					((currentPosition = save) == save & input()) ||
 					((currentPosition = save) == save & output()) ||
@@ -285,13 +286,17 @@ namespace Bla
 		bool literal(){
 			int save = currentPosition;
 			if ((currentPosition = save) == save & term (TokenType.NUMBR_LITERAL)) {
-				accumulator = createValue (LOLType.NUMBR, tokenList [save + 1].getValue ());
+				accumulator = createValue (LOLType.NUMBR, tokenList [save].getValue ());
 			} else if ((currentPosition = save) == save & term (TokenType.NUMBAR_LITERAL)) {
-			} else if ((currentPosition = save) == save & term (TokenType.YARN_LITERAL)) {
+				accumulator = createValue (LOLType.NUMBAR, tokenList [save].getValue ());
+			} else if ((currentPosition = save) == save & term(TokenType.STRING_DELIMETER) && term (TokenType.YARN_LITERAL) && term(TokenType.STRING_DELIMETER)) {
+				accumulator = createValue (LOLType.YARN, tokenList [save+1].getValue ());
 			} else if ((currentPosition = save) == save & term (TokenType.TROOF_LITERAL)) {
+				accumulator = createValue (LOLType.TROOF, tokenList [save].getValue ());
 			} else {
 				return false;
 			}
+
 			return true;
 		}
 

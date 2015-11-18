@@ -1,10 +1,12 @@
 ﻿<Properties StartupItem="Bla/Bla.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Bla/Program.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Bla/MainWindow.cs">
     <Files>
-      <File FileName="Bla/Program.cs" Line="8" Column="3" />
-      <File FileName="Bla/MainWindow.cs" Line="69" Column="22" />
-      <File FileName="Bla/Token.cs" Line="92" Column="26" />
+      <File FileName="Bla/Program.cs" Line="10" Column="51" />
+      <File FileName="Bla/MainWindow.cs" Line="88" Column="30" />
+      <File FileName="Bla/Token.cs" Line="4" Column="1" />
+      <File FileName="Bla/Prompt.cs" Line="12" Column="36" />
+      <File FileName="Bla/Parser.cs" Line="59" Column="54" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

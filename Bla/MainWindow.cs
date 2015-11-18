@@ -84,6 +84,8 @@ public partial class MainWindow: Gtk.Window
 	{
 		lexemeStore.Clear();
 		symbolTableStore.Clear ();
+		console.Buffer.Text = "";
+
 		string str = codeField.Buffer.Text;
 		//displayTextToConsole (str);
 		MainClass.runInterpreter(str);

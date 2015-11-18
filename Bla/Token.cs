@@ -133,7 +133,7 @@ namespace Bla
 			tokenDetails.Add(TokenType.NUMBR_LITERAL, new Regex(@"^[-+]?\d+$"));
 			tokenDetails.Add(TokenType.NUMBAR_LITERAL, new Regex(@"^[-+]?\d*\.\d+$"));
 			tokenDetails.Add(TokenType.YARN_LITERAL, new Regex(@"[\S 	]*\"""));
-			tokenDetails.Add (TokenType.TROOF_LITERAL, new Regex (@"^(WIN|FAIL)"));
+			tokenDetails.Add (TokenType.TROOF_LITERAL, new Regex (@"^(WIN|FAIL)$"));
 			tokenDetails.Add (TokenType.TYPE_LITERAL, new Regex (@"^(YARN|NUMBR|NUMBAR|TROOF|NOOB)"));
 			tokenDetails.Add (TokenType.STATEMENT_DELIMETER, new Regex (@"^(\n|,)$"));
 
@@ -249,6 +249,8 @@ namespace Bla
 				return TokenType.STRING_DELIMETER;
 			}
 
+			bool variableFlag = false; 
+
 			foreach (KeyValuePair<TokenType, Regex> kvp in tokenDetails) {
 				if (kvp.Value.IsMatch (str)) {
 					Console.WriteLine ("Matched to " + kvp.Key.ToString());
@@ -257,10 +259,15 @@ namespace Bla
 					}
 					if (kvp.Key == TokenType.YARN_LITERAL)
 						continue;
+					if (kvp.Key == TokenType.VARIABLE_IDENTIFIER) {
+						variableFlag = true;
+						continue;
+					}
 					return kvp.Key;
 				}
 			}
-			Console.WriteLine ("Matched to " + TokenType.UNKNOWN.ToString());
+			if (variableFlag)
+				return TokenType.VARIABLE_IDENTIFIER;
 			return TokenType.UNKNOWN;
 		}
 	}
