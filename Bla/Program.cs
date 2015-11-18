@@ -6,13 +6,17 @@ namespace Bla
 {
 	class MainClass
 	{
-		static MainWindow win;
-		static Dictionary <string, string> variableList;
+		public static MainWindow win;
+		public static SymbolTable st;
+
 		public static void Main (string[] args)
 		{
 			Application.Init ();
 			win = new MainWindow ();
 			win.Show ();
+			st = new SymbolTable ();
+			st.createVar ("a", new Tuple<LOLType, string> (LOLType.YARN, "hello"));
+			win.refreshSymbol (st);
 			Application.Run ();
 		}
 
@@ -20,8 +24,9 @@ namespace Bla
 			win.displayTextToConsole (str);
 		}
 
+	
+
 		public static void runInterpreter(string input) {
-			variableList = new Dictionary <string, string> ();
 			TokenStream ts = new TokenStream (input);
 			Token t;
 			while (!ts.end ()) {

@@ -3,13 +3,6 @@ using System.Collections.Generic;
 
 namespace Bla
 {
-	public enum LOLType {
-		NOOB,
-		NUMBR,
-		NUMBAR,
-		YARN,
-		TROOF
-	}
 	public class Parser
 	{
 		List<Token> tokenList;
@@ -60,6 +53,10 @@ namespace Bla
 
 		bool statement(){
 			int save = currentPosition;
+			if (term (TokenType.STATEMENT_DELIMETER)) {
+				currentPosition = save;
+				return true;
+			}
 			return (((currentPosition = save) == save & vardec()) ||
 			        ((currentPosition = save) == save & variableAssignment()) ||
 					((currentPosition = save) == save & expression()) ||
@@ -75,10 +72,9 @@ namespace Bla
 
 		bool input(){
 			if (term (TokenType.GIMMEH) && term (TokenType.VARIABLE_IDENTIFIER)) {
-		//		CreateMyForm ();
-				Console.WriteLine ("After CreateMyForm()");
+				new Dialog ( tokenList[currentPosition-1].getValue());
 				return true;
-			} 
+			}
 			return false;
 		}
 

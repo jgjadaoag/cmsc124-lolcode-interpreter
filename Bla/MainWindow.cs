@@ -1,6 +1,7 @@
 using System;
 using Gtk;
 using Bla;
+using System.Collections.Generic;
 
 public partial class MainWindow: Gtk.Window
 {	
@@ -45,7 +46,6 @@ public partial class MainWindow: Gtk.Window
 		lexemeColumn.AddAttribute (lexemeCell, "text", 0);
 		classificationColumn.AddAttribute (classificationCell, "text", 1);
 
-		//lexemeStore.AppendValues ("HAI", "Code Delimiter"); //test sample
 	}
 
 	public void addLexemes(string value, string classification) {
@@ -72,11 +72,12 @@ public partial class MainWindow: Gtk.Window
 		indentifierColumn.AddAttribute (indentifierCell, "text", 0);
 		valueColumn.AddAttribute (classificationCell, "text", 1);
 
-		//symbolTableStore.AppendValues ("HAI", "KTHXBYE"); //test sample
 	}
 
-	public void addSymbol(string value, string classification) {
-		symbolTableStore.AppendValues (value, classification);
+	public void refreshSymbol(SymbolTable st) {
+		foreach(KeyValuePair<string, Tuple<LOLType, string>> kvp in st.getVariableList()) {
+			symbolTableStore.AppendValues (kvp.Key, kvp.Value.Item2);
+		}
 
 	}
 
