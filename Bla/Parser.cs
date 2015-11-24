@@ -104,17 +104,20 @@ namespace Bla
 		}
 
 		bool input(){
+			int save = currentPosition;
 			if (term (TokenType.GIMMEH) && term (TokenType.VARIABLE_IDENTIFIER)) {
-				new Dialog ( tokenList[currentPosition-1].getValue());
-				MainClass.win.refreshSymbol (MainClass.st);
+				tempActionOrder.Add (new lolStatement (Statement_Types.INPUT, save));
 				return true;
+			} else {
+				return false;
 			}
-			return false;
 		}
 
 		bool output(){
+			tempActionOrder.Clear ();
 			int save = currentPosition;
 			if ((currentPosition = save) == save & term (TokenType.VISIBLE) && expression ()) {
+				tempActionOrder.Add (new lolStatement (Statement_Types.OUTPUT, save));
 			} else {
 				return false;
 			}
@@ -203,7 +206,7 @@ namespace Bla
 		}
 
 		bool addition(){
-			int save = currentPosition;
+			//int save = currentPosition;
 			if(term (TokenType.SUM_OF) && expression() && term(TokenType.AN) && expression()){
 				
 			}
