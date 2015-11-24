@@ -145,10 +145,11 @@ namespace Bla
 			return expression() && term(TokenType.STATEMENT_DELIMETER) && term(TokenType.WTF) && term(TokenType.STATEMENT_DELIMETER) && caseStatement() && term(TokenType.OIC);
 		}
 
-		bool caseStatement(){
+		bool caseStatement(){	
 			int save = currentPosition;
 			return (((currentPosition = save) == save & caseCondition() && codeBlock() && caseStatement()) ||
 					((currentPosition = save) == save & caseCondition() && codeBlock() && term(TokenType.STATEMENT_DELIMETER)) ||
+			        ((currentPosition = save) == save & caseCondition() && codeBlock() && term(TokenType.GTFO) && term(TokenType.STATEMENT_DELIMETER)) ||
 					((currentPosition = save) == save & caseCondition() && defaultCase() && codeBlock() && term(TokenType.STATEMENT_DELIMETER))
 					);
 		}
@@ -161,7 +162,7 @@ namespace Bla
 		}
 
 		bool defaultCase(){
-			return term (TokenType.OMGWTF) && literal () && term (TokenType.STATEMENT_DELIMETER);
+			return term (TokenType.OMGWTF) && term (TokenType.STATEMENT_DELIMETER);
 		}
 
 		bool mathOperator(){

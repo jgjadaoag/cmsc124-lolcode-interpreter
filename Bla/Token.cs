@@ -32,6 +32,7 @@ namespace Bla
 		WTF,
 		OMG, 
 		OMGWTF,
+		GTFO,
 		STRING_DELIMETER,
 		STATEMENT_DELIMETER,
 		AN,
@@ -128,6 +129,7 @@ namespace Bla
 			tokenDetails.Add(TokenType.WTF, new Regex(@"^WTF\?$"));
 			tokenDetails.Add(TokenType.OMG, new Regex(@"^OMG$"));
 			tokenDetails.Add(TokenType.OMGWTF, new Regex(@"^OMGWTF$"));
+			tokenDetails.Add(TokenType.GTFO, new Regex(@"^GTFO$"));
 			tokenDetails.Add(TokenType.STRING_DELIMETER, new Regex(@"^\""$"));
 			tokenDetails.Add (TokenType.LINE_COMMENT, new Regex (@"^BTW.*\n$"));
 			tokenDetails.Add (TokenType.BLOCK_COMMENT, new Regex (@"^OBTW.*TLDR$"));

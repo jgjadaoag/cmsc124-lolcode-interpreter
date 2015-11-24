@@ -31,7 +31,7 @@ namespace Bla
 				//try {
 					t = ts.get ();
 				win.addLexemes (t.getValue (), t.getType ().ToString ());
-				/**if (t.getType() == TokenType.I_HAS_A) {
+				/*if (t.getType() == TokenType.I_HAS_A) {
 					t = ts.get ();
 					if (!variableList.ContainsKey (t.getValue ())) {
 						variableList.Add (t.getValue (), "NOOB");
