@@ -81,7 +81,7 @@ namespace Bla
 			}
 			if ((currentPosition = save) == save & vardec ()) {
 			} else if ((currentPosition = save) == save & variableAssignment ()) {
-			} else if ((currentPosition = save) == save & caseBlock ()) {
+			} else if ((currentPosition = save) == save & switchBlock ()) {
 			} else if ((currentPosition = save) == save & expression ()) {
 			} else if ((currentPosition = save) == save & input ()) {
 			} else if ((currentPosition = save) == save & output ()) {
@@ -100,17 +100,20 @@ namespace Bla
 		}
 
 		bool input(){
+			int save = currentPosition;
 			if (term (TokenType.GIMMEH) && term (TokenType.VARIABLE_IDENTIFIER)) {
-				new Dialog ( tokenList[currentPosition-1].getValue());
-				MainClass.win.refreshSymbol (MainClass.st);
+				tempActionOrder.Add (new lolStatement (Statement_Types.INPUT, save));
 				return true;
+			} else {
+				return false;
 			}
-			return false;
 		}
 
 		bool output(){
+			tempActionOrder.Clear ();
 			int save = currentPosition;
 			if ((currentPosition = save) == save & term (TokenType.VISIBLE) && expression ()) {
+				tempActionOrder.Add (new lolStatement (Statement_Types.OUTPUT, save));
 			} else {
 				return false;
 			}

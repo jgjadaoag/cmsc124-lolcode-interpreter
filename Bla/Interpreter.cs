@@ -47,6 +47,7 @@ namespace Bla
 		Dictionary <TokenType, LOLType> tokToLolType;
 		int currentPosition;
 		SymbolTable variableTable;
+
 		public Interpreter (string input)
 		{
 			actionMap = new Dictionary<Statement_Types, lolAction> ();
@@ -88,6 +89,8 @@ namespace Bla
 		void addActionDefinitions() {
 			actionMap.Add (Statement_Types.VARIABLE_DECLARATION_ITZ, variableDeclarationItz);
 			actionMap.Add (Statement_Types.VARIABLE_DECLARATION, variableDeclaration);
+			actionMap.Add (Statement_Types.OUTPUT, output);
+			actionMap.Add (Statement_Types.INPUT, input);
 		}
 		void variableDeclarationItz(int location) {
 
@@ -105,6 +108,12 @@ namespace Bla
 					"");
 			}
 			MainClass.win.refreshSymbol (variableTable);
+		}
+		void output(int location) {
+			MainClass.win.displayTextToConsole (tokenList [location + 1].getValue ());
+		}
+		void input(int location) {
+			new Dialog (tokenList [location + 1].getValue (), variableTable);
 		}
 		void term(TokenType t) {
 			if (t != tokenList [currentPosition++].getType ()) {
