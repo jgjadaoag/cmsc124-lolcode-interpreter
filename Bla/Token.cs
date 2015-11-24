@@ -15,6 +15,8 @@ namespace Bla
 		TYPE_LITERAL,
 		HAI,
 		KTHXBYE,
+		UPPIN,
+		NERFIN,
 		TLDR,
 		ITZ,
 		R,
@@ -106,6 +108,8 @@ namespace Bla
 			tokenDetails.Add(TokenType.EITHER_OF, new Regex(@"^EITHER OF"));
 			tokenDetails.Add(TokenType.WON_OF, new Regex(@"^WON OF"));
 			tokenDetails.Add(TokenType.NOT, new Regex(@"^NOT$"));
+			tokenDetails.Add(TokenType.UPPIN, new Regex(@"^UPPIN$"));
+			tokenDetails.Add(TokenType.NERFIN, new Regex(@"^NERFIN$"));
 			tokenDetails.Add(TokenType.ALL_OF,new Regex(@"^ALL OF"));
 			tokenDetails.Add(TokenType.ANY_OF, new Regex(@"^ANY OF"));
 			tokenDetails.Add(TokenType.BOTH_SAEM, new Regex(@"^BOTH SAEM"));
