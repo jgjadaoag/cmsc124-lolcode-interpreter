@@ -30,6 +30,7 @@ namespace Bla
 		CONCAT_MKAY,
 		CONCAT
 	}
+
 	public class lolStatement {
 		public readonly Statement_Types type;
 		public readonly int location;
@@ -88,10 +89,12 @@ namespace Bla
 		void addActionDefinitions() {
 			actionMap.Add (Statement_Types.VARIABLE_DECLARATION_ITZ, variableDeclarationItz);
 			actionMap.Add (Statement_Types.VARIABLE_DECLARATION, variableDeclaration);
+			actionMap.Add (Statement_Types.VARIABLE_ASSIGNMENT, variableAssignment);
 		}
 		void variableDeclarationItz(int location) {
 
 			if (!variableTable.hasVariable (tokenList [location + 1].getValue ())) {
+				Console.WriteLine("MEW? "+tokenList[location + 3]);
 				variableTable.createVar(tokenList[location + 1].getValue(), 
 					tokToLolType[tokenList[location + 3].getType()],
 					tokenList[location + 3].getValue());
@@ -106,6 +109,16 @@ namespace Bla
 			}
 			MainClass.win.refreshSymbol (variableTable);
 		}
+
+		void variableAssignment(int location){
+			if (variableTable.hasVariable (tokenList [location].getValue ())) {
+				variableTable.setVar (tokenList[location].getValue(), 
+					tokToLolType[tokenList[location + 2].getType()],
+					tokenList[location + 2].getValue());
+			}
+			MainClass.win.refreshSymbol (variableTable);
+		}
+
 		void term(TokenType t) {
 			if (t != tokenList [currentPosition++].getType ()) {
 				throw new ApplicationException ("Error in token");

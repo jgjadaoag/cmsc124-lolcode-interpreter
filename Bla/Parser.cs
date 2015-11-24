@@ -81,7 +81,7 @@ namespace Bla
 			}
 			if ((currentPosition = save) == save & vardec ()) {
 			} else if ((currentPosition = save) == save & variableAssignment ()) {
-			} else if ((currentPosition = save) == save & caseBlock ()) {
+			} else if ((currentPosition = save) == save & switchBlock ()) {
 			} else if ((currentPosition = save) == save & expression ()) {
 			} else if ((currentPosition = save) == save & input ()) {
 			} else if ((currentPosition = save) == save & output ()) {
@@ -96,7 +96,11 @@ namespace Bla
 		}
 
 		bool variableAssignment(){
-			return term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.R) && expression ();
+			int save = currentPosition;
+			if (term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.R) && expression ()) {
+				tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_ASSIGNMENT, save));
+			}
+			return true;
 		}
 
 		bool input(){
@@ -199,7 +203,11 @@ namespace Bla
 		}
 
 		bool addition(){
-			return term (TokenType.SUM_OF) && expression() && term(TokenType.AN) && expression();
+			int save = currentPosition;
+			if(term (TokenType.SUM_OF) && expression() && term(TokenType.AN) && expression()){
+				
+			}
+			return true;
 		}
 
 		bool subtraction(){
