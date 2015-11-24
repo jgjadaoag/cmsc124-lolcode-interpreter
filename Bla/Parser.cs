@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Bla
@@ -81,12 +81,13 @@ namespace Bla
 			}
 			if ((currentPosition = save) == save & vardec ()) {
 			} else if ((currentPosition = save) == save & variableAssignment ()) {
-			} else if ((currentPosition = save) == save & caseBlock ()) {
+			} else if ((currentPosition = save) == save & ifThen ()) {
+			} else if ((currentPosition = save) == save & switchBlock ()) {
 			} else if ((currentPosition = save) == save & expression ()) {
 			} else if ((currentPosition = save) == save & input ()) {
 			} else if ((currentPosition = save) == save & output ()) {
-			} else if ((currentPosition = save) == save & ifThen ()) {
 			} else if ((currentPosition = save) == save & concatenation ()) {
+			} else if ((currentPosition = save) == save & term(Bla.TokenType.GTFO)){ 
 			} else {
 				return false;
 			}
@@ -163,24 +164,30 @@ namespace Bla
 		}
 
 		bool switchBlock(){
-			return expression() && term(TokenType.STATEMENT_DELIMETER) && term(TokenType.WTF) && term(TokenType.STATEMENT_DELIMETER) && caseStatement() && term(TokenType.OIC);
+			return expression() && term(TokenType.STATEMENT_DELIMETER) && term(TokenType.WTF) && term(TokenType.STATEMENT_DELIMETER) && caseBlock() && term(TokenType.OIC);
+		}
+
+		bool caseBlock(){
+			int save = currentPosition;
+			return (((currentPosition = save) == save & caseStatement() && caseBlock()) ||
+			        ((currentPosition = save) == save & caseStatement())
+			       );
 		}
 
 		bool caseStatement(){	
 			int save = currentPosition;
-			return (((currentPosition = save) == save & caseCondition() && codeBlock() && caseStatement()) ||
-					((currentPosition = save) == save & caseCondition() && codeBlock() && term(TokenType.STATEMENT_DELIMETER)) ||
-			        ((currentPosition = save) == save & caseCondition() && codeBlock() && term(TokenType.GTFO) && term(TokenType.STATEMENT_DELIMETER)) ||
+			return (((currentPosition = save) == save & caseCondition() && codeBlock() && term(TokenType.STATEMENT_DELIMETER)) ||
+			        ((currentPosition = save) == save & caseCondition() && term (TokenType.STATEMENT_DELIMETER)) ||
 					((currentPosition = save) == save & caseCondition() && defaultCase() && codeBlock() && term(TokenType.STATEMENT_DELIMETER))
 					);
 		}
 
 		bool caseCondition(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & caseCondition() && term(TokenType.OMG) && literal() && term(TokenType.STATEMENT_DELIMETER)) ||
-					((currentPosition = save) == save & term(TokenType.OMG) && literal() && term(TokenType.STATEMENT_DELIMETER))
-					);
-		}
+			return (((currentPosition = save) == save & term(TokenType.OMG) && literal() && term (TokenType.STATEMENT_DELIMETER) && caseCondition()) ||
+					((currentPosition = save) == save & term(TokenType.OMG) && literal())
+			       );
+		}	
 
 		bool defaultCase(){
 			return term (TokenType.OMGWTF) && term (TokenType.STATEMENT_DELIMETER);
