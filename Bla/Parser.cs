@@ -39,8 +39,8 @@ namespace Bla
 		bool term(TokenType tokType){
 			if (currentPosition == tokenList.Count)
 				return false;
-			Console.WriteLine ("Current Token: "+tokenList[currentPosition].Item1.getType());
-			Console.WriteLine ("Ask token: "+tokType);
+			//Console.WriteLine ("Current Token: "+tokenList[currentPosition].Item1.getType());
+			//Console.WriteLine ("Ask token: "+tokType);
 			return tokenList[currentPosition++].Item1.getType() == tokType;
 		}
 
@@ -62,6 +62,7 @@ namespace Bla
 					((currentPosition = save) == save & expression()) ||
 					((currentPosition = save) == save & input()) ||
 					((currentPosition = save) == save & output()) ||
+			        ((currentPosition = save) == save & ifThen()) ||
 					((currentPosition = save) == save & concatenation())
 					);
 		}
@@ -114,6 +115,7 @@ namespace Bla
 			int save = currentPosition;
 			return (((currentPosition = save) == save & term(TokenType.VARIABLE_IDENTIFIER)) ||
 					((currentPosition = save) == save & mathOperator()) ||
+			        ((currentPosition = save) == save & compareOperator()) ||
 					((currentPosition = save) == save & literal())
 					);
 		}

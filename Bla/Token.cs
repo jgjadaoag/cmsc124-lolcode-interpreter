@@ -116,12 +116,12 @@ namespace Bla
 			tokenDetails.Add(TokenType.IS_NOW_A, new Regex(@"^IS NOW A"));
 			tokenDetails.Add(TokenType.VISIBLE, new Regex(@"^VISIBLE$"));
 			tokenDetails.Add(TokenType.GIMMEH, new Regex(@"^GIMMEH$"));
-			tokenDetails.Add(TokenType.O_RLY, new Regex(@"^O RLY"));
+			tokenDetails.Add(TokenType.O_RLY, new Regex(@"^O RLY?"));
 			tokenDetails.Add(TokenType.YA_RLY, new Regex(@"^YA RLY"));
 			tokenDetails.Add(TokenType.MEBBE, new Regex(@"^MEBBE$"));
 			tokenDetails.Add(TokenType.NO_WAI, new Regex(@"^NO WAI"));
 			tokenDetails.Add(TokenType.OIC, new Regex(@"^OIC$"));
-			tokenDetails.Add(TokenType.WTF, new Regex(@"^WTF$"));
+			tokenDetails.Add(TokenType.WTF, new Regex(@"^WTF\?$"));
 			tokenDetails.Add(TokenType.OMG, new Regex(@"^OMG$"));
 			tokenDetails.Add(TokenType.OMGWTF, new Regex(@"^OMGWTF$"));
 			tokenDetails.Add(TokenType.STRING_DELIMETER, new Regex(@"^\""$"));
