@@ -206,9 +206,9 @@ namespace Bla
 		}
 
 		bool addition(){
-			//int save = currentPosition;
+			int save = currentPosition;
 			if(term (TokenType.SUM_OF) && expression() && term(TokenType.AN) && expression()){
-				
+				tempActionOrder.Add (new lolStatement(Statement_Types.ADDITION, save));
 			}
 			return true;
 		}

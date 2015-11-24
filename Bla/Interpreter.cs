@@ -91,6 +91,7 @@ namespace Bla
 			actionMap.Add (Statement_Types.VARIABLE_DECLARATION_ITZ, variableDeclarationItz);
 			actionMap.Add (Statement_Types.VARIABLE_DECLARATION, variableDeclaration);
 			actionMap.Add (Statement_Types.VARIABLE_ASSIGNMENT, variableAssignment);
+			actionMap.Add (Statement_Types.ADDITION, addition);
 			actionMap.Add (Statement_Types.OUTPUT, output);
 			actionMap.Add (Statement_Types.INPUT, input);
 		}
@@ -121,6 +122,12 @@ namespace Bla
 					tokenList[location + 2].getValue());
 			}
 			MainClass.win.refreshSymbol (variableTable);
+		}
+
+		void addition(int location){
+			int sum = int.Parse (tokenList [location + 1].getValue()) + int.Parse (tokenList [location + 2].getValue());
+			Console.WriteLine ("kjshdfkjdh");
+			Console.WriteLine ("HWAAAA"+sum);
 		}
 
 		void output(int location) {
