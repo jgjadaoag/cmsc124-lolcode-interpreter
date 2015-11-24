@@ -11,17 +11,21 @@ namespace Bla
 			variableList = new Dictionary <string, Tuple<LOLType, string>> ();
 		}
 
-		public void setVar(string name, Tuple<LOLType, string> value)
+		public void setVar(string name, LOLType type, string value)
 		{
-			variableList [name] = value;
+			variableList [name] = new Tuple<LOLType, string> (type, value);;
 		}
 
-		public void createVar(string name, Tuple<LOLType, string> value) {
-			variableList.Add (name, value);
+		public void createVar(string name, LOLType type, string value) {
+			variableList.Add (name, new Tuple<LOLType, string> (type, value));
 		}
 
 		public Dictionary<string, Tuple<LOLType, string>> getVariableList() {
 			return variableList;
+		}
+
+		public bool hasVariable(string name) {
+			return variableList.ContainsKey (name);
 		}
 	}
 }

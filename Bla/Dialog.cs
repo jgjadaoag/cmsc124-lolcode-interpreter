@@ -14,7 +14,7 @@ namespace Bla
 		protected void okButtonClicked (object sender, EventArgs e)
 		{
 			getString ();
-			MainClass.st.setVar (name, new Tuple<LOLType, string> (LOLType.YARN, getString()));
+			MainClass.st.setVar (name, LOLType.YARN, getString());
 			this.Destroy ();
 		}
 

@@ -5,13 +5,14 @@ namespace Bla
 {
 	public class Parser
 	{
-		List<Tuple<Token, bool>> tokenList;
+		List<Token> tokenList;
 		int currentPosition;
-		Tuple<LOLType, string> accumulator; //Tuple<type, value>
+		List<lolStatement> actionOrder;
+		List<lolStatement> tempActionOrder;
 
 		public Parser (string value)
 		{
-			tokenList = new List<Tuple<Token, bool>> ();
+			tokenList = new List<Token> ();
 			TokenStream ts = new TokenStream (value);
 			Token t;
 			currentPosition = 0;
@@ -19,13 +20,28 @@ namespace Bla
 			while(!ts.end()){
 				t = ts.get ();
 				if (t.getType() != TokenType.UNKNOWN && (t.getType() != TokenType.BTW || t.getType() != TokenType.OBTW)) {
-					tokenList.Add (new Tuple<Token, bool> (t, false));
+					tokenList.Add (t);
 				}
 			}
 
-			foreach (Tuple<Token, bool> tk in tokenList) {
-				Console.WriteLine (tk.Item1.getType());
+			actionOrder = new List<lolStatement> ();
+			tempActionOrder = new List<lolStatement> ();
+		}
+
+		public Parser (List<Token> tokenListP) {
+			tokenList = new List<Token> ();
+			currentPosition = 0;
+
+			foreach (Token t in tokenListP) {
+				this.tokenList.Add (t);
+
 			}
+			actionOrder = new List<lolStatement> ();
+			tempActionOrder = new List<lolStatement> ();
+		}
+
+		public List<lolStatement> getActionOrder() {
+			return actionOrder;
 		}
 
 		public bool parse(){
@@ -41,14 +57,20 @@ namespace Bla
 				return false;
 			//Console.WriteLine ("Current Token: "+tokenList[currentPosition].Item1.getType());
 			//Console.WriteLine ("Ask token: "+tokType);
-			return tokenList[currentPosition++].Item1.getType() == tokType;
+			return tokenList[currentPosition++].getType() == tokType;
 		}
 
 		bool codeBlock(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & statement() && term(TokenType.STATEMENT_DELIMETER) && codeBlock()) ||
-					((currentPosition = save) == save & statement())
-					);
+			tempActionOrder.Clear ();
+			if ((currentPosition = save) == save & statement () && term (TokenType.STATEMENT_DELIMETER) && codeBlock ()) {
+				return true;
+			}
+			tempActionOrder.Clear ();
+			if ((currentPosition = save) == save & statement ()) {
+				return true;
+			}
+			return false;
 		}
 
 		bool statement(){
@@ -57,14 +79,20 @@ namespace Bla
 				currentPosition = save;
 				return true;
 			}
-			return (((currentPosition = save) == save & vardec()) ||
-			        ((currentPosition = save) == save & variableAssignment()) ||
-					((currentPosition = save) == save & expression()) ||
-					((currentPosition = save) == save & input()) ||
-					((currentPosition = save) == save & output()) ||
-			        ((currentPosition = save) == save & ifThen()) ||
-					((currentPosition = save) == save & concatenation())
-					);
+			if ((currentPosition = save) == save & vardec ()) {
+			} else if ((currentPosition = save) == save & variableAssignment ()) {
+			} else if ((currentPosition = save) == save & caseBlock ()) {
+			} else if ((currentPosition = save) == save & expression ()) {
+			} else if ((currentPosition = save) == save & input ()) {
+			} else if ((currentPosition = save) == save & output ()) {
+			} else if ((currentPosition = save) == save & ifThen ()) {
+			} else if ((currentPosition = save) == save & concatenation ()) {
+			} else {
+				return false;
+			}
+			actionOrder.AddRange (tempActionOrder);
+			tempActionOrder.Clear ();
+			return true;
 		}
 
 		bool variableAssignment(){
@@ -73,7 +101,7 @@ namespace Bla
 
 		bool input(){
 			if (term (TokenType.GIMMEH) && term (TokenType.VARIABLE_IDENTIFIER)) {
-				new Dialog ( tokenList[currentPosition-1].Item1.getValue());
+				new Dialog ( tokenList[currentPosition-1].getValue());
 				MainClass.win.refreshSymbol (MainClass.st);
 				return true;
 			}
@@ -83,12 +111,6 @@ namespace Bla
 		bool output(){
 			int save = currentPosition;
 			if ((currentPosition = save) == save & term (TokenType.VISIBLE) && expression ()) {
-				Console.WriteLine (tokenList [save].Item1.getType ());
-				if (tokenList [save].Item2 == false) {
-					MainClass.writeToConsole (accumulator.Item2);
-					tokenList [save] = new Tuple<Token, bool> (tokenList [save].Item1, true);
-				}
-				Console.WriteLine ("\n\n\nprinting: " + accumulator.Item2 + "\n\n\n");
 			} else {
 				return false;
 			}
@@ -145,9 +167,9 @@ namespace Bla
 
 		bool caseStatement(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & term(TokenType.STATEMENT_DELIMETER) && caseCondition() && codeBlock() && caseStatement()) ||
-					((currentPosition = save) == save & term(TokenType.STATEMENT_DELIMETER) && caseCondition() && codeBlock() && term(TokenType.STATEMENT_DELIMETER)) ||
-					((currentPosition = save) == save & term(TokenType.STATEMENT_DELIMETER) && caseCondition() && defaultCase() && codeBlock() && term(TokenType.STATEMENT_DELIMETER))
+			return (((currentPosition = save) == save & caseCondition() && codeBlock() && caseStatement()) ||
+					((currentPosition = save) == save & caseCondition() && codeBlock() && term(TokenType.STATEMENT_DELIMETER)) ||
+					((currentPosition = save) == save & caseCondition() && defaultCase() && codeBlock() && term(TokenType.STATEMENT_DELIMETER))
 					);
 		}
 
@@ -277,20 +299,12 @@ namespace Bla
 		bool vardec(){
 			int save = currentPosition;
 			if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.ITZ) && assignRHS ()) {
-				if (tokenList [save].Item2 == false) {
-					MainClass.st.createVar (tokenList [save + 1].Item1.getValue (), new Tuple<LOLType, string> (LOLType.NOOB, ""));
-					tokenList [save] = new Tuple<Token, bool> (tokenList [save].Item1, true);
-				}
-
+				tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION_ITZ, save));
 			} else if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER)) {
-				if (tokenList [save].Item2 == false) {
-					MainClass.st.createVar (tokenList [save + 1].Item1.getValue (), new Tuple<LOLType, string> (LOLType.NOOB, ""));
-					tokenList [save] = new Tuple<Token, bool> (tokenList [save].Item1, true);
-				}
+				tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION, save));
 			} else {
 				return false;
 			}
-			MainClass.win.refreshSymbol (MainClass.st);
 			return true;
 		}
 
@@ -303,13 +317,9 @@ namespace Bla
 		bool literal(){
 			int save = currentPosition;
 			if ((currentPosition = save) == save & term (TokenType.NUMBR_LITERAL)) {
-				accumulator = createValue (LOLType.NUMBR, tokenList [save].Item1.getValue ());
 			} else if ((currentPosition = save) == save & term (TokenType.NUMBAR_LITERAL)) {
-				accumulator = createValue (LOLType.NUMBAR, tokenList [save].Item1.getValue ());
 			} else if ((currentPosition = save) == save & term(TokenType.STRING_DELIMETER) && term (TokenType.YARN_LITERAL) && term(TokenType.STRING_DELIMETER)) {
-				accumulator = createValue (LOLType.YARN, tokenList [save+1].Item1.getValue ());
 			} else if ((currentPosition = save) == save & term (TokenType.TROOF_LITERAL)) {
-				accumulator = createValue (LOLType.TROOF, tokenList [save].Item1.getValue ());
 			} else {
 				return false;
 			}
