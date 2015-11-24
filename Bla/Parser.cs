@@ -100,7 +100,7 @@ namespace Bla
 		bool concatenation(){
 			int save = currentPosition;
 			return(((currentPosition = save) == save & term(TokenType.SMOOSH) && stringList() && term(TokenType.MKAY)) ||
-				((currentPosition = save) == save & term(TokenType.SMOOSH) && stringList())
+					((currentPosition = save) == save & term(TokenType.SMOOSH) && stringList())
 				);
 		}
 
@@ -144,7 +144,6 @@ namespace Bla
 		bool switchBlock(){
 			return expression() && term(TokenType.STATEMENT_DELIMETER) && term(TokenType.WTF) && term(TokenType.STATEMENT_DELIMETER) && caseStatement() && term(TokenType.OIC);
 		}
-
 
 		bool caseStatement(){
 			int save = currentPosition;
@@ -241,17 +240,17 @@ namespace Bla
 		}
 
 		bool infiniteArityAnd(){
-			return term (TokenType.ALL_OF) && expression () && term (TokenType.AN) && expression () && term (TokenType.AN) && infiniteExpression () && term (TokenType.MKAY);
+			return term (TokenType.ALL_OF) && expression () && term (TokenType.AN) && infiniteExpression () && term (TokenType.MKAY);
 		}
 
 		bool infiniteArityOr(){
-			return term (TokenType.ANY_OF) && expression () && term (TokenType.AN) && expression () && term (TokenType.AN) && infiniteExpression () && term (TokenType.MKAY);
+			return term (TokenType.ANY_OF) && expression () && term (TokenType.AN) && infiniteExpression () && term (TokenType.MKAY);
 		}
 
 		bool infiniteExpression(){
 			int save = currentPosition;
 			return (((currentPosition = save) == save & expression() && term(TokenType.AN) && infiniteExpression()) ||
-				((currentPosition = save) == save & expression()));
+					((currentPosition = save) == save & expression()));
 		}
 
 		bool booleanOperation(){
@@ -259,6 +258,7 @@ namespace Bla
 			return (((currentPosition = save) == save & andOperator()) ||
 					((currentPosition = save) == save & orOperator ()) ||
 					((currentPosition = save) == save & xorOperator ()) ||
+			        ((currentPosition = save) == save & unaryNegation ()) ||
 					((currentPosition = save) == save & infiniteArityAnd ()) ||
 					((currentPosition = save) == save & infiniteArityOr ())
 					);
@@ -274,6 +274,10 @@ namespace Bla
 
 		bool xorOperator(){
 			return term (TokenType.WON_OF) && expression () && term (TokenType.AN) && expression ();
+		}
+
+		bool unaryNegation(){
+			return term (TokenType.NOT) && expression ();
 		}
 
 		bool vardec(){

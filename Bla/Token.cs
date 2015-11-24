@@ -195,9 +195,7 @@ namespace Bla
 			if(scannedType == TokenType.BTW){
 				while (currentPosition < input.Length && input [currentPosition++] != '\n')
 					;
-				if (currentPosition < input.Length && input [currentPosition] == '\n') {
-					currentPosition--;
-				}
+				currentPosition--;
 				
 			} else if(scannedType == TokenType.OBTW){
 				int tldrPosition = input.Substring (currentPosition).IndexOf ("TLDR");
