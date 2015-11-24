@@ -15,6 +15,8 @@ namespace Bla
 		TYPE_LITERAL,
 		HAI,
 		KTHXBYE,
+		UPPIN,
+		NERFIN,
 		TLDR,
 		ITZ,
 		R,
@@ -30,6 +32,7 @@ namespace Bla
 		WTF,
 		OMG, 
 		OMGWTF,
+		GTFO,
 		STRING_DELIMETER,
 		STATEMENT_DELIMETER,
 		AN,
@@ -106,6 +109,8 @@ namespace Bla
 			tokenDetails.Add(TokenType.EITHER_OF, new Regex(@"^EITHER OF"));
 			tokenDetails.Add(TokenType.WON_OF, new Regex(@"^WON OF"));
 			tokenDetails.Add(TokenType.NOT, new Regex(@"^NOT$"));
+			tokenDetails.Add(TokenType.UPPIN, new Regex(@"^UPPIN$"));
+			tokenDetails.Add(TokenType.NERFIN, new Regex(@"^NERFIN$"));
 			tokenDetails.Add(TokenType.ALL_OF,new Regex(@"^ALL OF"));
 			tokenDetails.Add(TokenType.ANY_OF, new Regex(@"^ANY OF"));
 			tokenDetails.Add(TokenType.BOTH_SAEM, new Regex(@"^BOTH SAEM"));
@@ -124,6 +129,7 @@ namespace Bla
 			tokenDetails.Add(TokenType.WTF, new Regex(@"^WTF\?$"));
 			tokenDetails.Add(TokenType.OMG, new Regex(@"^OMG$"));
 			tokenDetails.Add(TokenType.OMGWTF, new Regex(@"^OMGWTF$"));
+			tokenDetails.Add(TokenType.GTFO, new Regex(@"^GTFO$"));
 			tokenDetails.Add(TokenType.STRING_DELIMETER, new Regex(@"^\""$"));
 			tokenDetails.Add (TokenType.LINE_COMMENT, new Regex (@"^BTW.*\n$"));
 			tokenDetails.Add (TokenType.BLOCK_COMMENT, new Regex (@"^OBTW.*TLDR$"));
@@ -191,9 +197,7 @@ namespace Bla
 			if(scannedType == TokenType.BTW){
 				while (currentPosition < input.Length && input [currentPosition++] != '\n')
 					;
-				if (currentPosition < input.Length && input [currentPosition] == '\n') {
-					currentPosition--;
-				}
+				currentPosition--;
 				
 			} else if(scannedType == TokenType.OBTW){
 				int tldrPosition = input.Substring (currentPosition).IndexOf ("TLDR");

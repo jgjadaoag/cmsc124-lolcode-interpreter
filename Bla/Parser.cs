@@ -121,7 +121,7 @@ namespace Bla
 		bool concatenation(){
 			int save = currentPosition;
 			return(((currentPosition = save) == save & term(TokenType.SMOOSH) && stringList() && term(TokenType.MKAY)) ||
-				((currentPosition = save) == save & term(TokenType.SMOOSH) && stringList())
+					((currentPosition = save) == save & term(TokenType.SMOOSH) && stringList())
 				);
 		}
 
@@ -137,6 +137,7 @@ namespace Bla
 			int save = currentPosition;
 			return (((currentPosition = save) == save & term(TokenType.VARIABLE_IDENTIFIER)) ||
 					((currentPosition = save) == save & mathOperator()) ||
+			        ((currentPosition = save) == save & booleanOperation()) ||
 			        ((currentPosition = save) == save & compareOperator()) ||
 					((currentPosition = save) == save & literal())
 					);
@@ -161,14 +162,15 @@ namespace Bla
 			return term (TokenType.NO_WAI) && term(TokenType.STATEMENT_DELIMETER) && codeBlock();
 		}
 
-		bool caseBlock(){
-			return term(TokenType.WTF) && term(TokenType.STATEMENT_DELIMETER) && caseStatement() && term(TokenType.OIC);
+		bool switchBlock(){
+			return expression() && term(TokenType.STATEMENT_DELIMETER) && term(TokenType.WTF) && term(TokenType.STATEMENT_DELIMETER) && caseStatement() && term(TokenType.OIC);
 		}
 
-		bool caseStatement(){
+		bool caseStatement(){	
 			int save = currentPosition;
 			return (((currentPosition = save) == save & caseCondition() && codeBlock() && caseStatement()) ||
 					((currentPosition = save) == save & caseCondition() && codeBlock() && term(TokenType.STATEMENT_DELIMETER)) ||
+			        ((currentPosition = save) == save & caseCondition() && codeBlock() && term(TokenType.GTFO) && term(TokenType.STATEMENT_DELIMETER)) ||
 					((currentPosition = save) == save & caseCondition() && defaultCase() && codeBlock() && term(TokenType.STATEMENT_DELIMETER))
 					);
 		}
@@ -181,9 +183,8 @@ namespace Bla
 		}
 
 		bool defaultCase(){
-			return term (TokenType.OMGWTF) && literal () && term (TokenType.STATEMENT_DELIMETER);
+			return term (TokenType.OMGWTF) && term (TokenType.STATEMENT_DELIMETER);
 		}
-
 
 		bool mathOperator(){
 			int save = currentPosition;
@@ -261,27 +262,28 @@ namespace Bla
 		}
 
 		bool infiniteArityAnd(){
-			return term (TokenType.ALL_OF) && expression () && term (TokenType.AN) && expression () && term (TokenType.AN) && infiniteExpression () && term (TokenType.MKAY);
+			return term (TokenType.ALL_OF) && expression () && term (TokenType.AN) && infiniteExpression () && term (TokenType.MKAY);
 		}
 
 		bool infiniteArityOr(){
-			return term (TokenType.ANY_OF) && expression () && term (TokenType.AN) && expression () && term (TokenType.AN) && infiniteExpression () && term (TokenType.MKAY);
+			return term (TokenType.ANY_OF) && expression () && term (TokenType.AN) && infiniteExpression () && term (TokenType.MKAY);
 		}
 
 		bool infiniteExpression(){
 			int save = currentPosition;
 			return (((currentPosition = save) == save & expression() && term(TokenType.AN) && infiniteExpression()) ||
-				((currentPosition = save) == save & expression()));
+					((currentPosition = save) == save & expression()));
 		}
 
 		bool booleanOperation(){
 			int save = currentPosition;
 			return (((currentPosition = save) == save & andOperator()) ||
-				((currentPosition = save) == save & orOperator ()) ||
-				((currentPosition = save) == save & xorOperator ()) ||
-				((currentPosition = save) == save & infiniteArityAnd ()) ||
-				((currentPosition = save) == save & infiniteArityOr ())
-				);
+					((currentPosition = save) == save & orOperator ()) ||
+					((currentPosition = save) == save & xorOperator ()) ||
+			        ((currentPosition = save) == save & unaryNegation ()) ||
+					((currentPosition = save) == save & infiniteArityAnd ()) ||
+					((currentPosition = save) == save & infiniteArityOr ())
+					);
 		}
 
 		bool andOperator(){
@@ -294,6 +296,10 @@ namespace Bla
 
 		bool xorOperator(){
 			return term (TokenType.WON_OF) && expression () && term (TokenType.AN) && expression ();
+		}
+
+		bool unaryNegation(){
+			return term (TokenType.NOT) && expression ();
 		}
 
 		bool vardec(){
