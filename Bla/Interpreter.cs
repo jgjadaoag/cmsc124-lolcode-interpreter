@@ -100,6 +100,7 @@ namespace Bla
 			actionMap.Add (Statement_Types.VARIABLE_DECLARATION, variableDeclaration);
 			actionMap.Add (Statement_Types.VARIABLE_ASSIGNMENT, variableAssignment);
 			actionMap.Add (Statement_Types.ADDITION, addition);
+			actionMap.Add (Statement_Types.SUBTRACTION, subtraction);
 			actionMap.Add (Statement_Types.OUTPUT, output);
 			actionMap.Add (Statement_Types.INPUT, input);
 			actionMap.Add (Statement_Types.LITERAL, literal);
@@ -155,9 +156,33 @@ namespace Bla
 		}
 
 		void addition(int location){
-			int sum = int.Parse (tokenList [location + 1].getValue()) + int.Parse (tokenList [location + 2].getValue());
-			Console.WriteLine ("kjshdfkjdh");
-			Console.WriteLine ("HWAAAA"+sum);
+			int sum = 0;
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue add1 = lolIt.getCopy();
+
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			lolValue add2 = lolIt.getCopy();
+
+			sum = int.Parse (add1.getValue()) + int.Parse(add2.getValue());
+
+			MainClass.win.displayTextToConsole (""+sum);
+		}
+
+		void subtraction(int location){
+			int diff = 0;
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue d1 = lolIt.getCopy();
+
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			lolValue d2 = lolIt.getCopy();
+
+			diff = int.Parse (d1.getValue()) - int.Parse(d2.getValue());
+
+			MainClass.win.displayTextToConsole (""+diff);
 		}
 
 		void output(int location) {

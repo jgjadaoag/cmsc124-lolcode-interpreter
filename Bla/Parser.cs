@@ -240,7 +240,12 @@ namespace Bla
 		bool addition(){
 			int save = currentPosition;
 			if (term (TokenType.SUM_OF) && expression () && term (TokenType.AN) && expression ()) {
+				tempActionOrder.Clear ();
 				tempActionOrder.Add (new lolStatement (Statement_Types.ADDITION, save));
+				currentPosition = save + 1;
+				expression ();
+				currentPosition++;
+				expression ();
 			} else {
 				return false;
 			}
@@ -248,7 +253,18 @@ namespace Bla
 		}
 
 		bool subtraction(){
-			return term (TokenType.DIFF_OF) && expression() && term(TokenType.AN) && expression();
+			int save = currentPosition;
+			if (term (TokenType.DIFF_OF) && expression () && term (TokenType.AN) && expression ()) {
+				tempActionOrder.Clear ();
+				tempActionOrder.Add (new lolStatement (Statement_Types.SUBTRACTION, save));
+				currentPosition = save + 1;
+				expression ();
+				currentPosition++;
+				expression ();
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool multiplication(){
