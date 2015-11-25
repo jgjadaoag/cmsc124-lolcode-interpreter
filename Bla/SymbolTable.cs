@@ -20,6 +20,10 @@ namespace Bla
 		public string getValue() {
 			return value;
 		}
+
+		public LOLType getType() {
+			return type;
+		}
 	}
 	public class SymbolTable
 	{
@@ -32,6 +36,10 @@ namespace Bla
 		public void setVar(string name, LOLType type, string value)
 		{
 			variableList [name].setValue(type, value);
+		}
+
+		public lolValue getVar(string name) {
+			return variableList [name];
 		}
 
 		public void createVar(string name, LOLType type, string value) {

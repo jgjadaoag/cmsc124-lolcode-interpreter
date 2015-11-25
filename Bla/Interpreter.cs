@@ -103,6 +103,7 @@ namespace Bla
 			actionMap.Add (Statement_Types.OUTPUT, output);
 			actionMap.Add (Statement_Types.INPUT, input);
 			actionMap.Add (Statement_Types.LITERAL, literal);
+			actionMap.Add (Statement_Types.VARIABLE_IDENTIFIER, variableIdentifier);
 		}
 
 		void setError(string message) {
@@ -111,16 +112,18 @@ namespace Bla
 		}
 
 		void variableDeclarationItz(int location) {
+			//Execute expressions first
+			actionMap [actionList[currentPosition + 1].type] (actionList[currentPosition + 1].location);
 
 			if (!variableTable.hasVariable (tokenList [location + 1].getValue ())) {
-				Console.WriteLine ("MEW? " + tokenList [location + 3]);
 				variableTable.createVar (tokenList [location + 1].getValue (), 
-					tokToLolType [tokenList [location + 3].getType ()],
-					tokenList [location + 3].getValue ());
+					lolIt.getType(),
+					lolIt.getValue ());
 			} else {
 				setError ("Error: Variable " + tokenList[location + 1].getValue() + " already declared");
 			}
 			MainClass.win.refreshSymbol (variableTable);
+			currentPosition++;
 		}
 		void variableDeclaration(int location) {
 			if (!variableTable.hasVariable (tokenList [location + 1].getValue ())) {
@@ -144,6 +147,13 @@ namespace Bla
 			MainClass.win.refreshSymbol (variableTable);
 		}
 
+		void variableIdentifier(int location) {
+			if (variableTable.hasVariable (tokenList [location].getValue ())) {
+				lolValue val = variableTable.getVar (tokenList [location].getValue ());
+				lolIt.setValue (val.getType (), val.getValue());
+			}
+		}
+
 		void addition(int location){
 			int sum = int.Parse (tokenList [location + 1].getValue()) + int.Parse (tokenList [location + 2].getValue());
 			Console.WriteLine ("kjshdfkjdh");
@@ -158,7 +168,7 @@ namespace Bla
 		}
 		void input(int location) {
 			if (variableTable.hasVariable (tokenList [location + 1].getValue ())) {
-				new Dialog (tokenList [location + 1].getValue (), variableTable);
+				(new Dialog (tokenList [location + 1].getValue (), variableTable)).Run();
 			} else {
 				setError ("Error: Variable " + tokenList[location + 1].getValue() + " not declared");
 			}

@@ -161,6 +161,7 @@ namespace Bla
 		bool expression(){
 			int save = currentPosition;
 			if ((currentPosition = save) == save & term (TokenType.VARIABLE_IDENTIFIER)) {
+				tempActionOrder.Add (new lolStatement (Statement_Types.VARIABLE_IDENTIFIER, save));
 			} else if ((currentPosition = save) == save & mathOperator ()) {
 			} else if ((currentPosition = save) == save & booleanOperation ()) {
 			} else if ((currentPosition = save) == save & compareOperator ()) {

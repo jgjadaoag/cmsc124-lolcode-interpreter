@@ -5,11 +5,8 @@ namespace Bla
 	public partial class Dialog
 	{
 		private global::Gtk.Label label1;
-		
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
-		
 		private global::Gtk.TextView inputField;
-		
 		private global::Gtk.Button buttonOk;
 
 		protected virtual void Build ()

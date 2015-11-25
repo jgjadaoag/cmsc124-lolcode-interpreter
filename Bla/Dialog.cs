@@ -11,6 +11,7 @@ namespace Bla
 			this.name = name;
 			this.st = st;
 			this.Build ();
+
 		}
 
 		protected void okButtonClicked (object sender, EventArgs e)
