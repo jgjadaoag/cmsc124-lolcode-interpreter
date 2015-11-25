@@ -241,7 +241,7 @@ namespace Bla
 		bool addition(){
 			int save = currentPosition;
 			if (term (TokenType.SUM_OF) && expression () && term (TokenType.AN) && expression ()) {
-				//tempActionOrder.Clear ();
+				tempActionOrder.Clear ();
 				tempActionOrder.Add (new lolStatement (Statement_Types.ADDITION, save));
 				currentPosition = save + 1;
 				expression ();
