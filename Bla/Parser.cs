@@ -63,11 +63,21 @@ namespace Bla
 		bool codeBlock(){
 			int save = currentPosition;
 			tempActionOrder.Clear ();
+			int lastInstruction = actionOrder.Count;
 			if ((currentPosition = save) == save & statement () && term (TokenType.STATEMENT_DELIMETER) && codeBlock ()) {
 				return true;
-			}
-			tempActionOrder.Clear ();
-			if ((currentPosition = save) == save & statement ()) {
+			} else if ((currentPosition = save) == save & statement ()) {
+				//this is always called when an extra statement is called
+				if (lastInstruction < actionOrder.Count - 1) {
+					int repeatedInstruction;
+					for ( repeatedInstruction = lastInstruction + 1; repeatedInstruction < actionOrder.Count; repeatedInstruction++) {
+						if (actionOrder [repeatedInstruction].location == actionOrder [lastInstruction].location) {
+							break;
+						}
+							
+					}
+					actionOrder.RemoveRange (repeatedInstruction, repeatedInstruction - lastInstruction);
+				}
 				return true;
 			}
 			return false;
@@ -97,21 +107,35 @@ namespace Bla
 		}
 
 		bool variableAssignment(){
-			return term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.R) && expression ();
+			int save = currentPosition;
+			if (term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.R) && expression ()) {
+				tempActionOrder.Add (new lolStatement (Statement_Types.VARIABLE_ASSIGNMENT, save));
+				currentPosition = save + 2;
+				expression ();
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool input(){
+			int save = currentPosition;
 			if (term (TokenType.GIMMEH) && term (TokenType.VARIABLE_IDENTIFIER)) {
-				new Dialog ( tokenList[currentPosition-1].getValue());
-				MainClass.win.refreshSymbol (MainClass.st);
+				tempActionOrder.Add (new lolStatement (Statement_Types.INPUT, save));
 				return true;
+			} else {
+				return false;
 			}
-			return false;
 		}
 
 		bool output(){
+			tempActionOrder.Clear ();
 			int save = currentPosition;
 			if ((currentPosition = save) == save & term (TokenType.VISIBLE) && expression ()) {
+				tempActionOrder.Clear ();
+				tempActionOrder.Add (new lolStatement (Statement_Types.OUTPUT, save));
+				currentPosition = save + 1;
+				expression ();
 			} else {
 				return false;
 			}
@@ -136,12 +160,16 @@ namespace Bla
 
 		bool expression(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & term(TokenType.VARIABLE_IDENTIFIER)) ||
-					((currentPosition = save) == save & mathOperator()) ||
-			        ((currentPosition = save) == save & booleanOperation()) ||
-			        ((currentPosition = save) == save & compareOperator()) ||
-					((currentPosition = save) == save & literal())
-					);
+			if ((currentPosition = save) == save & term (TokenType.VARIABLE_IDENTIFIER)) {
+			} else if ((currentPosition = save) == save & mathOperator ()) {
+			} else if ((currentPosition = save) == save & booleanOperation ()) {
+			} else if ((currentPosition = save) == save & compareOperator ()) {
+			} else if ((currentPosition = save) == save & literal ()) {
+				tempActionOrder.Add (new lolStatement (Statement_Types.LITERAL, save));
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool ifThen(){
@@ -195,18 +223,27 @@ namespace Bla
 
 		bool mathOperator(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & addition()) ||
-					((currentPosition = save) == save & subtraction()) ||
-					((currentPosition = save) == save & multiplication()) ||
-					((currentPosition = save) == save & division()) ||
-					((currentPosition = save) == save & modulo()) ||
-					((currentPosition = save) == save & maximum()) ||
-					((currentPosition = save) == save & minimum())
-					);
+			if ((currentPosition = save) == save & addition ()) {
+			} else if ((currentPosition = save) == save & subtraction ()) {
+			} else if ((currentPosition = save) == save & multiplication ()) {
+			} else if ((currentPosition = save) == save & division ()) {
+			} else if ((currentPosition = save) == save & modulo ()) {
+			} else if ((currentPosition = save) == save & maximum ()) {
+			} else if ((currentPosition = save) == save & minimum ()) {
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool addition(){
-			return term (TokenType.SUM_OF) && expression() && term(TokenType.AN) && expression();
+			int save = currentPosition;
+			if (term (TokenType.SUM_OF) && expression () && term (TokenType.AN) && expression ()) {
+				tempActionOrder.Add (new lolStatement (Statement_Types.ADDITION, save));
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool subtraction(){
@@ -311,20 +348,18 @@ namespace Bla
 
 		bool vardec(){
 			int save = currentPosition;
-			if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.ITZ) && assignRHS ()) {
+			if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.ITZ) && expression ()) {
+				tempActionOrder.Clear();
 				tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION_ITZ, save));
+				currentPosition = save + 3;
+				expression ();
 			} else if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER)) {
+				tempActionOrder.Clear();
 				tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION, save));
 			} else {
 				return false;
 			}
 			return true;
-		}
-
-		bool assignRHS(){
-			int save = currentPosition;
-			return (((currentPosition = save) == save & term (TokenType.VARIABLE_IDENTIFIER)) ||
-					((currentPosition = save) == save & literal ()));
 		}
 
 		bool literal(){

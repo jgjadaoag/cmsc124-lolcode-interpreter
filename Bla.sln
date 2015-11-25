@@ -14,7 +14,4 @@ Global
 		{3242DCEE-7D9A-43E9-91A1-E9A738824B9C}.Release|x86.ActiveCfg = Release|x86
 		{3242DCEE-7D9A-43E9-91A1-E9A738824B9C}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Bla\Bla.csproj
-	EndGlobalSection
 EndGlobal
