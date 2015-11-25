@@ -48,6 +48,9 @@ namespace Bla
 		Dictionary <TokenType, LOLType> tokToLolType;
 		int currentPosition;
 		SymbolTable variableTable;
+		lolValue lolIt;
+		bool errorFlag;
+		string errorMessage;
 
 		public Interpreter (string input)
 		{
@@ -57,6 +60,8 @@ namespace Bla
 			Token t;
 			currentPosition = 0;
 			variableTable = new SymbolTable ();
+			lolIt = new lolValue (LOLType.NOOB, "");
+			errorFlag = false;
 
 			while(!ts.end()){
 				t = ts.get ();
@@ -81,9 +86,12 @@ namespace Bla
 		}
 
 		public void runProgram() {
-			foreach (lolStatement ls in actionList) {
-				actionMap [ls.type] (ls.location);
-				Console.WriteLine (ls.type);
+			for (currentPosition = 0; currentPosition < actionList.Count && !errorFlag; currentPosition++) {
+				actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+				Console.WriteLine (actionList[currentPosition].type);
+			}
+			if (errorFlag) {
+				MainClass.win.displayTextToConsole (errorMessage);
 			}
 		}
 
@@ -94,32 +102,44 @@ namespace Bla
 			actionMap.Add (Statement_Types.ADDITION, addition);
 			actionMap.Add (Statement_Types.OUTPUT, output);
 			actionMap.Add (Statement_Types.INPUT, input);
+			actionMap.Add (Statement_Types.LITERAL, literal);
+		}
+
+		void setError(string message) {
+			errorFlag = true;
+			errorMessage = message;
 		}
 
 		void variableDeclarationItz(int location) {
 
 			if (!variableTable.hasVariable (tokenList [location + 1].getValue ())) {
-				Console.WriteLine("MEW? "+tokenList[location + 3]);
-				variableTable.createVar(tokenList[location + 1].getValue(), 
-					tokToLolType[tokenList[location + 3].getType()],
-					tokenList[location + 3].getValue());
+				Console.WriteLine ("MEW? " + tokenList [location + 3]);
+				variableTable.createVar (tokenList [location + 1].getValue (), 
+					tokToLolType [tokenList [location + 3].getType ()],
+					tokenList [location + 3].getValue ());
+			} else {
+				setError ("Error: Variable " + tokenList[location + 1].getValue() + " already declared");
 			}
 			MainClass.win.refreshSymbol (variableTable);
 		}
 		void variableDeclaration(int location) {
 			if (!variableTable.hasVariable (tokenList [location + 1].getValue ())) {
-				variableTable.createVar(tokenList[location + 1].getValue(), 
+				variableTable.createVar (tokenList [location + 1].getValue (), 
 					LOLType.NOOB,
 					"");
+			} else {
+				setError ("Error: Variable " + tokenList[location + 1].getValue() + " already declared");
 			}
 			MainClass.win.refreshSymbol (variableTable);
 		}
 
 		void variableAssignment(int location){
 			if (variableTable.hasVariable (tokenList [location].getValue ())) {
-				variableTable.setVar (tokenList[location].getValue(), 
-					tokToLolType[tokenList[location + 2].getType()],
-					tokenList[location + 2].getValue());
+				variableTable.setVar (tokenList [location].getValue (), 
+					tokToLolType [tokenList [location + 2].getType ()],
+					tokenList [location + 2].getValue ());
+			} else {
+				setError ("Error: Variable " + tokenList[location].getValue() + " not declared");
 			}
 			MainClass.win.refreshSymbol (variableTable);
 		}
@@ -131,15 +151,22 @@ namespace Bla
 		}
 
 		void output(int location) {
-			MainClass.win.displayTextToConsole (tokenList [location + 1].getValue ());
+			//Execute expressions first
+			actionMap [actionList[currentPosition + 1].type] (actionList[currentPosition + 1].location);
+			currentPosition++;
+			MainClass.win.displayTextToConsole (lolIt.getValue());
 		}
 		void input(int location) {
-			new Dialog (tokenList [location + 1].getValue (), variableTable);
-		}
-		void term(TokenType t) {
-			if (t != tokenList [currentPosition++].getType ()) {
-				throw new ApplicationException ("Error in token");
+			if (variableTable.hasVariable (tokenList [location + 1].getValue ())) {
+				new Dialog (tokenList [location + 1].getValue (), variableTable);
+			} else {
+				setError ("Error: Variable " + tokenList[location + 1].getValue() + " not declared");
 			}
+		}
+		void literal(int location) {
+			if (tokenList [location].getType () == TokenType.STRING_DELIMETER)
+				location++;
+			lolIt.setValue (tokToLolType [tokenList [location].getType ()], tokenList [location].getValue ());
 		}
 	}
 }

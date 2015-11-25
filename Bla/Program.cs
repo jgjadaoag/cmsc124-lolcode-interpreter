@@ -7,7 +7,6 @@ namespace Bla
 	class MainClass
 	{
 		public static MainWindow win;
-		public static SymbolTable st;
 
 		public static void Main (string[] args)
 		{
