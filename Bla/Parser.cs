@@ -98,7 +98,9 @@ namespace Bla
 		bool variableAssignment(){
 			int save = currentPosition;
 			if (term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.R) && expression ()) {
-				tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_ASSIGNMENT, save));
+				tempActionOrder.Add (new lolStatement (Statement_Types.VARIABLE_ASSIGNMENT, save));
+			} else {
+				return false;
 			}
 			return true;
 		}
@@ -127,66 +129,103 @@ namespace Bla
 
 		bool concatenation(){
 			int save = currentPosition;
-			return(((currentPosition = save) == save & term(TokenType.SMOOSH) && stringList() && term(TokenType.MKAY)) ||
-					((currentPosition = save) == save & term(TokenType.SMOOSH) && stringList())
-				);
+			if (((currentPosition = save) == save & term (TokenType.SMOOSH) && stringList () && term (TokenType.MKAY))) {
+			} else if (((currentPosition = save) == save & term (TokenType.SMOOSH) && stringList ())) {
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool stringList(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & term(TokenType.YARN_LITERAL) && term(TokenType.AN) && stringList()) ||
-					((currentPosition = save) == save & term(TokenType.YARN_LITERAL)) ||
-					((currentPosition = save) == save & term(TokenType.YARN_LITERAL) && stringList())
-					);
+			if ((currentPosition = save) == save & term (TokenType.YARN_LITERAL) && term (TokenType.AN) && stringList ()) {
+			} else if (((currentPosition = save) == save & term (TokenType.YARN_LITERAL))) {
+			} else if (((currentPosition = save) == save & term (TokenType.YARN_LITERAL) && stringList ())) {
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool expression(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & term(TokenType.VARIABLE_IDENTIFIER)) ||
-					((currentPosition = save) == save & mathOperator()) ||
-			        ((currentPosition = save) == save & booleanOperation()) ||
-			        ((currentPosition = save) == save & compareOperator()) ||
-					((currentPosition = save) == save & literal())
-					);
+			if ((currentPosition = save) == save & term (TokenType.VARIABLE_IDENTIFIER)) {
+			} else if ((currentPosition = save) == save & mathOperator ()) {
+			} else if ((currentPosition = save) == save & mathOperator ()) {
+			} else if ((currentPosition = save) == save & booleanOperation ()) {
+			} else if ((currentPosition = save) == save & compareOperator ()) {
+			} else if ((currentPosition = save) == save & literal ()) {
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool ifThen(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & ifThenStart() && term(TokenType.STATEMENT_DELIMETER) && ifBlock() && term(TokenType.STATEMENT_DELIMETER) && elseBlock() && term(TokenType.STATEMENT_DELIMETER) && term(TokenType.OIC)) ||
-				((currentPosition = save) == save & ifThenStart() && term(TokenType.STATEMENT_DELIMETER) && ifBlock() && term(TokenType.STATEMENT_DELIMETER) && term(TokenType.OIC))
-				);
+			if ((currentPosition = save) == save & ifThenStart () && term (TokenType.STATEMENT_DELIMETER) && ifBlock () && term (TokenType.STATEMENT_DELIMETER) && elseBlock () && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.OIC)) {
+			} else if ((currentPosition = save) == save & ifThenStart () && term (TokenType.STATEMENT_DELIMETER) && ifBlock () && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.OIC)) {
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool ifThenStart(){
-			return expression () && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.O_RLY);
+			int save = currentPosition;
+			if (expression () && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.O_RLY)) {
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool ifBlock(){
-			return term (TokenType.YA_RLY) && term (TokenType.STATEMENT_DELIMETER) && codeBlock ();
+			if (term (TokenType.YA_RLY) && term (TokenType.STATEMENT_DELIMETER) && codeBlock ()) {
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool elseBlock(){
-			return term (TokenType.NO_WAI) && term(TokenType.STATEMENT_DELIMETER) && codeBlock();
+			if (term (TokenType.NO_WAI) && term (TokenType.STATEMENT_DELIMETER) && codeBlock ()) {
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool switchBlock(){
-			return expression() && term(TokenType.STATEMENT_DELIMETER) && term(TokenType.WTF) && term(TokenType.STATEMENT_DELIMETER) && caseStatement() && term(TokenType.OIC);
+			if (expression () && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.WTF) && term (TokenType.STATEMENT_DELIMETER) && caseStatement () && term (TokenType.OIC)) {
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool caseStatement(){	
 			int save = currentPosition;
-			return (((currentPosition = save) == save & caseCondition() && codeBlock() && caseStatement()) ||
-					((currentPosition = save) == save & caseCondition() && codeBlock() && term(TokenType.STATEMENT_DELIMETER)) ||
-			        ((currentPosition = save) == save & caseCondition() && codeBlock() && term(TokenType.GTFO) && term(TokenType.STATEMENT_DELIMETER)) ||
-					((currentPosition = save) == save & caseCondition() && defaultCase() && codeBlock() && term(TokenType.STATEMENT_DELIMETER))
-					);
+			if (((currentPosition = save) == save & caseCondition () && codeBlock () && caseStatement ())) {
+			} else if ((currentPosition = save) == save & caseCondition () && codeBlock () && term (TokenType.STATEMENT_DELIMETER)) {
+			} else if ((currentPosition = save) == save & caseCondition () && codeBlock () && term (TokenType.GTFO) && term (TokenType.STATEMENT_DELIMETER)) {
+			} else if ((currentPosition = save) == save & caseCondition () && codeBlock () && term (TokenType.GTFO) && term (TokenType.STATEMENT_DELIMETER)) {
+			} else if ((currentPosition = save) == save & caseCondition () && defaultCase () && codeBlock () && term (TokenType.STATEMENT_DELIMETER)) {
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool caseCondition(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & caseCondition() && term(TokenType.OMG) && literal() && term(TokenType.STATEMENT_DELIMETER)) ||
-					((currentPosition = save) == save & term(TokenType.OMG) && literal() && term(TokenType.STATEMENT_DELIMETER))
-					);
+			if ((currentPosition = save) == save & caseCondition () && term (TokenType.OMG) && literal () && term (TokenType.STATEMENT_DELIMETER)) {
+			} else if ((currentPosition = save) == save & term (TokenType.OMG) && literal () && term (TokenType.STATEMENT_DELIMETER)) {
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool defaultCase(){
