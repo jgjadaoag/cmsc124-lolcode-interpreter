@@ -24,6 +24,10 @@ namespace Bla
 		public LOLType getType() {
 			return type;
 		}
+
+		public lolValue getCopy(){
+			return new lolValue (type, value);
+		}
 	}
 	public class SymbolTable
 	{
