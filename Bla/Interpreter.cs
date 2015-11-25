@@ -101,6 +101,8 @@ namespace Bla
 			actionMap.Add (Statement_Types.VARIABLE_ASSIGNMENT, variableAssignment);
 			actionMap.Add (Statement_Types.ADDITION, addition);
 			actionMap.Add (Statement_Types.SUBTRACTION, subtraction);
+			actionMap.Add (Statement_Types.MULTIPLICATION, multiplication);
+			actionMap.Add (Statement_Types.DIVISION, division);
 			actionMap.Add (Statement_Types.OUTPUT, output);
 			actionMap.Add (Statement_Types.INPUT, input);
 			actionMap.Add (Statement_Types.LITERAL, literal);
@@ -156,7 +158,7 @@ namespace Bla
 		}
 
 		void addition(int location){
-			int sum = 0;
+			float sum = 0;
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue add1 = lolIt.getCopy();
@@ -165,13 +167,21 @@ namespace Bla
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			lolValue add2 = lolIt.getCopy();
 
-			sum = int.Parse (add1.getValue()) + int.Parse(add2.getValue());
+			LOLType sumType = LOLType.NUMBR;
 
+			if (add1.getType () == LOLType.NUMBAR || add2.getType () == LOLType.NUMBAR) {
+				sum = float.Parse(add1.getValue ()) + float.Parse (add2.getValue ());
+				sumType = LOLType.NUMBAR;
+			} else {
+				sum = int.Parse (add1.getValue ()) + int.Parse (add2.getValue ());
+			}
+
+			lolIt.setValue (sumType, sum.ToString());
 			MainClass.win.displayTextToConsole (""+sum);
 		}
 
 		void subtraction(int location){
-			int diff = 0;
+			float diff = 0;
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue d1 = lolIt.getCopy();
@@ -180,9 +190,65 @@ namespace Bla
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			lolValue d2 = lolIt.getCopy();
 
-			diff = int.Parse (d1.getValue()) - int.Parse(d2.getValue());
+			LOLType sumType = LOLType.NUMBR;
 
+			if (d1.getType () == LOLType.NUMBAR || d2.getType () == LOLType.NUMBAR) {
+				diff = float.Parse(d1.getValue ()) - float.Parse (d2.getValue ());
+				sumType = LOLType.NUMBAR;
+			} else {
+				diff = int.Parse (d1.getValue ()) - int.Parse (d2.getValue ());
+			}
+
+			lolIt.setValue (sumType, diff.ToString());
 			MainClass.win.displayTextToConsole (""+diff);
+		}
+
+		void multiplication(int location){
+			float prod = 0;
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue d1 = lolIt.getCopy();
+
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			lolValue d2 = lolIt.getCopy();
+
+			LOLType sumType = LOLType.NUMBR;
+
+			if (d1.getType () == LOLType.NUMBAR || d2.getType () == LOLType.NUMBAR) {
+				prod = float.Parse(d1.getValue ()) * float.Parse (d2.getValue ());
+				sumType = LOLType.NUMBAR;
+			} else {
+				prod = int.Parse (d1.getValue ()) * int.Parse (d2.getValue ());
+			}
+
+			lolIt.setValue (sumType, prod.ToString());
+			MainClass.win.displayTextToConsole (""+prod);
+		}
+
+		void division(int location){
+			float quo = 0;
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue d1 = lolIt.getCopy();
+
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			lolValue d2 = lolIt.getCopy();
+
+			LOLType sumType = LOLType.NUMBR;
+
+			if (float.Parse (d2.getValue ()) != 0) {
+				
+				quo = float.Parse (d1.getValue ()) / float.Parse (d2.getValue ());
+				sumType = LOLType.NUMBAR;
+
+				lolIt.setValue (sumType, quo.ToString ());
+				MainClass.win.displayTextToConsole ("" + quo);
+			} else {
+				MainClass.win.displayTextToConsole ("Invalid operation: Division by zero");
+			} 
+				
 		}
 
 		void output(int location) {
