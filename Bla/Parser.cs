@@ -178,7 +178,7 @@ namespace Bla
 			int save = currentPosition;
 			return (((currentPosition = save) == save & caseCondition() && codeBlock() && term(TokenType.STATEMENT_DELIMETER)) ||
 			        ((currentPosition = save) == save & caseCondition() && term (TokenType.STATEMENT_DELIMETER)) ||
-					((currentPosition = save) == save & caseCondition() && defaultCase() && codeBlock() && term(TokenType.STATEMENT_DELIMETER))
+					((currentPosition = save) == save & defaultCase() && codeBlock() && term(TokenType.STATEMENT_DELIMETER))
 					);
 		}
 
