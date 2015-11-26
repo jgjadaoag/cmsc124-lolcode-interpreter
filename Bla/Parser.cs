@@ -299,11 +299,33 @@ namespace Bla
 		}
 
 		bool equality(){
-			return term (TokenType.BOTH_SAEM) && expression () && term (TokenType.AN) && expression ();
+			int save = currentPosition;
+			if (term (TokenType.BOTH_SAEM) && expression () && term (TokenType.AN) && expression ()) {
+				tempActionOrder.Clear ();
+				tempActionOrder.Add (new lolStatement (Statement_Types.EQUALITY, save));
+				currentPosition = save + 1;
+				expression ();
+				currentPosition++;
+				expression ();
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool inequality(){
-			return term (TokenType.DIFFRINT) && expression () && term (TokenType.AN) && expression ();
+			int save = currentPosition;
+			if (term (TokenType.DIFFRINT) && expression () && term (TokenType.AN) && expression ()) {
+				tempActionOrder.Clear ();
+				tempActionOrder.Add (new lolStatement (Statement_Types.INEQUALITY, save));
+				currentPosition = save + 1;
+				expression ();
+				currentPosition++;
+				expression ();
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool greaterThan(){
@@ -333,7 +355,7 @@ namespace Bla
 		bool infiniteExpression(){
 			int save = currentPosition;
 			return (((currentPosition = save) == save & expression() && term(TokenType.AN) && infiniteExpression()) ||
-					((currentPosition = save) == save & expression()));
+			        ((currentPosition = save) == save & expression()));
 		}
 
 		bool booleanOperation(){
@@ -348,19 +370,61 @@ namespace Bla
 		}
 
 		bool andOperator(){
-			return term (TokenType.BOTH_OF) && expression () && term (TokenType.AN) && expression ();
+			int save = currentPosition;
+			if (term (TokenType.BOTH_OF) && expression () && term (TokenType.AN) && expression ()) {
+				tempActionOrder.Clear ();
+				tempActionOrder.Add (new lolStatement (Statement_Types.AND, save));
+				currentPosition = save + 1;
+				expression ();
+				currentPosition++;
+				expression ();
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool orOperator(){
-			return term (TokenType.EITHER_OF) && expression () && term (TokenType.AN) && expression ();
+			int save = currentPosition;
+			if (term (TokenType.EITHER_OF) && expression () && term (TokenType.AN) && expression ()) {
+				tempActionOrder.Clear ();
+				tempActionOrder.Add (new lolStatement (Statement_Types.OR, save));
+				currentPosition = save + 1;
+				expression ();
+				currentPosition++;
+				expression ();
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool xorOperator(){
-			return term (TokenType.WON_OF) && expression () && term (TokenType.AN) && expression ();
+			int save = currentPosition;
+			if (term (TokenType.WON_OF) && expression () && term (TokenType.AN) && expression ()) {
+				tempActionOrder.Clear ();
+				tempActionOrder.Add (new lolStatement (Statement_Types.XOR, save));
+				currentPosition = save + 1;
+				expression ();
+				currentPosition++;
+				expression ();
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool unaryNegation(){
-			return term (TokenType.NOT) && expression ();
+			int save = currentPosition;
+			if (term (TokenType.NOT) && expression ()) {
+				tempActionOrder.Clear ();
+				tempActionOrder.Add (new lolStatement (Statement_Types.NOT, save));
+				currentPosition = save + 1;
+				expression ();
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool vardec(){

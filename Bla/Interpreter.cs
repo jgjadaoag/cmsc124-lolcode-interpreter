@@ -28,7 +28,11 @@ namespace Bla
 		INPUT,
 		OUTPUT,
 		CONCAT_MKAY,
-		CONCAT
+		CONCAT,
+		AND,
+		OR,
+		XOR,
+		NOT
 	}
 
 	public class lolStatement {
@@ -105,6 +109,12 @@ namespace Bla
 			actionMap.Add (Statement_Types.INPUT, input);
 			actionMap.Add (Statement_Types.LITERAL, literal);
 			actionMap.Add (Statement_Types.VARIABLE_IDENTIFIER, variableIdentifier);
+			actionMap.Add (Statement_Types.AND, and);
+			actionMap.Add (Statement_Types.OR, or);
+			actionMap.Add (Statement_Types.XOR, xor);
+			actionMap.Add (Statement_Types.NOT, not);
+			actionMap.Add (Statement_Types.EQUALITY, equality);
+			actionMap.Add (Statement_Types.INEQUALITY, inequality);
 		}
 
 		void setError(string message) {
@@ -202,6 +212,109 @@ namespace Bla
 			if (tokenList [location].getType () == TokenType.STRING_DELIMETER)
 				location++;
 			lolIt.setValue (tokToLolType [tokenList [location].getType ()], tokenList [location].getValue ());
+		}
+		void and(int location){
+			string result = "";
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue x = lolIt.getCopy();
+
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			lolValue y = lolIt.getCopy();
+
+			if (x.getValue () == "WIN" && y.getValue () == "WIN") {
+				result = "WIN";
+			} else
+				result = "FAIL";
+
+			MainClass.win.displayTextToConsole (result);
+		}
+
+		void or(int location){
+			string result = "";
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue x = lolIt.getCopy();
+
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			lolValue y = lolIt.getCopy();
+
+			if (x.getValue () == "FAIL" && y.getValue () == "FAIL") {
+				result = "FAIL";
+			} else
+				result = "WIN";
+
+			MainClass.win.displayTextToConsole (result);
+		}
+
+		void xor(int location){
+			string result = "";
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue x = lolIt.getCopy();
+
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			lolValue y = lolIt.getCopy();
+
+			if (x.getValue () == y.getValue()) {
+				result = "FAIL";
+			} else
+				result = "WIN";
+
+			MainClass.win.displayTextToConsole (result);
+		}
+
+		void not(int location){
+			string result = "";
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue x = lolIt.getCopy();
+
+			if (x.getValue () == "WIN") {
+				result = "FAIL";
+			} else
+				result = "WIN";
+
+			MainClass.win.displayTextToConsole (result);
+		}
+
+		void equality(int location){
+			string result = "";
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue x = lolIt.getCopy();
+
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			lolValue y = lolIt.getCopy();
+
+			if (x.getValue () == y.getValue()) {
+				result = "WIN";
+			} else
+				result = "FAIL";
+
+			MainClass.win.displayTextToConsole (result);
+		}
+
+		void inequality(int location){
+			string result = "";
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue x = lolIt.getCopy();
+
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			lolValue y = lolIt.getCopy();
+
+			if (x.getValue () == y.getValue()) {
+				result = "FAIL";
+			} else
+				result = "WIN";
+
+			MainClass.win.displayTextToConsole (result);
 		}
 	}
 }
