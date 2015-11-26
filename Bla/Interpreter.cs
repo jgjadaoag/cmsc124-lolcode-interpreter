@@ -334,16 +334,80 @@ namespace Bla
 			return lv.getType() == LOLType.NUMBR || lv.getType() == LOLType.NUMBAR;
 		}
 
-		lolValue cast(lolValue lv, LOLType toType) {
-			switch (lv.getType()) {
-			case LOLType.NOOB:
-				switch (toType) {
-				case LOLType.YARN:
-					return new lolValue (LOLType.YARN, "");
-				}
-				break;
+		lolValue implicitCast(lolValue lv, LOLType toType) {
+			if(lv.getType() == LOLType.NOOB && toType != LOLType.TROOF) {
+				setError("Cannot implicitly cast NOOB to any type except TROOF");
+				return null;
 			}
-			return null;
+			return cast(lv, toType);
+		}
+		lolValue cast(lolValue lv, LOLType toType) {
+			string newValue = "";
+			switch(toType) {
+				case LOLType.NOOB:
+					break;
+				case LOLType.NUMBAR:
+					switch (lv.getType()) {
+						case LOLType.NOOB:
+							newValue = "0";
+							break;
+						case LOLType.NUMBAR:
+							newValue = lv.getValue();
+							break;
+						case LOLType.NUMBR:
+							newValue = lv.getValue();
+							break;
+						case LOLType.TROOF:
+							newValue = lv.getValue() == "FAIL"? "0": "1";
+							break;
+						case LOLType.YARN:
+							newValue = decimal.Parse(lv.getValue()).ToString();
+							break;
+					}
+					break;
+				case LOLType.NUMBR:
+					switch (lv.getType()) {
+						case LOLType.NOOB:
+							newValue = "0";
+							break;
+						case LOLType.NUMBAR:
+							newValue = Math.Floor(decimal.Parse(lv.getValue())).ToString();
+							break;
+						case LOLType.NUMBR:
+							newValue = lv.getValue();
+							break;
+						case LOLType.TROOF:
+							newValue = lv.getValue() == "FAIL"? "0": "1";
+							break;
+						case LOLType.YARN:
+							newValue = int.Parse(lv.getValue()).ToString();
+							break;
+					}
+					break;
+				case LOLType.TROOF:
+					switch (lv.getType()) {
+						case LOLType.NOOB:
+							newValue = "FAIL";
+							break;
+						case LOLType.NUMBAR:
+							newValue = decimal.Parse(lv.getValue()) != 0? "WIN": "FAIL";
+							break;
+						case LOLType.NUMBR:
+							newValue = int.Parse(lv.getValue()) != 0? "WIN": "FAIL";
+							break;
+						case LOLType.TROOF:
+							newValue = lv.getValue();
+							break;
+						case LOLType.YARN:
+							newValue = lv.getValue().Length != 0? "WIN": "FAIL";
+							break;
+					}
+					break;
+				case LOLType.YARN:
+					newValue = lv.getValue();
+					break;
+			}
+			return new lolValue(toType, newValue);
 		}
 	}
 }
