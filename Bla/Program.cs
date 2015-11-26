@@ -24,10 +24,10 @@ namespace Bla
 
 		public static void runInterpreter(string input) {
 
-			Parser p = new Parser (input);
+			/*Parser p = new Parser (input);
 			if (p.parse () == false) {
 				win.displayTextToConsole ("Syntax error :(");
-			}
+			}*/
 
 			Interpreter interpret = new Interpreter (input);
 			interpret.runProgram ();

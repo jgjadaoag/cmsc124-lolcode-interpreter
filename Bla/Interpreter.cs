@@ -100,7 +100,7 @@ namespace Bla
 			actionMap.Add (Statement_Types.LITERAL, literal);
 			actionMap.Add (Statement_Types.VARIABLE_IDENTIFIER, variableIdentifier);
 			actionMap.Add (Statement_Types.MODULO, modulo);
-			actionMap.Add (Statement_Types.MODULO, maximum);
+			actionMap.Add (Statement_Types.MAXIMUM, maximum);
 		}
 
 		public void runProgram() {
