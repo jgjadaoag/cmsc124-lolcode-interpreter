@@ -7,11 +7,13 @@ namespace Bla
 	{
 		List<Token> tokenList;
 		int currentPosition;
+		bool parseCheck;
 		List<lolStatement> actionOrder;
 		List<lolStatement> tempActionOrder;
 
 		public Parser (string value)
 		{
+			parseCheck = true;
 			tokenList = new List<Token> ();
 			TokenStream ts = new TokenStream (value);
 			Token t;
@@ -164,7 +166,7 @@ namespace Bla
 
 			if ((currentPosition = save) == save & term (TokenType.VARIABLE_IDENTIFIER)) {
 				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
-					Console.WriteLine ("Sum statement");
+					Console.WriteLine ("VARIABLE statement");
 					tempActionOrder.Clear ();
 				}
 				tempActionOrder.Add (new lolStatement (Statement_Types.VARIABLE_IDENTIFIER, save));
@@ -248,94 +250,75 @@ namespace Bla
 		}
 
 		bool addition(){
-			int save = currentPosition;
-			int saveAction = tempActionOrder.Count;
-			Console.WriteLine ("=============================================");
-			Console.WriteLine ("=TEMP=ACTION=LIST=outside=addition========");
-			Console.WriteLine ("=============================================");
-			foreach (lolStatement ls in tempActionOrder) {
-				Console.WriteLine (ls.type);
-			}
-			Console.WriteLine ("=============================================");
-			if (term (TokenType.SUM_OF) && expression () && term (TokenType.AN) && expression ()) {
-				tempActionOrder.RemoveRange (saveAction, tempActionOrder.Count - saveAction);
-				Console.WriteLine ("=============================================");
-				Console.WriteLine ("=TEMP=ACTION=LIST===========================");
-				Console.WriteLine ("=============================================");
-				foreach (lolStatement ls in tempActionOrder) {
-					Console.WriteLine (ls.type);
-				}
-				Console.WriteLine ("=============================================");
-				tempActionOrder.Add (new lolStatement (Statement_Types.ADDITION, save));
-				currentPosition = save + 1;
-				expression ();
-				currentPosition++;
-				expression ();
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.ADDITION, currentPosition));
 
-				Console.WriteLine ("=============================================");
-				Console.WriteLine ("=TEMP=ACTION=LIST===========================");
-				Console.WriteLine ("=============================================");
-				foreach (lolStatement ls in tempActionOrder) {
-					Console.WriteLine (ls.type);
-				}
-				Console.WriteLine ("=============================================");
-			} else {
-				return false;
+			if (term (TokenType.SUM_OF) && expression () && term (TokenType.AN) && expression ()) {
+				return true;
 			}
-			return true;
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool subtraction(){
-			int save = currentPosition;
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.SUBTRACTION, currentPosition));
+
 			if (term (TokenType.DIFF_OF) && expression () && term (TokenType.AN) && expression ()) {
-				tempActionOrder.Clear ();
-				tempActionOrder.Add (new lolStatement (Statement_Types.SUBTRACTION, save));
-				currentPosition = save + 1;
-				expression ();
-				currentPosition++;
-				expression ();
-			} else {
-				return false;
+				return true;
 			}
-			return true;
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool multiplication(){
-			int save = currentPosition;
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.MULTIPLICATION, currentPosition));
+
 			if (term (TokenType.PRODUKT_OF) && expression () && term (TokenType.AN) && expression ()) {
-				tempActionOrder.Clear ();
-				tempActionOrder.Add (new lolStatement (Statement_Types.MULTIPLICATION, save));
-				currentPosition = save + 1;
-				expression ();
-				currentPosition++;
-				expression ();
-			} else {
-				return false;
+				return true;
 			}
-			return true;
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool division(){
-			int save = currentPosition;
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.DIVISION, currentPosition));
+
 			if (term (TokenType.QUOSHUNT_OF) && expression () && term (TokenType.AN) && expression ()) {
-				tempActionOrder.Clear ();
-				tempActionOrder.Add (new lolStatement (Statement_Types.DIVISION, save));
-				currentPosition = save + 1;
-				expression ();
-				currentPosition++;
-				expression ();
-			} else {
-				return false;
+				return true;
 			}
-			return true;
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool modulo(){
-			return term (TokenType.MOD_OF) && expression() && term(TokenType.AN) && expression();
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.MODULO, currentPosition));
+
+			if (term (TokenType.MOD_OF) && expression () && term (TokenType.AN) && expression ()) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool maximum(){
-			return term (TokenType.BIGGR_OF) && expression() && term(TokenType.AN) && expression();
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.MODULO, currentPosition));
+
+			if (term (TokenType.BIGGR_OF) && expression () && term (TokenType.AN) && expression ()) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool minimum(){
@@ -420,11 +403,7 @@ namespace Bla
 
 		bool vardec(){
 			int save = currentPosition;
-			if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.ITZ) && expression ()) {
-				tempActionOrder.Clear();
-				tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION_ITZ, save));
-				currentPosition = save + 3;
-				expression ();
+			if ((currentPosition = save) == save & variableDeclarationItz()) {
 			} else if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER)) {
 				tempActionOrder.Clear();
 				tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION, save));
@@ -432,6 +411,21 @@ namespace Bla
 				return false;
 			}
 			return true;
+		}
+
+		bool variableDeclarationItz() {
+			int save = currentPosition;
+			tempActionOrder.Clear ();
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION_ITZ, save));
+
+			if (term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.ITZ) && expression ()) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange (actionSave, tempActionOrder.Count - actionSave);
+
+			return false;
 		}
 
 		bool literal(){
