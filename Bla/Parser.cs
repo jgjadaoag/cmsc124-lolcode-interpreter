@@ -161,12 +161,21 @@ namespace Bla
 
 		bool expression(){
 			int save = currentPosition;
+
 			if ((currentPosition = save) == save & term (TokenType.VARIABLE_IDENTIFIER)) {
+				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
+					Console.WriteLine ("Sum statement");
+					tempActionOrder.Clear ();
+				}
 				tempActionOrder.Add (new lolStatement (Statement_Types.VARIABLE_IDENTIFIER, save));
 			} else if ((currentPosition = save) == save & mathOperator ()) {
 			} else if ((currentPosition = save) == save & booleanOperation ()) {
 			} else if ((currentPosition = save) == save & compareOperator ()) {
 			} else if ((currentPosition = save) == save & literal ()) {
+				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
+					Console.WriteLine ("Literal statement");
+					tempActionOrder.Clear ();
+				}
 				tempActionOrder.Add (new lolStatement (Statement_Types.LITERAL, save));
 			} else {
 				return false;
@@ -240,14 +249,36 @@ namespace Bla
 
 		bool addition(){
 			int save = currentPosition;
+			int saveAction = tempActionOrder.Count;
+			Console.WriteLine ("=============================================");
+			Console.WriteLine ("=TEMP=ACTION=LIST=outside=addition========");
+			Console.WriteLine ("=============================================");
+			foreach (lolStatement ls in tempActionOrder) {
+				Console.WriteLine (ls.type);
+			}
+			Console.WriteLine ("=============================================");
 			if (term (TokenType.SUM_OF) && expression () && term (TokenType.AN) && expression ()) {
-				tempActionOrder.Clear ();
+				tempActionOrder.RemoveRange (saveAction, tempActionOrder.Count - saveAction);
+				Console.WriteLine ("=============================================");
+				Console.WriteLine ("=TEMP=ACTION=LIST===========================");
+				Console.WriteLine ("=============================================");
+				foreach (lolStatement ls in tempActionOrder) {
+					Console.WriteLine (ls.type);
+				}
+				Console.WriteLine ("=============================================");
 				tempActionOrder.Add (new lolStatement (Statement_Types.ADDITION, save));
 				currentPosition = save + 1;
 				expression ();
 				currentPosition++;
 				expression ();
-	
+
+				Console.WriteLine ("=============================================");
+				Console.WriteLine ("=TEMP=ACTION=LIST===========================");
+				Console.WriteLine ("=============================================");
+				foreach (lolStatement ls in tempActionOrder) {
+					Console.WriteLine (ls.type);
+				}
+				Console.WriteLine ("=============================================");
 			} else {
 				return false;
 			}

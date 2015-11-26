@@ -71,7 +71,9 @@ namespace Bla
 				}
 			}
 			Parser p = new Parser (tokenList);
-			p.parse ();
+			if (!p.parse ()) {
+				setError ("Error in parser");
+			};
 
 			tokToLolType = new Dictionary<TokenType, LOLType> ();
 
@@ -86,9 +88,15 @@ namespace Bla
 		}
 
 		public void runProgram() {
+			Console.WriteLine ("=============================================");
+			Console.WriteLine ("=ACTION=LIST================================");
+			Console.WriteLine ("=============================================");
+			foreach (lolStatement ls in actionList) {
+				Console.WriteLine (ls.type.ToString());
+			}
+			Console.WriteLine ("=============================================");
 			for (currentPosition = 0; currentPosition < actionList.Count && !errorFlag; currentPosition++) {
 				actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-				Console.WriteLine (actionList[currentPosition].type);
 			}
 			if (errorFlag) {
 				MainClass.win.displayTextToConsole (errorMessage);
@@ -116,7 +124,8 @@ namespace Bla
 
 		void variableDeclarationItz(int location) {
 			//Execute expressions first
-			actionMap [actionList[currentPosition + 1].type] (actionList[currentPosition + 1].location);
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 
 			if (!variableTable.hasVariable (tokenList [location + 1].getValue ())) {
 				variableTable.createVar (tokenList [location + 1].getValue (), 
@@ -126,7 +135,6 @@ namespace Bla
 				setError ("Error: Variable " + tokenList[location + 1].getValue() + " already declared");
 			}
 			MainClass.win.refreshSymbol (variableTable);
-			currentPosition++;
 		}
 		void variableDeclaration(int location) {
 			if (!variableTable.hasVariable (tokenList [location + 1].getValue ())) {
