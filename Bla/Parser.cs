@@ -92,13 +92,13 @@ namespace Bla
 			}
 			if ((currentPosition = save) == save & vardec ()) {
 			} else if ((currentPosition = save) == save & variableAssignment ()) {
-			} else if ((currentPosition = save) == save & expression ()) {
+			} else if ((currentPosition = save) == save & ifThen ()) {
 			} else if ((currentPosition = save) == save & switchBlock ()) {
+			} else if ((currentPosition = save) == save & expression ()) {
 			} else if ((currentPosition = save) == save & input ()) {
 			} else if ((currentPosition = save) == save & output ()) {
 			} else if ((currentPosition = save) == save & concatenation ()) {
 			} else if ((currentPosition = save) == save & term(Bla.TokenType.GTFO)){ 
-			} else if ((currentPosition = save) == save & ifThen ()) {
 			} else {
 				return false;
 			}

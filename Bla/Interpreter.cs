@@ -375,10 +375,10 @@ namespace Bla
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			lolValue y = lolIt.getCopy();
 
-			if (x.getValue () == y.getValue()) {
-				result = "FAIL";
-			} else
+			if (x.getValue () != y.getValue()) {
 				result = "WIN";
+			} else
+				result = "FAIL";
 
 			MainClass.win.displayTextToConsole (result);
 		}
