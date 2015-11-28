@@ -85,19 +85,20 @@ namespace Bla
 
 		bool statement(){
 			int save = currentPosition;
+
 			if (term (TokenType.STATEMENT_DELIMETER)) {
 				currentPosition = save;
 				return true;
 			}
 			if ((currentPosition = save) == save & vardec ()) {
 			} else if ((currentPosition = save) == save & variableAssignment ()) {
-			} else if ((currentPosition = save) == save & ifThen ()) {
-			} else if ((currentPosition = save) == save & switchBlock ()) {
 			} else if ((currentPosition = save) == save & expression ()) {
+			} else if ((currentPosition = save) == save & switchBlock ()) {
 			} else if ((currentPosition = save) == save & input ()) {
 			} else if ((currentPosition = save) == save & output ()) {
 			} else if ((currentPosition = save) == save & concatenation ()) {
 			} else if ((currentPosition = save) == save & term(Bla.TokenType.GTFO)){ 
+			} else if ((currentPosition = save) == save & ifThen ()) {
 			} else {
 				return false;
 			}
@@ -246,6 +247,7 @@ namespace Bla
 				expression ();
 				currentPosition++;
 				expression ();
+	
 			} else {
 				return false;
 			}
@@ -268,11 +270,33 @@ namespace Bla
 		}
 
 		bool multiplication(){
-			return term (TokenType.PRODUKT_OF) && expression() && term(TokenType.AN) && expression();
+			int save = currentPosition;
+			if (term (TokenType.PRODUKT_OF) && expression () && term (TokenType.AN) && expression ()) {
+				tempActionOrder.Clear ();
+				tempActionOrder.Add (new lolStatement (Statement_Types.MULTIPLICATION, save));
+				currentPosition = save + 1;
+				expression ();
+				currentPosition++;
+				expression ();
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool division(){
-			return term (TokenType.QUOSHUNT_OF) && expression() && term(TokenType.AN) && expression();
+			int save = currentPosition;
+			if (term (TokenType.QUOSHUNT_OF) && expression () && term (TokenType.AN) && expression ()) {
+				tempActionOrder.Clear ();
+				tempActionOrder.Add (new lolStatement (Statement_Types.DIVISION, save));
+				currentPosition = save + 1;
+				expression ();
+				currentPosition++;
+				expression ();
+			} else {
+				return false;
+			}
+			return true;
 		}
 
 		bool modulo(){
