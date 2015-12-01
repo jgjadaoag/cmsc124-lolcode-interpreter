@@ -233,9 +233,18 @@ namespace Bla
 
 		bool ifThen(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & ifThenStart() && term(TokenType.STATEMENT_DELIMETER) && ifTrueBlock() && term(TokenType.STATEMENT_DELIMETER) && ifFalseBlock() && term(TokenType.STATEMENT_DELIMETER) && term(TokenType.OIC)) ||
-				((currentPosition = save) == save & ifThenStart() && term(TokenType.STATEMENT_DELIMETER) && ifTrueBlock() && term(TokenType.STATEMENT_DELIMETER) && term(TokenType.OIC))
-				);
+			if ((currentPosition = save) == save & ifThenStart () && term (TokenType.STATEMENT_DELIMETER) && ifTrueBlock () && term (TokenType.STATEMENT_DELIMETER)) {
+				switch (tokenList [currentPosition].getType()) {
+				case TokenType.NO_WAI:
+					ifFalseBlock ();
+					break;
+				case TokenType.OIC:
+					currentPosition++;
+					break;
+				}
+				return true;
+			}
+			return false;
 		}
 
 		bool ifThenStart(){
