@@ -4,12 +4,12 @@ using System.Collections.Generic;
 namespace Bla
 {
 	public enum Statement_Types {
-		VARIABLE_DECLARATION_ITZ, //I HAS A * ITZ
-		VARIABLE_DECLARATION,// I HAS A
+		VARIABLE_DECLARATION_ITZ,
+		VARIABLE_DECLARATION,
 		VARIABLE_ASSIGNMENT,
-		IF_THEN_ELSE, //O RLY? YA RLY, NO WAI..
-		IF_THEN, //O RLY?
-		SWITCH, //WTF?
+		IF_THEN_ELSE,
+		IF_THEN,
+		SWITCH,
 		VARIABLE_IDENTIFIER,
 		ADDITION,
 		SUBTRACTION,
@@ -75,7 +75,9 @@ namespace Bla
 				}
 			}
 			Parser p = new Parser (tokenList);
-			p.parse ();
+			if (!p.parse ()) {
+				setError ("Error in parser");
+			};
 
 			tokToLolType = new Dictionary<TokenType, LOLType> ();
 
@@ -87,16 +89,6 @@ namespace Bla
 			addActionDefinitions ();
 
 			actionList = p.getActionOrder ();
-		}
-
-		public void runProgram() {
-			for (currentPosition = 0; currentPosition < actionList.Count && !errorFlag; currentPosition++) {
-				actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-				Console.WriteLine (actionList[currentPosition].type);
-			}
-			if (errorFlag) {
-				MainClass.win.displayTextToConsole (errorMessage);
-			}
 		}
 
 		void addActionDefinitions() {
@@ -117,6 +109,24 @@ namespace Bla
 			actionMap.Add (Statement_Types.NOT, not);
 			actionMap.Add (Statement_Types.EQUALITY, equality);
 			actionMap.Add (Statement_Types.INEQUALITY, inequality);
+			actionMap.Add (Statement_Types.MODULO, modulo);
+			actionMap.Add (Statement_Types.MAXIMUM, maximum);
+		}
+
+		public void runProgram() {
+			Console.WriteLine ("=============================================");
+			Console.WriteLine ("=ACTION=LIST================================");
+			Console.WriteLine ("=============================================");
+			foreach (lolStatement ls in actionList) {
+				Console.WriteLine (ls.type.ToString());
+			}
+			Console.WriteLine ("=============================================");
+			for (currentPosition = 0; currentPosition < actionList.Count && !errorFlag; currentPosition++) {
+				actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			}
+			if (errorFlag) {
+				MainClass.win.displayTextToConsole (errorMessage);
+			}
 		}
 
 		void setError(string message) {
@@ -126,7 +136,8 @@ namespace Bla
 
 		void variableDeclarationItz(int location) {
 			//Execute expressions first
-			actionMap [actionList[currentPosition + 1].type] (actionList[currentPosition + 1].location);
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 
 			if (!variableTable.hasVariable (tokenList [location + 1].getValue ())) {
 				variableTable.createVar (tokenList [location + 1].getValue (), 
@@ -136,7 +147,6 @@ namespace Bla
 				setError ("Error: Variable " + tokenList[location + 1].getValue() + " already declared");
 			}
 			MainClass.win.refreshSymbol (variableTable);
-			currentPosition++;
 		}
 		void variableDeclaration(int location) {
 			if (!variableTable.hasVariable (tokenList [location + 1].getValue ())) {
@@ -168,7 +178,7 @@ namespace Bla
 		}
 
 		void addition(int location){
-			float sum = 0;
+			decimal sum = 0;
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue add1 = lolIt.getCopy();
@@ -180,7 +190,7 @@ namespace Bla
 			LOLType sumType = LOLType.NUMBR;
 
 			if (add1.getType () == LOLType.NUMBAR || add2.getType () == LOLType.NUMBAR) {
-				sum = float.Parse(add1.getValue ()) + float.Parse (add2.getValue ());
+				sum = decimal.Parse(add1.getValue ()) + decimal.Parse (add2.getValue ());
 				sumType = LOLType.NUMBAR;
 			} else {
 				sum = int.Parse (add1.getValue ()) + int.Parse (add2.getValue ());
@@ -191,7 +201,7 @@ namespace Bla
 		}
 
 		void subtraction(int location){
-			float diff = 0;
+			decimal diff = 0;
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue d1 = lolIt.getCopy();
@@ -203,18 +213,19 @@ namespace Bla
 			LOLType sumType = LOLType.NUMBR;
 
 			if (d1.getType () == LOLType.NUMBAR || d2.getType () == LOLType.NUMBAR) {
-				diff = float.Parse(d1.getValue ()) - float.Parse (d2.getValue ());
+				diff = decimal.Parse(d1.getValue ()) - decimal.Parse (d2.getValue ());
 				sumType = LOLType.NUMBAR;
 			} else {
 				diff = int.Parse (d1.getValue ()) - int.Parse (d2.getValue ());
 			}
 
 			lolIt.setValue (sumType, diff.ToString());
+			Console.WriteLine(diff);
 			MainClass.win.displayTextToConsole (""+diff);
 		}
 
 		void multiplication(int location){
-			float prod = 0;
+			decimal prod = 0;
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue d1 = lolIt.getCopy();
@@ -226,7 +237,7 @@ namespace Bla
 			LOLType sumType = LOLType.NUMBR;
 
 			if (d1.getType () == LOLType.NUMBAR || d2.getType () == LOLType.NUMBAR) {
-				prod = float.Parse(d1.getValue ()) * float.Parse (d2.getValue ());
+				prod = decimal.Parse(d1.getValue ()) * decimal.Parse (d2.getValue ());
 				sumType = LOLType.NUMBAR;
 			} else {
 				prod = int.Parse (d1.getValue ()) * int.Parse (d2.getValue ());
@@ -237,7 +248,7 @@ namespace Bla
 		}
 
 		void division(int location){
-			float quo = 0;
+			decimal quo = 0;
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue d1 = lolIt.getCopy();
@@ -248,23 +259,72 @@ namespace Bla
 
 			LOLType sumType = LOLType.NUMBR;
 
-			if (float.Parse (d2.getValue ()) != 0) {
+			if (decimal.Parse (d2.getValue ()) != 0) {
 				
-				quo = float.Parse (d1.getValue ()) / float.Parse (d2.getValue ());
+				quo = decimal.Parse (d1.getValue ()) / decimal.Parse (d2.getValue ());
 				sumType = LOLType.NUMBAR;
 
 				lolIt.setValue (sumType, quo.ToString ());
 				MainClass.win.displayTextToConsole ("" + quo);
 			} else {
-				MainClass.win.displayTextToConsole ("Invalid operation: Division by zero");
+				setError ("Invalid operation: Division by zero");
 			} 
 				
 		}
 
+		void modulo(int location){
+			decimal quo = 0;
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue d1 = lolIt.getCopy();
+
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			lolValue d2 = lolIt.getCopy();
+
+			LOLType sumType = LOLType.NUMBR;
+
+			if (decimal.Parse (d2.getValue ()) != 0) {
+				
+				quo = decimal.Parse (d1.getValue ()) % decimal.Parse (d2.getValue ());
+				sumType = LOLType.NUMBAR;
+
+				lolIt.setValue (sumType, quo.ToString ());
+			} else {
+				setError ("Invalid operation: Division by zero");
+			} 
+				
+		}
+
+		void maximum(int location){
+			decimal higher;
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue d1 = lolIt.getCopy();
+
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			lolValue d2 = lolIt.getCopy();
+
+			LOLType sumType = LOLType.NUMBR;
+			/*
+			if (isNumberType(d1) || isNumberType(d2)) {
+				diff = decimal.Parse(d1.getValue ()) - decimal.Parse (d2.getValue ());
+				sumType = LOLType.NUMBAR;
+			} else {
+				setError("Error comparing non numeric types");
+			}
+
+			lolIt.setValue (sumType, diff.ToString());
+			Console.WriteLine(diff);
+			MainClass.win.displayTextToConsole (""+diff);
+			*/
+		}
+
 		void output(int location) {
 			//Execute expressions first
-			actionMap [actionList[currentPosition + 1].type] (actionList[currentPosition + 1].location);
 			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			MainClass.win.displayTextToConsole (lolIt.getValue());
 		}
 		void input(int location) {
@@ -381,6 +441,85 @@ namespace Bla
 				result = "FAIL";
 
 			MainClass.win.displayTextToConsole (result);
+
+		bool isNumberType(lolValue lv) {
+			return lv.getType() == LOLType.NUMBR || lv.getType() == LOLType.NUMBAR;
+		}
+
+		lolValue implicitCast(lolValue lv, LOLType toType) {
+			if(lv.getType() == LOLType.NOOB && toType != LOLType.TROOF) {
+				setError("Cannot implicitly cast NOOB to any type except TROOF");
+				return null;
+			}
+			return cast(lv, toType);
+		}
+		lolValue cast(lolValue lv, LOLType toType) {
+			string newValue = "";
+			switch(toType) {
+				case LOLType.NOOB:
+					break;
+				case LOLType.NUMBAR:
+					switch (lv.getType()) {
+						case LOLType.NOOB:
+							newValue = "0";
+							break;
+						case LOLType.NUMBAR:
+							newValue = lv.getValue();
+							break;
+						case LOLType.NUMBR:
+							newValue = lv.getValue();
+							break;
+						case LOLType.TROOF:
+							newValue = lv.getValue() == "FAIL"? "0": "1";
+							break;
+						case LOLType.YARN:
+							newValue = decimal.Parse(lv.getValue()).ToString();
+							break;
+					}
+					break;
+				case LOLType.NUMBR:
+					switch (lv.getType()) {
+						case LOLType.NOOB:
+							newValue = "0";
+							break;
+						case LOLType.NUMBAR:
+							newValue = Math.Floor(decimal.Parse(lv.getValue())).ToString();
+							break;
+						case LOLType.NUMBR:
+							newValue = lv.getValue();
+							break;
+						case LOLType.TROOF:
+							newValue = lv.getValue() == "FAIL"? "0": "1";
+							break;
+						case LOLType.YARN:
+							newValue = int.Parse(lv.getValue()).ToString();
+							break;
+					}
+					break;
+				case LOLType.TROOF:
+					switch (lv.getType()) {
+						case LOLType.NOOB:
+							newValue = "FAIL";
+							break;
+						case LOLType.NUMBAR:
+							newValue = decimal.Parse(lv.getValue()) != 0? "WIN": "FAIL";
+							break;
+						case LOLType.NUMBR:
+							newValue = int.Parse(lv.getValue()) != 0? "WIN": "FAIL";
+							break;
+						case LOLType.TROOF:
+							newValue = lv.getValue();
+							break;
+						case LOLType.YARN:
+							newValue = lv.getValue().Length != 0? "WIN": "FAIL";
+							break;
+					}
+					break;
+				case LOLType.YARN:
+					newValue = lv.getValue();
+					break;
+			}
+			return new lolValue(toType, newValue);
 		}
 	}
 }

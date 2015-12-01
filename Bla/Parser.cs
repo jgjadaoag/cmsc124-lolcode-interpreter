@@ -7,11 +7,13 @@ namespace Bla
 	{
 		List<Token> tokenList;
 		int currentPosition;
+		bool parseCheck;
 		List<lolStatement> actionOrder;
 		List<lolStatement> tempActionOrder;
 
 		public Parser (string value)
 		{
+			parseCheck = true;
 			tokenList = new List<Token> ();
 			TokenStream ts = new TokenStream (value);
 			Token t;
@@ -161,12 +163,21 @@ namespace Bla
 
 		bool expression(){
 			int save = currentPosition;
+
 			if ((currentPosition = save) == save & term (TokenType.VARIABLE_IDENTIFIER)) {
+				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
+					Console.WriteLine ("VARIABLE statement");
+					tempActionOrder.Clear ();
+				}
 				tempActionOrder.Add (new lolStatement (Statement_Types.VARIABLE_IDENTIFIER, save));
 			} else if ((currentPosition = save) == save & mathOperator ()) {
 			} else if ((currentPosition = save) == save & booleanOperation ()) {
 			} else if ((currentPosition = save) == save & compareOperator ()) {
 			} else if ((currentPosition = save) == save & literal ()) {
+				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
+					Console.WriteLine ("Literal statement");
+					tempActionOrder.Clear ();
+				}
 				tempActionOrder.Add (new lolStatement (Statement_Types.LITERAL, save));
 			} else {
 				return false;
@@ -239,72 +250,75 @@ namespace Bla
 		}
 
 		bool addition(){
-			int save = currentPosition;
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.ADDITION, currentPosition));
+
 			if (term (TokenType.SUM_OF) && expression () && term (TokenType.AN) && expression ()) {
-				tempActionOrder.Clear ();
-				tempActionOrder.Add (new lolStatement (Statement_Types.ADDITION, save));
-				currentPosition = save + 1;
-				expression ();
-				currentPosition++;
-				expression ();
-	
-			} else {
-				return false;
+				return true;
 			}
-			return true;
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool subtraction(){
-			int save = currentPosition;
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.SUBTRACTION, currentPosition));
+
 			if (term (TokenType.DIFF_OF) && expression () && term (TokenType.AN) && expression ()) {
-				tempActionOrder.Clear ();
-				tempActionOrder.Add (new lolStatement (Statement_Types.SUBTRACTION, save));
-				currentPosition = save + 1;
-				expression ();
-				currentPosition++;
-				expression ();
-			} else {
-				return false;
+				return true;
 			}
-			return true;
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool multiplication(){
-			int save = currentPosition;
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.MULTIPLICATION, currentPosition));
+
 			if (term (TokenType.PRODUKT_OF) && expression () && term (TokenType.AN) && expression ()) {
-				tempActionOrder.Clear ();
-				tempActionOrder.Add (new lolStatement (Statement_Types.MULTIPLICATION, save));
-				currentPosition = save + 1;
-				expression ();
-				currentPosition++;
-				expression ();
-			} else {
-				return false;
+				return true;
 			}
-			return true;
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool division(){
-			int save = currentPosition;
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.DIVISION, currentPosition));
+
 			if (term (TokenType.QUOSHUNT_OF) && expression () && term (TokenType.AN) && expression ()) {
-				tempActionOrder.Clear ();
-				tempActionOrder.Add (new lolStatement (Statement_Types.DIVISION, save));
-				currentPosition = save + 1;
-				expression ();
-				currentPosition++;
-				expression ();
-			} else {
-				return false;
+				return true;
 			}
-			return true;
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool modulo(){
-			return term (TokenType.MOD_OF) && expression() && term(TokenType.AN) && expression();
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.MODULO, currentPosition));
+
+			if (term (TokenType.MOD_OF) && expression () && term (TokenType.AN) && expression ()) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool maximum(){
-			return term (TokenType.BIGGR_OF) && expression() && term(TokenType.AN) && expression();
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.MODULO, currentPosition));
+
+			if (term (TokenType.BIGGR_OF) && expression () && term (TokenType.AN) && expression ()) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool minimum(){
@@ -453,11 +467,7 @@ namespace Bla
 
 		bool vardec(){
 			int save = currentPosition;
-			if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.ITZ) && expression ()) {
-				tempActionOrder.Clear();
-				tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION_ITZ, save));
-				currentPosition = save + 3;
-				expression ();
+			if ((currentPosition = save) == save & variableDeclarationItz()) {
 			} else if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER)) {
 				tempActionOrder.Clear();
 				tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION, save));
@@ -465,6 +475,21 @@ namespace Bla
 				return false;
 			}
 			return true;
+		}
+
+		bool variableDeclarationItz() {
+			int save = currentPosition;
+			tempActionOrder.Clear ();
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION_ITZ, save));
+
+			if (term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.ITZ) && expression ()) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange (actionSave, tempActionOrder.Count - actionSave);
+
+			return false;
 		}
 
 		bool literal(){

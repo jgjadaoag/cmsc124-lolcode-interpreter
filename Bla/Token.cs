@@ -81,12 +81,14 @@ namespace Bla
 		int currentPosition;
 		public readonly Dictionary<TokenType, Regex> tokenDetails;
 		bool stringFlag;
+		bool stringRead;
 
 		public TokenStream (string input) {
 			this.input = input;
 			Console.WriteLine ("Input Length: " + input.Length.ToString ());
 			currentPosition = 0;
 			stringFlag = false;
+			stringRead = false;
 
 			//Filling up token details
 			tokenDetails = new Dictionary<TokenType, Regex> ();
@@ -151,11 +153,16 @@ namespace Bla
 			string scannedString = "";
 
 			if (stringFlag ) {
-				if (!(input [currentPosition] == '"')) {
+				if (input [currentPosition] != '"' && !stringRead) {
+					stringRead = true;
 					return readString (input.Substring (currentPosition));
+				} else if (!stringRead) {
+					stringRead = true;
+					return new Token ("", TokenType.YARN_LITERAL);
 				} else {
 					currentPosition++;
 					stringFlag = false;
+					stringRead = false;
 					skipSpace ();
 					return new Token ("\"", TokenType.STRING_DELIMETER);
 				}
@@ -163,16 +170,32 @@ namespace Bla
 
 			TokenType scannedType = identifyToken (input.Substring (currentPosition));
 
+			//If the scanned token has more than one word
 			if (scannedType > TokenType.OBTW) {
 				string rgx = tokenDetails [scannedType].ToString ();
 				Console.WriteLine (scannedString);
 				if (rgx [rgx.Length - 1] != '$') {
-					try{
+					//try{
+					/*
 						scannedString = input.Substring (currentPosition, tokenDetails [scannedType].ToString ().Length - 1);
 						currentPosition += tokenDetails [scannedType].ToString ().Length - 1;
 						skipSpace ();
 						return new Token (scannedString, scannedType);
-					} catch (Exception a){}
+						*/
+					scannedString = input.Substring (currentPosition, tokenDetails [scannedType].ToString ().Length - 1);
+					int save = currentPosition;
+					currentPosition += tokenDetails [scannedType].ToString ().Length - 2;
+
+					if ((currentPosition == input.Length - 1) ||
+						(Char.IsWhiteSpace (this.input [currentPosition + 1])) ||
+						(input[currentPosition + 1] == ',')) {
+						currentPosition++;
+						skipSpace ();
+						return new Token (scannedString, scannedType);
+					}
+					currentPosition = save;
+					scannedString = "";
+					//} catch (Exception a){}
 				}
 			}
 			if (stringFlag == false) {
@@ -209,6 +232,7 @@ namespace Bla
 				}
 			}
 
+			if(!stringFlag)
 			skipSpace ();
 			return new Token (scannedString, scannedType);
 		}
