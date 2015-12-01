@@ -111,6 +111,7 @@ namespace Bla
 			actionMap.Add (Statement_Types.INEQUALITY, inequality);
 			actionMap.Add (Statement_Types.MODULO, modulo);
 			actionMap.Add (Statement_Types.MAXIMUM, maximum);
+			actionMap.Add (Statement_Types.MINIMUM, minimum);
 		}
 
 		public void runProgram() {
@@ -190,14 +191,18 @@ namespace Bla
 			LOLType sumType = LOLType.NUMBR;
 
 			if (add1.getType () == LOLType.NUMBAR || add2.getType () == LOLType.NUMBAR) {
+				add1 = implicitCast (add1, LOLType.NUMBAR);
+				add2 = implicitCast (add2, LOLType.NUMBAR);
 				sum = decimal.Parse(add1.getValue ()) + decimal.Parse (add2.getValue ());
 				sumType = LOLType.NUMBAR;
 			} else {
+				add1 = implicitCast (add1, LOLType.NUMBR);
+				add2 = implicitCast (add2, LOLType.NUMBR);
 				sum = int.Parse (add1.getValue ()) + int.Parse (add2.getValue ());
 			}
 
 			lolIt.setValue (sumType, sum.ToString());
-			MainClass.win.displayTextToConsole (""+sum);
+			//MainClass.win.displayTextToConsole (""+sum);
 		}
 
 		void subtraction(int location){
@@ -221,7 +226,7 @@ namespace Bla
 
 			lolIt.setValue (sumType, diff.ToString());
 			Console.WriteLine(diff);
-			MainClass.win.displayTextToConsole (""+diff);
+			//MainClass.win.displayTextToConsole (""+diff);
 		}
 
 		void multiplication(int location){
@@ -244,7 +249,7 @@ namespace Bla
 			}
 
 			lolIt.setValue (sumType, prod.ToString());
-			MainClass.win.displayTextToConsole (""+prod);
+			//MainClass.win.displayTextToConsole (""+prod);
 		}
 
 		void division(int location){
@@ -265,7 +270,7 @@ namespace Bla
 				sumType = LOLType.NUMBAR;
 
 				lolIt.setValue (sumType, quo.ToString ());
-				MainClass.win.displayTextToConsole ("" + quo);
+				//MainClass.win.displayTextToConsole ("" + quo);
 			} else {
 				setError ("Invalid operation: Division by zero");
 			} 
@@ -297,28 +302,37 @@ namespace Bla
 		}
 
 		void maximum(int location){
-			decimal higher;
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			lolValue d1 = lolIt.getCopy();
+			lolValue num1 = lolIt.getCopy();
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
-			lolValue d2 = lolIt.getCopy();
+			lolValue num2 = lolIt.getCopy();
 
-			LOLType sumType = LOLType.NUMBR;
-			/*
-			if (isNumberType(d1) || isNumberType(d2)) {
-				diff = decimal.Parse(d1.getValue ()) - decimal.Parse (d2.getValue ());
-				sumType = LOLType.NUMBAR;
-			} else {
-				setError("Error comparing non numeric types");
+			if(decimal.Parse (implicitCast(num1, LOLType.NUMBAR).getValue ()) > decimal.Parse (implicitCast(num2, LOLType.NUMBAR).getValue ())){
+				lolIt = num1.getCopy();
 			}
+			else {
+				lolIt = num2.getCopy();
+			}		
+		}
 
-			lolIt.setValue (sumType, diff.ToString());
-			Console.WriteLine(diff);
-			MainClass.win.displayTextToConsole (""+diff);
-			*/
+		void minimum(int location){
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue num1 = lolIt.getCopy();
+
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			lolValue num2 = lolIt.getCopy();
+
+			if(decimal.Parse (implicitCast(num1, LOLType.NUMBAR).getValue ()) > decimal.Parse (implicitCast(num2, LOLType.NUMBAR).getValue ())){
+				lolIt = num2.getCopy();
+			}
+			else {
+				lolIt = num1.getCopy();
+			}		
 		}
 
 		void output(int location) {
@@ -354,7 +368,8 @@ namespace Bla
 			} else
 				result = "FAIL";
 
-			MainClass.win.displayTextToConsole (result);
+			lolIt.setValue (LOLType.TROOF, result);
+		//	MainClass.win.displayTextToConsole (result);
 		}
 
 		void or(int location){
@@ -372,7 +387,8 @@ namespace Bla
 			} else
 				result = "WIN";
 
-			MainClass.win.displayTextToConsole (result);
+			lolIt.setValue (LOLType.TROOF, result);
+			//MainClass.win.displayTextToConsole (result);
 		}
 
 		void xor(int location){
@@ -390,7 +406,8 @@ namespace Bla
 			} else
 				result = "WIN";
 
-			MainClass.win.displayTextToConsole (result);
+			lolIt.setValue (LOLType.TROOF, result);
+			//MainClass.win.displayTextToConsole (result);
 		}
 
 		void not(int location){
@@ -404,7 +421,8 @@ namespace Bla
 			} else
 				result = "WIN";
 
-			MainClass.win.displayTextToConsole (result);
+			lolIt.setValue (LOLType.TROOF, result);
+		//	MainClass.win.displayTextToConsole (result);
 		}
 
 		void equality(int location){
@@ -422,7 +440,8 @@ namespace Bla
 			} else
 				result = "FAIL";
 
-			MainClass.win.displayTextToConsole (result);
+			lolIt.setValue (LOLType.TROOF, result);
+		//	MainClass.win.displayTextToConsole (result);
 		}
 
 		void inequality(int location){
@@ -440,7 +459,8 @@ namespace Bla
 			} else
 				result = "FAIL";
 
-			MainClass.win.displayTextToConsole (result);
+			lolIt.setValue (LOLType.TROOF, result);
+		//	MainClass.win.displayTextToConsole (result);
 		}
 
 		bool isNumberType(lolValue lv) {
