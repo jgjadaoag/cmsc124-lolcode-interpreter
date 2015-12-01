@@ -116,6 +116,9 @@ namespace Bla
 			actionMap.Add (Statement_Types.IF_THEN_START, ifThenStart);
 			actionMap.Add (Statement_Types.MINIMUM, minimum);
 			actionMap.Add (Statement_Types.CONCAT, concat);
+			actionMap.Add (Statement_Types.IF_THEN_TRUE, ifTrueBlock);
+			actionMap.Add (Statement_Types.IF_THEN_FALSE, ifFalseBlock);
+			actionMap.Add (Statement_Types.OIC, oic);
 		}
 
 		public void runProgram() {
@@ -487,9 +490,99 @@ namespace Bla
 		}
 		#endregion
 
+		#region Conditional
 		void ifThenStart(int location) {
-			Console.WriteLine ("LOLIT: ", lolIt.getValue());
+			Console.WriteLine ("LOLIT: " + lolIt.getValue());
+			if (implicitCast (lolIt, LOLType.TROOF).getValue () == "WIN") {
+				currentPosition++;
+				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			} else {
+				goToNextIfCondition ();
+				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+				if (actionList [currentPosition].type == Statement_Types.OIC) {
+					return;
+				}
+			}
+			goToOIC ();
+			currentPosition++;
 		}
+
+		void goToOIC() {
+			int newBlock = 0;
+
+			while (currentPosition < actionList.Count - 1) {
+				currentPosition++;
+				switch (actionList [currentPosition].type) {
+				case Statement_Types.SWITCH:
+				case Statement_Types.IF_THEN_START:
+					newBlock++;
+					break;
+				case Statement_Types.OIC:
+					if (newBlock != 0) {
+						newBlock--;
+						break;
+					}
+					return;
+				}
+			}
+		}
+		void goToNextIfCondition() {
+			int newBlock = 0;
+
+			while (currentPosition < actionList.Count) {
+				currentPosition++;
+				switch (actionList [currentPosition].type) {
+				case Statement_Types.SWITCH:
+				case Statement_Types.IF_THEN_START:
+					newBlock++;
+					break;
+				case Statement_Types.OIC:
+					if (newBlock != 0) {
+						newBlock--;
+						break;
+					}
+					return;
+				case Statement_Types.IF_THEN_FALSE:
+				case Statement_Types.ELSE_IF:
+					if (newBlock != 0) {
+						continue;
+					}
+					return;
+				}
+			}
+		}
+
+		void ifTrueBlock(int location) {
+			Console.WriteLine ("Inside if true");
+
+			int savePosition = currentPosition;
+			goToNextIfCondition ();
+			int lastPosition = currentPosition;
+			currentPosition = savePosition;
+
+			while (currentPosition < lastPosition) {
+				currentPosition++;
+				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			}
+		}
+
+		void ifFalseBlock(int location) {
+			Console.WriteLine ("Inside false");
+
+			int savePosition = currentPosition;
+			goToNextIfCondition ();
+			int lastPosition = currentPosition;
+			currentPosition = savePosition;
+
+			while (currentPosition < lastPosition) {
+				currentPosition++;
+				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			}
+		}
+
+		void oic(int location) {
+		}
+		#endregion
 
 		#region Helper functions
 
