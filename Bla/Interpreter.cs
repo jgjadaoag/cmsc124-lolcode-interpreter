@@ -7,8 +7,10 @@ namespace Bla
 		VARIABLE_DECLARATION_ITZ,
 		VARIABLE_DECLARATION,
 		VARIABLE_ASSIGNMENT,
-		IF_THEN_ELSE,
-		IF_THEN,
+		IF_THEN_START,
+		IF_THEN_FALSE,
+		IF_THEN_TRUE,
+		ELSE_IF,
 		SWITCH,
 		VARIABLE_IDENTIFIER,
 		ADDITION,
@@ -32,7 +34,8 @@ namespace Bla
 		AND,
 		OR,
 		XOR,
-		NOT
+		NOT,
+		OIC
 	}
 
 	public class lolStatement {
@@ -70,9 +73,12 @@ namespace Bla
 			while(!ts.end()){
 				t = ts.get ();
 				MainClass.win.addLexemes (t.getValue (), t.getType ().ToString ());
-				if (t.getType() != TokenType.UNKNOWN && (t.getType() != TokenType.BTW && t.getType() != TokenType.OBTW)) {
+				if (t.getType () == TokenType.UNKNOWN) {
+					MainClass.win.displayTextToConsole ("Unknown token: " + t.getValue ());
 					tokenList.Add (t);
-				}
+				} else if ((t.getType () != TokenType.BTW && t.getType () != TokenType.OBTW)) {
+					tokenList.Add (t);
+				} 
 			}
 			Parser p = new Parser (tokenList);
 			if (!p.parse ()) {
@@ -111,6 +117,7 @@ namespace Bla
 			actionMap.Add (Statement_Types.INEQUALITY, inequality);
 			actionMap.Add (Statement_Types.MODULO, modulo);
 			actionMap.Add (Statement_Types.MAXIMUM, maximum);
+			actionMap.Add (Statement_Types.IF_THEN_START, ifThenStart);
 		}
 
 		public void runProgram() {
@@ -307,6 +314,7 @@ namespace Bla
 			lolValue d2 = lolIt.getCopy();
 
 			LOLType sumType = LOLType.NUMBR;
+
 			/*
 			if (isNumberType(d1) || isNumberType(d2)) {
 				diff = decimal.Parse(d1.getValue ()) - decimal.Parse (d2.getValue ());
@@ -441,6 +449,10 @@ namespace Bla
 				result = "FAIL";
 
 			MainClass.win.displayTextToConsole (result);
+		}
+
+		void ifThenStart(int location) {
+			Console.WriteLine ("LOLIT: ", lolIt.getValue());
 		}
 
 		bool isNumberType(lolValue lv) {
