@@ -99,7 +99,6 @@ namespace Bla
 			} else if ((currentPosition = save) == save & expression ()) {
 			} else if ((currentPosition = save) == save & input ()) {
 			} else if ((currentPosition = save) == save & output ()) {
-			} else if ((currentPosition = save) == save & concatenation ()) {
 			} else if ((currentPosition = save) == save & term(Bla.TokenType.GTFO)){ 
 			} else {
 				return false;
@@ -147,17 +146,22 @@ namespace Bla
 		}
 
 		bool concatenation(){
-			int save = currentPosition;
-			return(((currentPosition = save) == save & term(TokenType.SMOOSH) && stringList() && term(TokenType.MKAY)) ||
-					((currentPosition = save) == save & term(TokenType.SMOOSH) && stringList())
-				);
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.CONCAT, currentPosition));
+
+			if (term (TokenType.SMOOSH) && stringList() && term(TokenType.MKAY)) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool stringList(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & term(TokenType.YARN_LITERAL) && term(TokenType.AN) && stringList()) ||
-					((currentPosition = save) == save & term(TokenType.YARN_LITERAL)) ||
-					((currentPosition = save) == save & term(TokenType.YARN_LITERAL) && stringList())
+			return (((currentPosition = save) == save & expression() && term(TokenType.AN) && stringList()) ||
+			        ((currentPosition = save) == save & expression() && stringList()) ||
+			        ((currentPosition = save) == save & expression())
 					);
 		}
 
@@ -173,6 +177,7 @@ namespace Bla
 			} else if ((currentPosition = save) == save & mathOperator ()) {
 			} else if ((currentPosition = save) == save & booleanOperation ()) {
 			} else if ((currentPosition = save) == save & compareOperator ()) {
+			} else if ((currentPosition = save) == save & concatenation ()) {
 			} else if ((currentPosition = save) == save & literal ()) {
 				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
 					Console.WriteLine ("Literal statement");
@@ -336,11 +341,7 @@ namespace Bla
 		bool compareOperator(){
 			int save = currentPosition;
 			return (((currentPosition = save) == save & equality()) ||
-				((currentPosition = save) == save & inequality()) ||
-				((currentPosition = save) == save & greaterThan()) ||
-				((currentPosition = save) == save & lessThan ()) ||
-				((currentPosition = save) == save & greaterThanOrEqual ()) ||
-				((currentPosition = save) == save & lessThanOrEqual ())
+				((currentPosition = save) == save & inequality())
 				);
 		}
 
@@ -366,22 +367,6 @@ namespace Bla
 
 			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
 			return false;
-		}
-
-		bool greaterThan(){
-			return term (TokenType.DIFFRINT) && expression () && term (TokenType.AN) && minimum ();
-		}
-
-		bool lessThan(){
-			return term (TokenType.DIFFRINT) && expression () && term (TokenType.AN) && maximum ();
-		}
-
-		bool greaterThanOrEqual(){
-			return term (TokenType.BOTH_SAEM) && expression () && term (TokenType.AN) && maximum ();
-		}
-
-		bool lessThanOrEqual(){
-			return term (TokenType.BOTH_SAEM) && expression () && term (TokenType.AN) && minimum ();
 		}
 
 		bool infiniteArityAnd(){

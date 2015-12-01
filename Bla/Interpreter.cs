@@ -20,14 +20,9 @@ namespace Bla
 		MINIMUM,
 		EQUALITY,
 		INEQUALITY,
-		GREATER,
-		LESS,
-		GREATER_EQUAL,
-		LESS_EQUAL,
 		LITERAL,
 		INPUT,
 		OUTPUT,
-		CONCAT_MKAY,
 		CONCAT,
 		AND,
 		OR,
@@ -56,6 +51,7 @@ namespace Bla
 		bool errorFlag;
 		string errorMessage;
 
+		#region Object Method
 		public Interpreter (string input)
 		{
 			actionMap = new Dictionary<Statement_Types, lolAction> ();
@@ -112,6 +108,7 @@ namespace Bla
 			actionMap.Add (Statement_Types.MODULO, modulo);
 			actionMap.Add (Statement_Types.MAXIMUM, maximum);
 			actionMap.Add (Statement_Types.MINIMUM, minimum);
+			actionMap.Add (Statement_Types.CONCAT, concat);
 		}
 
 		public void runProgram() {
@@ -134,7 +131,9 @@ namespace Bla
 			errorFlag = true;
 			errorMessage = message;
 		}
+		#endregion
 
+		#region Variable Operations
 		void variableDeclarationItz(int location) {
 			//Execute expressions first
 			currentPosition++;
@@ -170,14 +169,9 @@ namespace Bla
 			}
 			MainClass.win.refreshSymbol (variableTable);
 		}
+		#endregion
 
-		void variableIdentifier(int location) {
-			if (variableTable.hasVariable (tokenList [location].getValue ())) {
-				lolValue val = variableTable.getVar (tokenList [location].getValue ());
-				lolIt.setValue (val.getType (), val.getValue());
-			}
-		}
-
+		#region MATH OPERATORS
 		void addition(int location){
 			decimal sum = 0;
 			currentPosition++;
@@ -334,25 +328,10 @@ namespace Bla
 				lolIt = num1.getCopy();
 			}		
 		}
+		#endregion
 
-		void output(int location) {
-			//Execute expressions first
-			currentPosition++;
-			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			MainClass.win.displayTextToConsole (lolIt.getValue());
-		}
-		void input(int location) {
-			if (variableTable.hasVariable (tokenList [location + 1].getValue ())) {
-				(new Dialog (tokenList [location + 1].getValue (), variableTable)).Run();
-			} else {
-				setError ("Error: Variable " + tokenList[location + 1].getValue() + " not declared");
-			}
-		}
-		void literal(int location) {
-			if (tokenList [location].getType () == TokenType.STRING_DELIMETER)
-				location++;
-			lolIt.setValue (tokToLolType [tokenList [location].getType ()], tokenList [location].getValue ());
-		}
+		#region Boolean Operations
+
 		void and(int location){
 			string result = "";
 			currentPosition++;
@@ -369,7 +348,7 @@ namespace Bla
 				result = "FAIL";
 
 			lolIt.setValue (LOLType.TROOF, result);
-		//	MainClass.win.displayTextToConsole (result);
+			//	MainClass.win.displayTextToConsole (result);
 		}
 
 		void or(int location){
@@ -422,7 +401,7 @@ namespace Bla
 				result = "WIN";
 
 			lolIt.setValue (LOLType.TROOF, result);
-		//	MainClass.win.displayTextToConsole (result);
+			//	MainClass.win.displayTextToConsole (result);
 		}
 
 		void equality(int location){
@@ -441,7 +420,7 @@ namespace Bla
 				result = "FAIL";
 
 			lolIt.setValue (LOLType.TROOF, result);
-		//	MainClass.win.displayTextToConsole (result);
+			//	MainClass.win.displayTextToConsole (result);
 		}
 
 		void inequality(int location){
@@ -460,9 +439,48 @@ namespace Bla
 				result = "FAIL";
 
 			lolIt.setValue (LOLType.TROOF, result);
-		//	MainClass.win.displayTextToConsole (result);
+			//	MainClass.win.displayTextToConsole (result);
+		}
+		#endregion
+
+		#region I/O
+		void output(int location) {
+			//Execute expressions first
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			MainClass.win.displayTextToConsole (lolIt.getValue());
 		}
 
+		void input(int location) {
+			if (variableTable.hasVariable (tokenList [location + 1].getValue ())) {
+				(new Dialog (tokenList [location + 1].getValue (), variableTable)).Run();
+			} else {
+				setError ("Error: Variable " + tokenList[location + 1].getValue() + " not declared");
+			}
+		}
+		#endregion
+
+		#region Expressions
+		void variableIdentifier(int location) {
+			if (variableTable.hasVariable (tokenList [location].getValue ())) {
+				lolValue val = variableTable.getVar (tokenList [location].getValue ());
+				lolIt.setValue (val.getType (), val.getValue());
+			}
+		}
+
+		void literal(int location) {
+			if (tokenList [location].getType () == TokenType.STRING_DELIMETER)
+				location++;
+			lolIt.setValue (tokToLolType [tokenList [location].getType ()], tokenList [location].getValue ());
+		}
+
+
+		void concat(int location){
+
+		}
+		#endregion
+
+		#region Helper functions
 		bool isNumberType(lolValue lv) {
 			return lv.getType() == LOLType.NUMBR || lv.getType() == LOLType.NUMBAR;
 		}
@@ -542,6 +560,7 @@ namespace Bla
 			}
 			return new lolValue(toType, newValue);
 		}
+		#endregion
 	}
 }
 
