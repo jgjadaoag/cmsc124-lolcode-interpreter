@@ -12,6 +12,9 @@ namespace Bla
 		IF_THEN_TRUE,
 		ELSE_IF,
 		SWITCH,
+		CASE,
+		GTFO,
+		DEFAULT_CASE,
 		VARIABLE_IDENTIFIER,
 		ADDITION,
 		SUBTRACTION,
@@ -119,6 +122,10 @@ namespace Bla
 			actionMap.Add (Statement_Types.IF_THEN_TRUE, ifTrueBlock);
 			actionMap.Add (Statement_Types.IF_THEN_FALSE, ifFalseBlock);
 			actionMap.Add (Statement_Types.OIC, oic);
+			actionMap.Add (Statement_Types.SWITCH, switchBlock);
+			actionMap.Add (Statement_Types.CASE, caseBlock);
+			actionMap.Add (Statement_Types.DEFAULT_CASE, defaultBlock);
+			actionMap.Add (Statement_Types.GTFO, gtfo);
 		}
 
 		public void runProgram() {
@@ -581,6 +588,83 @@ namespace Bla
 		}
 
 		void oic(int location) {
+		}
+
+		void goToNextSwitchCondition() {
+			int newBlock = 0;
+
+			while (currentPosition < actionList.Count - 1) {
+				currentPosition++;
+				switch (actionList [currentPosition].type) {
+				case Statement_Types.SWITCH:
+				case Statement_Types.IF_THEN_START:
+					newBlock++;
+					break;
+				case Statement_Types.OIC:
+					if (newBlock != 0) {
+						newBlock--;
+						break;
+					}
+					return;
+				case Statement_Types.CASE:
+				case Statement_Types.DEFAULT_CASE:
+					if (newBlock != 0) {
+						continue;
+					}
+					return;
+				}
+			}
+		}
+
+		void switchBlock(int location) {
+			lolValue testCase = lolIt.getCopy();
+			currentPosition++;
+
+			while (currentPosition < actionList.Count && actionList [currentPosition].type != Statement_Types.OIC) {
+				if (actionList [currentPosition].type == Statement_Types.CASE) {
+					currentPosition++;
+					actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+					if (testCase.getValue () == lolIt.getValue ()) {
+						executeCase ();
+						goToOIC ();
+						break;
+					}
+				} else {
+					executeCase ();
+					goToOIC ();
+					break;
+				}
+				goToNextSwitchCondition ();
+			}
+			currentPosition++;
+		}
+
+		void executeCase() {
+			int savePosition = currentPosition;
+			goToNextSwitchCondition ();
+			int lastPosition = currentPosition;
+			currentPosition = savePosition;
+			while (currentPosition < lastPosition) {
+				currentPosition++;
+
+				while (currentPosition < actionList.Count - 2 && actionList [currentPosition].type == Statement_Types.CASE) {
+					currentPosition += 2;
+				}
+				if (actionList [currentPosition].type == Statement_Types.DEFAULT_CASE) {
+					currentPosition++;
+				}
+				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			}
+		}
+
+		void caseBlock(int location) {
+		}
+
+		void defaultBlock(int location) {
+		}
+
+		void gtfo(int location) {
+			goToOIC ();
 		}
 		#endregion
 

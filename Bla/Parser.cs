@@ -11,6 +11,7 @@ namespace Bla
 		List<lolStatement> actionOrder;
 		List<lolStatement> tempActionOrder;
 		List<TokenType> ifBlockDelimeter;
+		List<TokenType> caseBlockDelimeter;
 
 		public Parser (string value)
 		{
@@ -27,13 +28,7 @@ namespace Bla
 				}
 			}
 
-			actionOrder = new List<lolStatement> ();
-			tempActionOrder = new List<lolStatement> ();
-
-
-			ifBlockDelimeter = new List<TokenType> ();
-			ifBlockDelimeter.Add (TokenType.NO_WAI);
-			ifBlockDelimeter.Add (TokenType.OIC);
+			initializeParser();
 		}
 
 		public Parser (List<Token> tokenListP) {
@@ -44,11 +39,21 @@ namespace Bla
 				this.tokenList.Add (t);
 
 			}
+			initializeParser();
+		}
+
+		private void initializeParser () {
 			actionOrder = new List<lolStatement> ();
 			tempActionOrder = new List<lolStatement> ();
+
 			ifBlockDelimeter = new List<TokenType> ();
 			ifBlockDelimeter.Add (TokenType.NO_WAI);
 			ifBlockDelimeter.Add (TokenType.OIC);
+
+			caseBlockDelimeter = new List<TokenType> ();
+			caseBlockDelimeter.Add (TokenType.OMG);
+			caseBlockDelimeter.Add (TokenType.OMGWTF);
+			caseBlockDelimeter.Add (TokenType.OIC);
 		}
 
 		public List<lolStatement> getActionOrder() {
@@ -128,12 +133,12 @@ namespace Bla
 			}
 			if ((currentPosition = save) == save & vardec ()) {
 			} else if ((currentPosition = save) == save & variableAssignment ()) {
+			} else if ((currentPosition = save) == save & gtfo ()) {
 			} else if ((currentPosition = save) == save & ifThen ()) {
 			} else if ((currentPosition = save) == save & switchBlock ()) {
 			} else if ((currentPosition = save) == save & input ()) {
 			} else if ((currentPosition = save) == save & output ()) {
 			} else if ((currentPosition = save) == save & concatenation ()) {
-			} else if ((currentPosition = save) == save & term(Bla.TokenType.GTFO)){ 
 			} else if ((currentPosition = save) == save & expression ()) {
 			} else {
 				return false;
@@ -149,6 +154,7 @@ namespace Bla
 			}
 			if ((currentPosition = save) == save & vardec ()) {
 			} else if ((currentPosition = save) == save & variableAssignment ()) {
+			} else if ((currentPosition = save) == save & gtfo ()) {
 			} else if ((currentPosition = save) == save & ifThen ()) {
 			} else if ((currentPosition = save) == save & switchBlock ()) {
 			} else if ((currentPosition = save) == save & input ()) {
@@ -173,6 +179,16 @@ namespace Bla
 				return false;
 			}
 			return true;
+		}
+
+		bool gtfo () {
+			int save = currentPosition;
+			if (term (TokenType.GTFO)) {
+				tempActionOrder.Add (new lolStatement (Statement_Types.GTFO, save));
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		bool input(){
@@ -238,7 +254,6 @@ namespace Bla
 					Console.WriteLine ("Literal statement");
 					//tempActionOrder.Clear ();
 				}
-				tempActionOrder.Add (new lolStatement (Statement_Types.LITERAL, save));
 			} else {
 				return false;
 			}
@@ -330,7 +345,7 @@ namespace Bla
 			int actionSave = tempActionOrder.Count;
 
 			if (expression () && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.WTF)) {
-			//	tempActionOrder.Add (new lolStatement (Statement_Types.IF_THEN_START, currentPosition - 1));
+				tempActionOrder.Add (new lolStatement (Statement_Types.SWITCH, currentPosition - 1));
 				return true;
 			}
 
@@ -341,26 +356,81 @@ namespace Bla
 		bool caseBlock(){
 			int save = currentPosition;
 			return (((currentPosition = save) == save & caseStatement() && caseBlock()) ||
-			        ((currentPosition = save) == save & caseStatement())
+				((currentPosition = save) == save & caseCondition() && defaultCaseStatement()) ||
+				((currentPosition = save) == save & defaultCaseStatement()) ||
+			    ((currentPosition = save) == save & caseStatement())
 			       );
+		}
+
+		bool defaultCaseStatement(){	
+			int actionSave = tempActionOrder.Count;
+
+			List<lolStatement> oldTempActionOrder = tempActionOrder;
+			tempActionOrder = new List<lolStatement> ();
+
+
+			if (defaultCase()) {
+				oldTempActionOrder.AddRange (tempActionOrder);
+				if (codeBlock(caseBlockDelimeter, oldTempActionOrder) && term(TokenType.STATEMENT_DELIMETER)) {
+					tempActionOrder = oldTempActionOrder;
+					return true;
+				}
+			}
+
+			tempActionOrder = oldTempActionOrder;
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool caseStatement(){	
-			int save = currentPosition;
-			return (((currentPosition = save) == save & caseCondition() && codeBlock() && term(TokenType.STATEMENT_DELIMETER)) ||
-					((currentPosition = save) == save & defaultCase() && codeBlock() && term(TokenType.STATEMENT_DELIMETER))
-					);
+			int actionSave = tempActionOrder.Count;
+
+			List<lolStatement> oldTempActionOrder = tempActionOrder;
+			tempActionOrder = new List<lolStatement> ();
+
+
+			if (caseCondition()) {
+				oldTempActionOrder.AddRange (tempActionOrder);
+				if (codeBlock(caseBlockDelimeter, oldTempActionOrder) && term(TokenType.STATEMENT_DELIMETER)) {
+					tempActionOrder = oldTempActionOrder;
+					return true;
+				}
+			}
+
+			tempActionOrder = oldTempActionOrder;
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool caseCondition(){
-			int save = currentPosition;
-			return (((currentPosition = save) == save & term(TokenType.OMG) && literal() && term (TokenType.STATEMENT_DELIMETER) && caseCondition()) ||
-					((currentPosition = save) == save & term(TokenType.OMG) && literal())
-			       );
+			int actionSave;
+			bool entered = false;
+			while (term(TokenType.OMG) ) {
+				entered = true;
+				actionSave = tempActionOrder.Count;
+				tempActionOrder.Add (new lolStatement (Statement_Types.CASE, currentPosition - 1));
+				if(literal() && term (TokenType.STATEMENT_DELIMETER)) {
+					continue;
+				}
+
+				tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+				return false;
+			}
+
+			currentPosition--;
+			return entered;
 		}	
 
 		bool defaultCase(){
-			return term (TokenType.OMGWTF) && term (TokenType.STATEMENT_DELIMETER);
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.DEFAULT_CASE, currentPosition));
+
+			if (term (TokenType.OMGWTF) && term (TokenType.STATEMENT_DELIMETER)) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		#endregion
@@ -604,6 +674,8 @@ namespace Bla
 			} else {
 				return false;
 			}
+
+			tempActionOrder.Add (new lolStatement (Statement_Types.LITERAL, save));
 
 			return true;
 		}
