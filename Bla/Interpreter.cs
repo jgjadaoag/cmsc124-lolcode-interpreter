@@ -441,6 +441,7 @@ namespace Bla
 				result = "FAIL";
 
 			MainClass.win.displayTextToConsole (result);
+		}
 
 		bool isNumberType(lolValue lv) {
 			return lv.getType() == LOLType.NUMBR || lv.getType() == LOLType.NUMBAR;
