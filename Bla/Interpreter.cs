@@ -33,7 +33,9 @@ namespace Bla
 		OR,
 		XOR,
 		NOT,
-		OIC
+		OIC,
+		ARITY_AND,
+		ARITY_OR
 	}
 
 	public class lolStatement {
@@ -126,6 +128,8 @@ namespace Bla
 			actionMap.Add (Statement_Types.CASE, caseBlock);
 			actionMap.Add (Statement_Types.DEFAULT_CASE, defaultBlock);
 			actionMap.Add (Statement_Types.GTFO, gtfo);
+			actionMap.Add (Statement_Types.ARITY_AND, arityAnd);
+			actionMap.Add (Statement_Types.ARITY_OR, arityOr);
 		}
 
 		public void runProgram() {
@@ -177,12 +181,16 @@ namespace Bla
 		}
 
 		void variableAssignment(int location){
+			//Execute expressions first
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+
 			if (variableTable.hasVariable (tokenList [location].getValue ())) {
 				variableTable.setVar (tokenList [location].getValue (), 
-					tokToLolType [tokenList [location + 2].getType ()],
-					tokenList [location + 2].getValue ());
+					lolIt.getType(),
+					lolIt.getValue ());
 			} else {
-				setError ("Error: Variable " + tokenList[location].getValue() + " not declared");
+				setError ("Error: Variable " + tokenList[location].getValue() + "is not yet declared");
 			}
 			MainClass.win.refreshSymbol (variableTable);
 		}
@@ -354,10 +362,12 @@ namespace Bla
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue x = lolIt.getCopy();
+			x = implicitCast (x, LOLType.TROOF);
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			lolValue y = lolIt.getCopy();
+			y = implicitCast (y, LOLType.TROOF);
 
 			if (x.getValue () == "WIN" && y.getValue () == "WIN") {
 				result = "WIN";
@@ -373,10 +383,12 @@ namespace Bla
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue x = lolIt.getCopy();
+			x = implicitCast (x, LOLType.TROOF);
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			lolValue y = lolIt.getCopy();
+			y = implicitCast (y, LOLType.TROOF);
 
 			if (x.getValue () == "FAIL" && y.getValue () == "FAIL") {
 				result = "FAIL";
@@ -392,10 +404,12 @@ namespace Bla
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue x = lolIt.getCopy();
+			x = implicitCast (x, LOLType.TROOF);
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			lolValue y = lolIt.getCopy();
+			y = implicitCast (y, LOLType.TROOF);
 
 			if (x.getValue () == y.getValue()) {
 				result = "FAIL";
@@ -411,6 +425,7 @@ namespace Bla
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue x = lolIt.getCopy();
+			x = implicitCast (x, LOLType.TROOF);
 
 			if (x.getValue () == "WIN") {
 				result = "FAIL";
@@ -426,10 +441,12 @@ namespace Bla
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue x = lolIt.getCopy();
+			x = implicitCast (x, LOLType.TROOF);
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			lolValue y = lolIt.getCopy();
+			y = implicitCast (y, LOLType.TROOF);
 
 			if (x.getValue () == y.getValue()) {
 				result = "WIN";
@@ -445,10 +462,12 @@ namespace Bla
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue x = lolIt.getCopy();
+			x = implicitCast (x, LOLType.TROOF);
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			lolValue y = lolIt.getCopy();
+			y = implicitCast (y, LOLType.TROOF);
 
 			if (x.getValue () != y.getValue()) {
 				result = "WIN";
@@ -457,6 +476,82 @@ namespace Bla
 
 			lolIt.setValue (LOLType.TROOF, result);
 			//	MainClass.win.displayTextToConsole (result);
+		}
+
+		void arityAnd(int location){
+			string result = "";
+			lolValue x;
+			lolValue y;
+			int parameters = 0;
+			location++;
+			while(tokenList [location].getValue () != "MKAY"){
+				if(tokenList [location].getValue () != "AN"){
+					parameters++;
+				}
+				location++;
+			}
+
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			x = lolIt.getCopy();
+			x = implicitCast (x, LOLType.TROOF);
+			result = x.getValue();
+			parameters--;
+
+
+			while(parameters != 0){
+				currentPosition++;
+				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+				y = lolIt.getCopy ();
+				y = implicitCast (y, LOLType.TROOF);
+
+				if (result == "WIN" && y.getValue () == "WIN") {
+					result = "WIN";
+				} else
+					result = "FAIL";
+
+				parameters--;
+			}
+		
+			lolIt.setValue (LOLType.TROOF, result);
+		}
+
+		void arityOr(int location){
+			string result = "";
+			lolValue x;
+			lolValue y;
+			int parameters = 0;
+			location++;
+			while(tokenList [location].getValue () != "MKAY"){
+				if(tokenList [location].getValue () != "AN"){
+					parameters++;
+				}
+				location++;
+			}
+
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			x = lolIt.getCopy();
+			x = implicitCast (x, LOLType.TROOF);
+			result = x.getValue();
+			parameters--;
+
+
+			while(parameters != 0){
+				currentPosition++;
+				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+				y = lolIt.getCopy ();
+				y = implicitCast (y, LOLType.TROOF);
+
+				if (result == "FAIL" && y.getValue () == "FAIL") {
+					result = "FAIL";
+				} else
+					result = "WIN";
+
+				parameters--;
+			}
+
+			lolIt.setValue (LOLType.TROOF, result);
 		}
 		#endregion
 
@@ -491,9 +586,47 @@ namespace Bla
 			lolIt.setValue (tokToLolType [tokenList [location].getType ()], tokenList [location].getValue ());
 		}
 
-
 		void concat(int location){
+			string result = "";
+			lolValue string1;
+			lolValue string2;
+			int parameters = 0;
+			char quote = '"';
 
+			while(tokenList [location].getValue () != "MKAY"){
+				location++;
+				if (tokenList [location].getValue () == quote.ToString ()) {
+					parameters++;
+					location += 3;
+					if (tokenList [location].getValue () != "AN")
+						location--;
+				} else {
+					parameters++;
+					location++;
+					if (tokenList [location].getValue () != "AN")
+						location--;
+				}
+			}
+				
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			string1 = lolIt.getCopy ();
+			string1 = implicitCast (string1, LOLType.YARN);
+			result = string1.getValue ();
+			parameters--;
+
+			while(parameters != 0){
+				currentPosition++;
+				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+				string2 = lolIt.getCopy ();
+				string2 = implicitCast (string2, LOLType.YARN);
+
+				result = result + string2.getValue ();
+
+				parameters--;
+			}
+
+			lolIt.setValue (LOLType.YARN, result);
 		}
 		#endregion
 
@@ -681,6 +814,7 @@ namespace Bla
 			}
 			return cast(lv, toType);
 		}
+
 		lolValue cast(lolValue lv, LOLType toType) {
 			string newValue = "";
 			switch(toType) {
