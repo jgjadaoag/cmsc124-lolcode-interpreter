@@ -464,10 +464,7 @@ namespace Bla
 			lolValue y;
 			int parameters = 0;
 
-			int locationEnd = location;
-			while(tokenList [locationEnd].getValue () != "MKAY"){
-				locationEnd++;
-			}
+			int locationEnd = goToMkay (location+1);
 
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
@@ -494,16 +491,28 @@ namespace Bla
 			lolIt.setValue (LOLType.TROOF, result);
 		}
 
+		int goToMkay(int location) {
+			int stack = 0;
+
+			while(true){
+				if (stack == 0 && tokenList [location].getType () == TokenType.MKAY)
+					break;
+				if (tokenList [location].getType () == TokenType.ANY_OF || tokenList [location].getType () == TokenType.ALL_OF || tokenList [location].getType () == TokenType.SMOOSH)
+					stack++;
+				if (tokenList [location].getType () == TokenType.MKAY) 
+					stack --;
+				location++;
+			}
+
+			return location;
+		}
 		void arityOr(int location){
 			string result = "";
 			lolValue x;
 			lolValue y;
 			int parameters = 0;
 
-			int locationEnd = location;
-			while(tokenList [locationEnd].getValue () != "MKAY"){
-				locationEnd++;
-			}
+			int locationEnd = goToMkay (location+1);
 
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
