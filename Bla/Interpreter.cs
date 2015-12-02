@@ -165,12 +165,16 @@ namespace Bla
 		}
 
 		void variableAssignment(int location){
+			//Execute expressions first
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+
 			if (variableTable.hasVariable (tokenList [location].getValue ())) {
 				variableTable.setVar (tokenList [location].getValue (), 
-					tokToLolType [tokenList [location + 2].getType ()],
-					tokenList [location + 2].getValue ());
+					lolIt.getType(),
+					lolIt.getValue ());
 			} else {
-				setError ("Error: Variable " + tokenList[location].getValue() + " not declared");
+				setError ("Error: Variable " + tokenList[location].getValue() + "is not yet declared");
 			}
 			MainClass.win.refreshSymbol (variableTable);
 		}
@@ -584,11 +588,13 @@ namespace Bla
 					parameters++;
 					location += 3;
 					if (tokenList [location].getValue () != "AN" && tokenList [location].getValue () != "MKAY")
+
 						location--;
 				} else {
 					parameters++;
 					location++;
 					if (tokenList [location].getValue () != "AN" && tokenList [location].getValue () != "MKAY")
+
 						location--;
 				}
 			}
