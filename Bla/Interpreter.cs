@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Bla
@@ -152,6 +152,7 @@ namespace Bla
 			}
 			MainClass.win.refreshSymbol (variableTable);
 		}
+
 		void variableDeclaration(int location) {
 			if (!variableTable.hasVariable (tokenList [location + 1].getValue ())) {
 				variableTable.createVar (tokenList [location + 1].getValue (), 
@@ -462,12 +463,10 @@ namespace Bla
 			lolValue x;
 			lolValue y;
 			int parameters = 0;
-			location++;
-			while(tokenList [location].getValue () != "MKAY"){
-				if(tokenList [location].getValue () != "AN"){
-					parameters++;
-				}
-				location++;
+
+			int locationEnd = location;
+			while(tokenList [locationEnd].getValue () != "MKAY"){
+				locationEnd++;
 			}
 
 			currentPosition++;
@@ -478,7 +477,7 @@ namespace Bla
 			parameters--;
 
 
-			while(parameters != 0){
+			while(currentPosition < actionList.Count - 1 && actionList[currentPosition + 1].location < locationEnd){
 				currentPosition++;
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 				y = lolIt.getCopy ();
@@ -500,12 +499,10 @@ namespace Bla
 			lolValue x;
 			lolValue y;
 			int parameters = 0;
-			location++;
-			while(tokenList [location].getValue () != "MKAY"){
-				if(tokenList [location].getValue () != "AN"){
-					parameters++;
-				}
-				location++;
+
+			int locationEnd = location;
+			while(tokenList [locationEnd].getValue () != "MKAY"){
+				locationEnd++;
 			}
 
 			currentPosition++;
@@ -516,7 +513,7 @@ namespace Bla
 			parameters--;
 
 
-			while(parameters != 0){
+			while(currentPosition < actionList.Count - 1 && actionList[currentPosition + 1].location < locationEnd){
 				currentPosition++;
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 				y = lolIt.getCopy ();
@@ -574,11 +571,16 @@ namespace Bla
 
 			while(tokenList [location].getValue () != "MKAY"){
 				location++;
-				if(tokenList [location].getValue () == quote.ToString()){
+				if (tokenList [location].getValue () == quote.ToString ()) {
 					parameters++;
 					location += 3;
-					if(tokenList [location].getValue () != "AN")
-					location--;
+					if (tokenList [location].getValue () != "AN" && tokenList [location].getValue () != "MKAY")
+						location--;
+				} else {
+					parameters++;
+					location++;
+					if (tokenList [location].getValue () != "AN" && tokenList [location].getValue () != "MKAY")
+						location--;
 				}
 			}
 				
@@ -586,6 +588,7 @@ namespace Bla
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			string1 = lolIt.getCopy ();
 			string1 = implicitCast (string1, LOLType.YARN);
+			Console.WriteLine (string1.getValue());
 			result = string1.getValue ();
 			parameters--;
 
@@ -594,7 +597,7 @@ namespace Bla
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 				string2 = lolIt.getCopy ();
 				string2 = implicitCast (string2, LOLType.YARN);
-
+				Console.WriteLine (string2.getValue());
 				result = result + string2.getValue ();
 
 				parameters--;
