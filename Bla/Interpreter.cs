@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Bla
@@ -169,6 +169,7 @@ namespace Bla
 			}
 			MainClass.win.refreshSymbol (variableTable);
 		}
+
 		void variableDeclaration(int location) {
 			if (!variableTable.hasVariable (tokenList [location + 1].getValue ())) {
 				variableTable.createVar (tokenList [location + 1].getValue (), 
@@ -483,13 +484,8 @@ namespace Bla
 			lolValue x;
 			lolValue y;
 			int parameters = 0;
-			location++;
-			while(tokenList [location].getValue () != "MKAY"){
-				if(tokenList [location].getValue () != "AN"){
-					parameters++;
-				}
-				location++;
-			}
+
+			int locationEnd = goToMkay (location+1);
 
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
@@ -499,7 +495,7 @@ namespace Bla
 			parameters--;
 
 
-			while(parameters != 0){
+			while(currentPosition < actionList.Count - 1 && actionList[currentPosition + 1].location < locationEnd){
 				currentPosition++;
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 				y = lolIt.getCopy ();
@@ -516,18 +512,28 @@ namespace Bla
 			lolIt.setValue (LOLType.TROOF, result);
 		}
 
+		int goToMkay(int location) {
+			int stack = 0;
+
+			while(true){
+				if (stack == 0 && tokenList [location].getType () == TokenType.MKAY)
+					break;
+				if (tokenList [location].getType () == TokenType.ANY_OF || tokenList [location].getType () == TokenType.ALL_OF || tokenList [location].getType () == TokenType.SMOOSH)
+					stack++;
+				if (tokenList [location].getType () == TokenType.MKAY) 
+					stack --;
+				location++;
+			}
+
+			return location;
+		}
 		void arityOr(int location){
 			string result = "";
 			lolValue x;
 			lolValue y;
 			int parameters = 0;
-			location++;
-			while(tokenList [location].getValue () != "MKAY"){
-				if(tokenList [location].getValue () != "AN"){
-					parameters++;
-				}
-				location++;
-			}
+
+			int locationEnd = goToMkay (location+1);
 
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
@@ -537,7 +543,7 @@ namespace Bla
 			parameters--;
 
 
-			while(parameters != 0){
+			while(currentPosition < actionList.Count - 1 && actionList[currentPosition + 1].location < locationEnd){
 				currentPosition++;
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 				y = lolIt.getCopy ();
@@ -598,12 +604,14 @@ namespace Bla
 				if (tokenList [location].getValue () == quote.ToString ()) {
 					parameters++;
 					location += 3;
-					if (tokenList [location].getValue () != "AN")
+					if (tokenList [location].getValue () != "AN" && tokenList [location].getValue () != "MKAY")
+
 						location--;
 				} else {
 					parameters++;
 					location++;
-					if (tokenList [location].getValue () != "AN")
+					if (tokenList [location].getValue () != "AN" && tokenList [location].getValue () != "MKAY")
+
 						location--;
 				}
 			}
@@ -612,6 +620,7 @@ namespace Bla
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			string1 = lolIt.getCopy ();
 			string1 = implicitCast (string1, LOLType.YARN);
+			Console.WriteLine (string1.getValue());
 			result = string1.getValue ();
 			parameters--;
 
@@ -620,7 +629,7 @@ namespace Bla
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 				string2 = lolIt.getCopy ();
 				string2 = implicitCast (string2, LOLType.YARN);
-
+				Console.WriteLine (string2.getValue());
 				result = result + string2.getValue ();
 
 				parameters--;
