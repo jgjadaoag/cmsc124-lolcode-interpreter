@@ -64,12 +64,14 @@ namespace Bla
 			return program2 ();
 		}
 
-		bool program(){
-			return term(TokenType.HAI) && term(TokenType.STATEMENT_DELIMETER) && codeBlock() && term(TokenType.STATEMENT_DELIMETER) && term(TokenType.KTHXBYE);
-		}
-
 		bool program2(){
-			return term(TokenType.HAI) && term(TokenType.STATEMENT_DELIMETER) && codeBlock(TokenType.KTHXBYE, actionOrder) && term(TokenType.STATEMENT_DELIMETER) && term(TokenType.KTHXBYE);
+			int save = currentPosition;
+			bool result = ((currentPosition = save) == save & term (TokenType.HAI) && term (TokenType.STATEMENT_DELIMETER) && codeBlock (TokenType.KTHXBYE, actionOrder) && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.KTHXBYE)) ||
+				((currentPosition = save) == save & term (TokenType.HAI) && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.KTHXBYE));
+			if (currentPosition == tokenList.Count)
+				return result;
+
+			return false;
 		}
 
 		bool term(TokenType tokType){
@@ -78,29 +80,6 @@ namespace Bla
 			//Console.WriteLine ("Current Token: "+tokenList[currentPosition].Item1.getType());
 			//Console.WriteLine ("Ask token: "+tokType);
 			return tokenList[currentPosition++].getType() == tokType;
-		}
-
-		bool codeBlock(){
-			int save = currentPosition;
-			tempActionOrder.Clear ();
-			int lastInstruction = actionOrder.Count;
-			if ((currentPosition = save) == save & statement () && term (TokenType.STATEMENT_DELIMETER) && codeBlock ()) {
-				return true;
-			} else if ((currentPosition = save) == save & statement ()) {
-				//this is always called when an extra statement is called
-				if (lastInstruction < actionOrder.Count - 1) {
-					int repeatedInstruction;
-					for ( repeatedInstruction = lastInstruction + 1; repeatedInstruction < actionOrder.Count; repeatedInstruction++) {
-						if (actionOrder [repeatedInstruction].location == actionOrder [lastInstruction].location) {
-							break;
-						}
-							
-					}
-					actionOrder.RemoveRange (repeatedInstruction, repeatedInstruction - lastInstruction);
-				}
-				return true;
-			}
-			return false;
 		}
 
 		bool codeBlock(TokenType endsWith, List<lolStatement> masterActionOrder) {
@@ -139,35 +118,14 @@ namespace Bla
 			} else if ((currentPosition = save) == save & input ()) {
 			} else if ((currentPosition = save) == save & output ()) {
 			} else if ((currentPosition = save) == save & concatenation ()) {
+			} else if ((currentPosition = save) == save & cast2()){ 
 			} else if ((currentPosition = save) == save & expression ()) {
 			} else {
 				return false;
 			}
 			return true;
 		}
-		bool statement(){
-			int save = currentPosition;
-
-			if (term (TokenType.STATEMENT_DELIMETER)) {
-				currentPosition = save;
-				return true;
-			}
-			if ((currentPosition = save) == save & vardec ()) {
-			} else if ((currentPosition = save) == save & variableAssignment ()) {
-			} else if ((currentPosition = save) == save & gtfo ()) {
-			} else if ((currentPosition = save) == save & ifThen ()) {
-			} else if ((currentPosition = save) == save & switchBlock ()) {
-			} else if ((currentPosition = save) == save & input ()) {
-			} else if ((currentPosition = save) == save & output ()) {
-			} else if ((currentPosition = save) == save & term(Bla.TokenType.GTFO)){ 
-			} else if ((currentPosition = save) == save & expression ()) {
-			} else {
-				return false;
-			}
-			actionOrder.AddRange (tempActionOrder);
-			tempActionOrder.Clear ();
-			return true;
-		}
+	
 
 		bool variableAssignment(){
 			int save = currentPosition;
@@ -217,10 +175,20 @@ namespace Bla
 		}
 
 		bool concatenation(){
+			int save = currentPosition;
+
 			int actionSave = tempActionOrder.Count;
 			tempActionOrder.Add (new lolStatement (Statement_Types.CONCAT, currentPosition));
 
-			if (term (TokenType.SMOOSH) && stringList() && term(TokenType.MKAY)) {
+			if ((currentPosition = save) == save & term (TokenType.SMOOSH) && stringList () && term (TokenType.MKAY)) {
+				return true;
+			} 
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			tempActionOrder.Add (new lolStatement (Statement_Types.CONCAT, currentPosition));
+
+			if ((currentPosition = save) == save & term (TokenType.SMOOSH) && stringList () && term(TokenType.STATEMENT_DELIMETER)) {
+				currentPosition--;
 				return true;
 			}
 
@@ -265,6 +233,31 @@ namespace Bla
 			int actionSave = tempActionOrder.Count;
 
 			if (expression()) {
+				tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		bool cast1(){
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.CAST_MAEK, currentPosition));
+
+			if (term (TokenType.MAEK) && expression () && term (TokenType.A) && term(TokenType.TYPE_LITERAL)) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		bool cast2(){
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.CAST_IS_NOW_A, currentPosition));
+
+			if (term (TokenType.VARIABLE_IDENTIFIER) && term(TokenType.IS_NOW_A) && term(TokenType.TYPE_LITERAL)) {
 				return true;
 			}
 
@@ -285,6 +278,7 @@ namespace Bla
 			} else if ((currentPosition = save) == save & booleanOperation ()) {
 			} else if ((currentPosition = save) == save & compareOperator ()) {
 			} else if ((currentPosition = save) == save & concatenation ()) {
+			} else if ((currentPosition = save) == save & cast1 ()) {
 			} else if ((currentPosition = save) == save & literal ()) {
 				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
 					Console.WriteLine ("Literal statement");
@@ -395,7 +389,7 @@ namespace Bla
 				((currentPosition = save) == save & caseCondition() && defaultCaseStatement()) ||
 				((currentPosition = save) == save & defaultCaseStatement()) ||
 			    ((currentPosition = save) == save & caseStatement())
-			       );
+			);
 		}
 
 		bool defaultCaseStatement(){	
