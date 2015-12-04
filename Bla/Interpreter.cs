@@ -35,7 +35,11 @@ namespace Bla
 		NOT,
 		OIC,
 		ARITY_AND,
-		ARITY_OR
+		ARITY_OR,
+		FUNCTION_DEFINITION,
+		FUNCTION_END,
+		FUNCTION_CALL,
+		FUNCTION_RETURN,
 	}
 
 	public class lolStatement {
@@ -130,6 +134,10 @@ namespace Bla
 			actionMap.Add (Statement_Types.GTFO, gtfo);
 			actionMap.Add (Statement_Types.ARITY_AND, arityAnd);
 			actionMap.Add (Statement_Types.ARITY_OR, arityOr);
+			actionMap.Add (Statement_Types.FUNCTION_DEFINITION, functionDefinition);
+			actionMap.Add (Statement_Types.FUNCTION_CALL, functionCall);
+			actionMap.Add (Statement_Types.FUNCTION_END, functionEnd);
+			actionMap.Add (Statement_Types.FUNCTION_RETURN, functionEnd);
 		}
 
 		public void runProgram() {
@@ -675,6 +683,36 @@ namespace Bla
 				}
 			}
 		}
+
+		void goToEndBlock() {
+			Stack<TokenType> blocks = new Stack<TokenType> ();
+
+			while (currentPosition < actionList.Count - 1) {
+				currentPosition++;
+				switch (actionList [currentPosition].type) {
+				case Statement_Types.SWITCH:
+				case Statement_Types.IF_THEN_START:
+					blocks.Push (TokenType.OIC);
+					break;
+				case Statement_Types.FUNCTION_DEFINITION:
+					blocks.Push (TokenType.IF_U_SAY_SO);
+					break;
+				case Statement_Types.OIC:
+					if (blocks.Count != 0 && blocks.Peek() == TokenType.OIC) {
+						blocks.Pop();
+						break;
+					}
+					return;
+				case Statement_Types.FUNCTION_END:
+					if (blocks.Count != 0 && blocks.Peek() == TokenType.IF_U_SAY_SO) {
+						blocks.Pop();
+						break;
+					}
+					return;
+				}
+			}
+		}
+
 		void goToNextIfCondition() {
 			int newBlock = 0;
 
@@ -806,8 +844,26 @@ namespace Bla
 		}
 
 		void gtfo(int location) {
+			lolIt.setValue (LOLType.NOOB, "");
 			goToOIC ();
 		}
+		#endregion
+
+		#region Function
+
+		void functionDefinition(int location) {
+			goToEndBlock ();
+		}
+
+		void functionEnd(int location) {
+		}
+
+		void functionCall(int location) {
+		}
+
+		void functionReturn(int location) {
+		}
+
 		#endregion
 
 		#region Helper functions

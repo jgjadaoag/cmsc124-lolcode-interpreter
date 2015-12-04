@@ -140,6 +140,8 @@ namespace Bla
 			} else if ((currentPosition = save) == save & output ()) {
 			} else if ((currentPosition = save) == save & concatenation ()) {
 			} else if ((currentPosition = save) == save & expression ()) {
+			} else if ((currentPosition = save) == save & functionBlock()) {
+			} else if ((currentPosition = save) == save & functionCall()) {
 			} else {
 				return false;
 			}
@@ -160,6 +162,7 @@ namespace Bla
 			} else if ((currentPosition = save) == save & input ()) {
 			} else if ((currentPosition = save) == save & output ()) {
 			} else if ((currentPosition = save) == save & term(Bla.TokenType.GTFO)){ 
+			} else if ((currentPosition = save) == save & functionBlock()) {
 			} else if ((currentPosition = save) == save & expression ()) {
 			} else {
 				return false;
@@ -757,6 +760,69 @@ namespace Bla
 
 			return true;
 		}
+
+		#region Function
+
+		bool functionBlock() {
+			int actionSave = tempActionOrder.Count;
+			if (!functionStart ()) {
+				tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+
+				return false;
+			}
+
+			List<lolStatement>  oldTempActionOrder = tempActionOrder;
+			tempActionOrder = new List<lolStatement> ();
+
+			if (term (TokenType.STATEMENT_DELIMETER) && codeBlock (TokenType.IF_U_SAY_SO, oldTempActionOrder) && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.IF_U_SAY_SO)) {
+				Console.WriteLine ("FUNCTION KOMPLIITO");
+				oldTempActionOrder.Add (new lolStatement(Statement_Types.FUNCTION_END, currentPosition - 1));
+				tempActionOrder = oldTempActionOrder;
+				return true;
+			}
+
+			tempActionOrder = oldTempActionOrder;
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+
+			return false;
+		}
+
+		bool functionStart() {
+			int save = currentPosition;
+
+			if (((currentPosition = save) == save & term(TokenType.HOW_IZ_I) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.YR) && functionArg()) ||
+				((currentPosition = save) == save & term (TokenType.HOW_IZ_I) && term (TokenType.VARIABLE_IDENTIFIER))){
+				tempActionOrder.Add (new lolStatement(Statement_Types.FUNCTION_DEFINITION, save));
+				return true;
+			}
+
+			return false;
+		}
+
+		bool functionArg() {
+			int save = currentPosition;
+
+			return (((currentPosition = save) == save & term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.AN) && term(TokenType.YR) && functionArg()) ||
+				((currentPosition = save) == save & term(TokenType.VARIABLE_IDENTIFIER))
+			);
+		}
+
+		bool functionCall() {
+			int save = currentPosition;
+
+			return (((currentPosition = save) == save & term (TokenType.I_IZ) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.MKAY)) || 
+				((currentPosition = save) == save & term (TokenType.I_IZ) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.YR) && functionActualArg())
+			);
+		}
+		bool functionActualArg() {
+			int save = currentPosition;
+
+			return (((currentPosition = save) == save & expression() && term(TokenType.AN) && term(TokenType.YR) && functionActualArg()) ||
+				((currentPosition = save) == save & expression() && term(TokenType.MKAY))
+			);
+		}
+
+		#endregion
 
 		private Tuple<LOLType, string> createValue(LOLType type, string value) {
 			return new Tuple<LOLType, string> (type, value);

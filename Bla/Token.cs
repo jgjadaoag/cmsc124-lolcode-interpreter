@@ -33,6 +33,7 @@ namespace Bla
 		OMG, 
 		OMGWTF,
 		GTFO,
+		YR,
 		STRING_DELIMETER,
 		STATEMENT_DELIMETER,
 		AN,
@@ -42,6 +43,10 @@ namespace Bla
 		BTW,
 		OBTW,
 		I_HAS_A,
+		HOW_IZ_I,
+		IF_U_SAY_SO,
+		I_IZ,
+		FOUND_YR,
 		SUM_OF,
 		DIFF_OF,
 		PRODUKT_OF,
@@ -144,6 +149,11 @@ namespace Bla
 			tokenDetails.Add (TokenType.TROOF_LITERAL, new Regex (@"^(WIN|FAIL)$"));
 			tokenDetails.Add (TokenType.TYPE_LITERAL, new Regex (@"^(YARN|NUMBR|NUMBAR|TROOF|NOOB)"));
 			tokenDetails.Add (TokenType.STATEMENT_DELIMETER, new Regex (@"^(\n|,)$"));
+			tokenDetails.Add (TokenType.HOW_IZ_I, new Regex (@"^HOW IZ I"));
+			tokenDetails.Add (TokenType.I_IZ, new Regex (@"^I IZ"));
+			tokenDetails.Add (TokenType.IF_U_SAY_SO, new Regex (@"^IF U SAY SO"));
+			tokenDetails.Add (TokenType.FOUND_YR, new Regex (@"^FOUND YR"));
+			tokenDetails.Add (TokenType.YR, new Regex (@"^YR$"));
 
 			skipSpace ();
 		}
