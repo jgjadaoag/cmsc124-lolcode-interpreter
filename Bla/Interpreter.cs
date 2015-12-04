@@ -686,23 +686,31 @@ namespace Bla
 			Console.WriteLine ("LOLIT: " + lolIt.getValue());
 			if (implicitCast (lolIt, LOLType.TROOF).getValue () == "WIN") {
 				currentPosition++;
+				Console.WriteLine ("if true first statement: " + actionList [currentPosition + 1].type + ", " + actionList [currentPosition].location );
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			} else {
+				currentPosition += 2;
 				goToNextIfCondition ();
+				Console.WriteLine ("Should be if false: " + actionList [currentPosition].type + ", " + actionList [currentPosition].location );
+				Console.WriteLine ("if false first statement: " + actionList [currentPosition + 1].type + ", " + actionList [currentPosition].location );
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 				if (actionList [currentPosition].type == Statement_Types.OIC) {
 					return;
 				}
 			}
+			Console.WriteLine ("ifThenStart: Current Statement: " + actionList [currentPosition].type + ", " + actionList [currentPosition].location );
+			if(currentPosition + 1 < actionList.Count)
+				currentPosition++;
 			goToOIC ();
-			currentPosition++;
+			Console.WriteLine ("ifThenStart: After OIC: " + actionList [currentPosition].type + ", " + actionList [currentPosition].location );
+			Console.Write (actionList [currentPosition].type);;
 		}
 
 		void goToOIC() {
 			int newBlock = 0;
 
 			while (currentPosition < actionList.Count - 1) {
-				currentPosition++;
+				Console.WriteLine("goToOIC checking statement: "  + actionList [currentPosition].type + ", " + actionList [currentPosition].location );
 				switch (actionList [currentPosition].type) {
 				case Statement_Types.SWITCH:
 				case Statement_Types.IF_THEN_START:
@@ -715,6 +723,7 @@ namespace Bla
 					}
 					return;
 				}
+				currentPosition++;
 			}
 		}
 		void goToNextIfCondition() {
@@ -722,6 +731,7 @@ namespace Bla
 
 			while (currentPosition < actionList.Count) {
 				currentPosition++;
+				Console.WriteLine ("Checking statement: " + actionList [currentPosition].type + ", " + actionList [currentPosition].location );
 				switch (actionList [currentPosition].type) {
 				case Statement_Types.SWITCH:
 				case Statement_Types.IF_THEN_START:
@@ -748,13 +758,17 @@ namespace Bla
 
 			int savePosition = currentPosition;
 			goToNextIfCondition ();
+			Console.WriteLine ("ifTrueBlock: Should be next condition: " + actionList [currentPosition].type);
 			int lastPosition = currentPosition;
 			currentPosition = savePosition;
 
-			while (currentPosition < lastPosition) {
+			while (currentPosition + 1 < lastPosition) {
 				currentPosition++;
+
+				Console.WriteLine ("ifTrueBlock Executing: " + actionList [currentPosition].type + ", " + actionList [currentPosition].location );
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			}
+			Console.WriteLine ("ifTrueBlock next statement: " + actionList [currentPosition + 1].type + ", " + actionList [currentPosition + 1].location);
 		}
 
 		void ifFalseBlock(int location) {
