@@ -68,6 +68,7 @@ namespace Bla
 			int save = currentPosition;
 			bool result = ((currentPosition = save) == save & term (TokenType.HAI) && term (TokenType.STATEMENT_DELIMETER) && codeBlock (TokenType.KTHXBYE, actionOrder) && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.KTHXBYE)) ||
 				((currentPosition = save) == save & term (TokenType.HAI) && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.KTHXBYE));
+
 			if (currentPosition == tokenList.Count)
 				return result;
 
@@ -126,7 +127,7 @@ namespace Bla
 			return true;
 		}
 	
-
+		#region Variable Operations
 		bool variableAssignment(){
 			int save = currentPosition;
 			if (term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.R) && expression ()) {
@@ -139,16 +140,35 @@ namespace Bla
 			return true;
 		}
 
-		bool gtfo () {
+		bool vardec(){
 			int save = currentPosition;
-			if (term (TokenType.GTFO)) {
-				tempActionOrder.Add (new lolStatement (Statement_Types.GTFO, save));
-				return true;
+			if ((currentPosition = save) == save & variableDeclarationItz()) {
+			} else if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER)) {
+				tempActionOrder.Clear();
+				tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION, save));
 			} else {
 				return false;
 			}
+			return true;
 		}
 
+		bool variableDeclarationItz() {
+			int save = currentPosition;
+			tempActionOrder.Clear ();
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION_ITZ, save));
+
+			if (term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.ITZ) && expression ()) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange (actionSave, tempActionOrder.Count - actionSave);
+
+			return false;
+		}
+		#endregion
+
+		#region I/O
 		bool input(){
 			int save = currentPosition;
 			if (term (TokenType.GIMMEH) && term (TokenType.VARIABLE_IDENTIFIER)) {
@@ -170,6 +190,48 @@ namespace Bla
 			} else {
 				return false;
 			}
+
+			return true;
+		}
+		#endregion
+
+		#region Expressions
+		bool expression(){
+			int save = currentPosition;
+
+			if ((currentPosition = save) == save & term (TokenType.VARIABLE_IDENTIFIER)) {
+				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
+					Console.WriteLine ("VARIABLE statement");
+					//tempActionOrder.Clear ();
+				}
+				tempActionOrder.Add (new lolStatement (Statement_Types.VARIABLE_IDENTIFIER, save));
+			} else if ((currentPosition = save) == save & mathOperator ()) {
+			} else if ((currentPosition = save) == save & booleanOperation ()) {
+			} else if ((currentPosition = save) == save & compareOperator ()) {
+			} else if ((currentPosition = save) == save & concatenation ()) {
+			} else if ((currentPosition = save) == save & cast1 ()) {
+			} else if ((currentPosition = save) == save & literal ()) {
+				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
+					Console.WriteLine ("Literal statement");
+					//tempActionOrder.Clear ();
+				}
+			} else {
+				return false;
+			}
+			return true;
+		}
+
+		bool literal(){
+			int save = currentPosition;
+			if ((currentPosition = save) == save & term (TokenType.NUMBR_LITERAL)) {
+			} else if ((currentPosition = save) == save & term (TokenType.NUMBAR_LITERAL)) {
+			} else if ((currentPosition = save) == save & term(TokenType.STRING_DELIMETER) && term (TokenType.YARN_LITERAL) && term(TokenType.STRING_DELIMETER)) {
+			} else if ((currentPosition = save) == save & term (TokenType.TROOF_LITERAL)) {
+			} else {
+				return false;
+			}
+
+			tempActionOrder.Add (new lolStatement (Statement_Types.LITERAL, save));
 
 			return true;
 		}
@@ -264,34 +326,9 @@ namespace Bla
 			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
 			return false;
 		}
-
-		bool expression(){
-			int save = currentPosition;
-
-			if ((currentPosition = save) == save & term (TokenType.VARIABLE_IDENTIFIER)) {
-				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
-					Console.WriteLine ("VARIABLE statement");
-					//tempActionOrder.Clear ();
-				}
-				tempActionOrder.Add (new lolStatement (Statement_Types.VARIABLE_IDENTIFIER, save));
-			} else if ((currentPosition = save) == save & mathOperator ()) {
-			} else if ((currentPosition = save) == save & booleanOperation ()) {
-			} else if ((currentPosition = save) == save & compareOperator ()) {
-			} else if ((currentPosition = save) == save & concatenation ()) {
-			} else if ((currentPosition = save) == save & cast1 ()) {
-			} else if ((currentPosition = save) == save & literal ()) {
-				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
-					Console.WriteLine ("Literal statement");
-					//tempActionOrder.Clear ();
-				}
-			} else {
-				return false;
-			}
-			return true;
-		}
+		#endregion
 
 		#region Conditional
-
 		bool ifThen(){
 			int actionSave = tempActionOrder.Count;
 
@@ -385,11 +422,28 @@ namespace Bla
 
 		bool caseBlock(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & caseStatement() && caseBlock()) ||
-				((currentPosition = save) == save & caseCondition() && defaultCaseStatement()) ||
-				((currentPosition = save) == save & defaultCaseStatement()) ||
-			    ((currentPosition = save) == save & caseStatement())
-			);
+			int actionSave = tempActionOrder.Count;
+
+			if ((currentPosition = save) == save & caseStatement() && caseBlock()) {
+				return true;
+			}
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+
+			if ((currentPosition = save) == save & caseCondition() && defaultCaseStatement()) {
+				return true;
+			}
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+
+			if ((currentPosition = save) == save & defaultCaseStatement()) {
+				return true;
+			}
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+
+			if ((currentPosition = save) == save & caseStatement()) {
+				return true;
+			}
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool defaultCaseStatement(){	
@@ -463,8 +517,18 @@ namespace Bla
 			return false;
 		}
 
+		bool gtfo () {
+			int save = currentPosition;
+			if (term (TokenType.GTFO)) {
+				tempActionOrder.Add (new lolStatement (Statement_Types.GTFO, save));
+				return true;
+			} else {
+				return false;
+			}
+		}
 		#endregion
 
+		#region Math Operators
 		bool mathOperator(){
 			int save = currentPosition;
 			if ((currentPosition = save) == save & addition ()) {
@@ -563,14 +627,16 @@ namespace Bla
 			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
 			return false;
 		}
+		#endregion
 
+		#region Comparison
 		bool compareOperator(){
 			int save = currentPosition;
 			return (((currentPosition = save) == save & equality()) ||
 				((currentPosition = save) == save & inequality())
 				);
 		}
-
+	
 		bool equality(){
 			int actionSave = tempActionOrder.Count;
 			tempActionOrder.Add (new lolStatement (Statement_Types.EQUALITY, currentPosition));
@@ -588,6 +654,67 @@ namespace Bla
 			tempActionOrder.Add (new lolStatement (Statement_Types.INEQUALITY, currentPosition));
 
 			if (term (TokenType.DIFFRINT) && expression () && term (TokenType.AN) && expression ()) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+		#endregion
+
+		#region Boolean Operations
+		bool booleanOperation(){
+			int save = currentPosition;
+			return (((currentPosition = save) == save & andOperator()) ||
+					((currentPosition = save) == save & orOperator ()) ||
+					((currentPosition = save) == save & xorOperator ()) ||
+			        ((currentPosition = save) == save & unaryNegation ()) ||
+					((currentPosition = save) == save & infiniteArityAnd ()) ||
+					((currentPosition = save) == save & infiniteArityOr ())
+					);
+		}
+
+		bool andOperator(){
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.AND, currentPosition));
+
+			if (term (TokenType.BOTH_OF) && expression () && term (TokenType.AN) && expression ()) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		bool orOperator(){
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.OR, currentPosition));
+
+			if (term (TokenType.EITHER_OF) && expression () && term (TokenType.AN) && expression ()) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		bool xorOperator(){
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.XOR, currentPosition));
+
+			if (term (TokenType.WON_OF) && expression () && term (TokenType.AN) && expression ()) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		bool unaryNegation(){
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.NOT, currentPosition));
+
+			if (term (TokenType.NOT) && expression ()) {
 				return true;
 			}
 
@@ -650,107 +777,7 @@ namespace Bla
 			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
 			return false;
 		}
-
-		bool booleanOperation(){
-			int save = currentPosition;
-			return (((currentPosition = save) == save & andOperator()) ||
-					((currentPosition = save) == save & orOperator ()) ||
-					((currentPosition = save) == save & xorOperator ()) ||
-			        ((currentPosition = save) == save & unaryNegation ()) ||
-					((currentPosition = save) == save & infiniteArityAnd ()) ||
-					((currentPosition = save) == save & infiniteArityOr ())
-					);
-		}
-
-		bool andOperator(){
-			int actionSave = tempActionOrder.Count;
-			tempActionOrder.Add (new lolStatement (Statement_Types.AND, currentPosition));
-
-			if (term (TokenType.BOTH_OF) && expression () && term (TokenType.AN) && expression ()) {
-				return true;
-			}
-
-			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
-			return false;
-		}
-
-		bool orOperator(){
-			int actionSave = tempActionOrder.Count;
-			tempActionOrder.Add (new lolStatement (Statement_Types.OR, currentPosition));
-
-			if (term (TokenType.EITHER_OF) && expression () && term (TokenType.AN) && expression ()) {
-				return true;
-			}
-
-			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
-			return false;
-		}
-
-		bool xorOperator(){
-			int actionSave = tempActionOrder.Count;
-			tempActionOrder.Add (new lolStatement (Statement_Types.XOR, currentPosition));
-
-			if (term (TokenType.WON_OF) && expression () && term (TokenType.AN) && expression ()) {
-				return true;
-			}
-
-			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
-			return false;
-		}
-
-		bool unaryNegation(){
-			int actionSave = tempActionOrder.Count;
-			tempActionOrder.Add (new lolStatement (Statement_Types.NOT, currentPosition));
-
-			if (term (TokenType.NOT) && expression ()) {
-				return true;
-			}
-
-			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
-			return false;
-		}
-
-		bool vardec(){
-			int save = currentPosition;
-			if ((currentPosition = save) == save & variableDeclarationItz()) {
-			} else if ((currentPosition = save) == save & term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER)) {
-				tempActionOrder.Clear();
-				tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION, save));
-			} else {
-				return false;
-			}
-			return true;
-		}
-
-		bool variableDeclarationItz() {
-			int save = currentPosition;
-			tempActionOrder.Clear ();
-			int actionSave = tempActionOrder.Count;
-			tempActionOrder.Add (new lolStatement(Statement_Types.VARIABLE_DECLARATION_ITZ, save));
-
-			if (term (TokenType.I_HAS_A) && term (TokenType.VARIABLE_IDENTIFIER) && term (TokenType.ITZ) && expression ()) {
-				return true;
-			}
-
-			tempActionOrder.RemoveRange (actionSave, tempActionOrder.Count - actionSave);
-
-			return false;
-		}
-
-		bool literal(){
-			int save = currentPosition;
-			if ((currentPosition = save) == save & term (TokenType.NUMBR_LITERAL)) {
-			} else if ((currentPosition = save) == save & term (TokenType.NUMBAR_LITERAL)) {
-			} else if ((currentPosition = save) == save & term(TokenType.STRING_DELIMETER) && term (TokenType.YARN_LITERAL) && term(TokenType.STRING_DELIMETER)) {
-			} else if ((currentPosition = save) == save & term (TokenType.TROOF_LITERAL)) {
-			} else {
-				return false;
-			}
-
-			tempActionOrder.Add (new lolStatement (Statement_Types.LITERAL, save));
-
-			return true;
-		}
+		#endregion
 
 		private Tuple<LOLType, string> createValue(LOLType type, string value) {
 			return new Tuple<LOLType, string> (type, value);
