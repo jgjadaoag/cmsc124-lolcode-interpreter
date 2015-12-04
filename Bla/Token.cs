@@ -262,7 +262,7 @@ namespace Bla
 			
 		private Token readString(string str){
 			string holder = "";
-
+			string special = "";
 			foreach(char c in str){
 				if(c == '"'){
 					currentPosition += holder.Length;
@@ -272,6 +272,7 @@ namespace Bla
 				} else {
 					holder += c;
 				}
+					
 				Console.WriteLine (holder);
 			}
 

@@ -1,4 +1,5 @@
 using System;
+using System.Media;
 using System.Collections.Generic;
 
 namespace Bla
@@ -571,7 +572,43 @@ namespace Bla
 			//Execute expressions first
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			MainClass.win.displayTextToConsole (lolIt.getValue());
+
+			MainClass.win.displayTextToConsole (parseString(lolIt.getValue()));
+		}
+
+		string parseString(string str){
+			string holder = "";
+
+			for (int count = 0; count < str.Length; count++) {
+				if (str [count] == ':') {
+					switch (str [count + 1]) {
+						case ')':
+							holder += "\n";
+							count = count + 1;
+							break;
+						case '>':
+							holder += "\t";
+							count = count + 1;
+							break;
+						case 'o':
+							SystemSounds.Beep.Play ();
+							count = count + 1;
+							break;
+						case '"':
+							holder += "\"";
+							count = count + 1;
+							break;
+						case ':':
+							holder += ":";
+							count = count + 1;
+							break;
+						//default: holder += str[count];
+					}
+				} else {
+					holder += str [count];
+				}
+			}
+			return holder;
 		}
 
 		void input(int location) {
