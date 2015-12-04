@@ -13,11 +13,16 @@ public partial class MainWindow: Gtk.Window
 		Build ();
 		lexemesInit ();
 		symbolTableInit ();
-
+			
 		//change console background color
 		console.ModifyBase(StateType.Normal, new Gdk.Color(0000,0000,0000));
 		//change window color
 		fixed1.ModifyBg (StateType.Normal, new Gdk.Color (0240, 0240, 0240));
+
+		//change console text color
+		var consoleTextColorTag = new TextTag ("colorTag");
+		consoleTextColorTag.Foreground = "white";
+		console.Buffer.TagTable.Add (consoleTextColorTag);
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
@@ -95,26 +100,39 @@ public partial class MainWindow: Gtk.Window
 
 	public void displayTextToConsole (String stringText)
 	{
-		//change console text color
-		var consoleTextColorTag = new TextTag ("colorTag");
-		consoleTextColorTag.Foreground = "white";
-		console.Buffer.TagTable.Add (consoleTextColorTag);
-
 		TextIter insertIter = console.Buffer.EndIter;
+		Console.WriteLine (stringText);
 		console.Buffer.InsertWithTagsByName (ref insertIter, stringText + "\n", "colorTag");
-		console.Buffer.ApplyTag ("word_wrap", console.Buffer.StartIter, console.Buffer.EndIter);
+		//console.Buffer.ApplyTag ("word_wrap", console.Buffer.StartIter, console.Buffer.EndIter);
 	}
 
 	protected void OnOpenFileButtonClicked (object sender, EventArgs e)
 	{
-		using (FileChooserDialog fileChooser = new FileChooserDialog (null,"Open File", // pang- gawa nung pang open na window
+		using (FileChooserDialog fileChooser = new FileChooserDialog (null,"Open File",
 		                                                              null, FileChooserAction.Open,"Cancel", ResponseType.Cancel, 
 		                                                              "Open", ResponseType.Accept)) {
 			if (fileChooser.Run () == (int)ResponseType.Accept) {
 				System.IO.StreamReader file = System.IO.File.OpenText (fileChooser.Filename);
-				codeField.Buffer.Text = "  " + file.ReadToEnd ();		// pag lagay dun sa text view
+			/*	codeField.Buffer.Text = file.ReadAllLines ();		// put the file content to codeField
+
 				file.Close ();
-				fileChooser.Destroy ();		//pang close nung window
+				fileChooser.Destroy ();*/
+				
+				string line = file.ReadLine();
+				string nextLine;
+				while(line != null)
+				{
+					nextLine = file.ReadLine ();
+					if (nextLine == null)
+						codeField.Buffer.Text += line;
+					else 
+						codeField.Buffer.Text += line + "\n";
+
+					line = nextLine;
+				}
+
+				file.Close();
+				fileChooser.Destroy ();
 			}
 		}
 	}
