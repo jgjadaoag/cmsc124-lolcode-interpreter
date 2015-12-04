@@ -422,11 +422,28 @@ namespace Bla
 
 		bool caseBlock(){
 			int save = currentPosition;
-			return (((currentPosition = save) == save & caseStatement() && caseBlock()) ||
-				((currentPosition = save) == save & caseCondition() && defaultCaseStatement()) ||
-				((currentPosition = save) == save & defaultCaseStatement()) ||
-			    ((currentPosition = save) == save & caseStatement())
-			);
+			int actionSave = tempActionOrder.Count;
+
+			if ((currentPosition = save) == save & caseStatement() && caseBlock()) {
+				return true;
+			}
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+
+			if ((currentPosition = save) == save & caseCondition() && defaultCaseStatement()) {
+				return true;
+			}
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+
+			if ((currentPosition = save) == save & defaultCaseStatement()) {
+				return true;
+			}
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+
+			if ((currentPosition = save) == save & caseStatement()) {
+				return true;
+			}
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool defaultCaseStatement(){	

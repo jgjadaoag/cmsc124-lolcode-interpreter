@@ -683,26 +683,26 @@ namespace Bla
 
 		#region Conditional
 		void ifThenStart(int location) {
-			Console.WriteLine ("LOLIT: " + lolIt.getValue());
 			if (implicitCast (lolIt, LOLType.TROOF).getValue () == "WIN") {
 				currentPosition++;
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			} else {
+				currentPosition += 2;
 				goToNextIfCondition ();
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 				if (actionList [currentPosition].type == Statement_Types.OIC) {
 					return;
 				}
 			}
+			if(currentPosition + 1 < actionList.Count)
+				currentPosition++;
 			goToOIC ();
-			currentPosition++;
 		}
 
 		void goToOIC() {
 			int newBlock = 0;
 
 			while (currentPosition < actionList.Count - 1) {
-				currentPosition++;
 				switch (actionList [currentPosition].type) {
 				case Statement_Types.SWITCH:
 				case Statement_Types.IF_THEN_START:
@@ -715,6 +715,7 @@ namespace Bla
 					}
 					return;
 				}
+				currentPosition++;
 			}
 		}
 		void goToNextIfCondition() {
@@ -744,21 +745,20 @@ namespace Bla
 		}
 
 		void ifTrueBlock(int location) {
-			Console.WriteLine ("Inside if true");
 
 			int savePosition = currentPosition;
 			goToNextIfCondition ();
 			int lastPosition = currentPosition;
 			currentPosition = savePosition;
 
-			while (currentPosition < lastPosition) {
+			while (currentPosition + 1 < lastPosition) {
 				currentPosition++;
+
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			}
 		}
 
 		void ifFalseBlock(int location) {
-			Console.WriteLine ("Inside false");
 
 			int savePosition = currentPosition;
 			goToNextIfCondition ();
@@ -828,7 +828,9 @@ namespace Bla
 			goToNextSwitchCondition ();
 			int lastPosition = currentPosition;
 			currentPosition = savePosition;
+			Console.WriteLine("lastPosition: " + lastPosition);
 			while (currentPosition < lastPosition) {
+				Console.WriteLine("currentPosition: " + currentPosition);
 				currentPosition++;
 
 				while (currentPosition < actionList.Count - 2 && actionList [currentPosition].type == Statement_Types.CASE) {
@@ -837,6 +839,7 @@ namespace Bla
 				if (actionList [currentPosition].type == Statement_Types.DEFAULT_CASE) {
 					currentPosition++;
 				}
+				Console.WriteLine("Switch is Executing: " + actionList [currentPosition].type + ", " + currentPosition);
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			}
 		}
