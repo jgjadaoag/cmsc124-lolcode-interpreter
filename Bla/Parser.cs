@@ -405,7 +405,14 @@ namespace Bla
 		}
 
 		bool switchBlock() {
-			return switchStart() && term(TokenType.STATEMENT_DELIMETER) && caseBlock() && term(TokenType.OIC);
+			int actionSave = tempActionOrder.Count;
+			if(switchStart() && term(TokenType.STATEMENT_DELIMETER) && caseBlock() && term(TokenType.OIC)) {
+				tempActionOrder.Add (new lolStatement (Statement_Types.OIC, currentPosition - 1));
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		bool switchStart(){

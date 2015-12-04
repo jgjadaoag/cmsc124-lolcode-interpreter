@@ -862,7 +862,8 @@ namespace Bla
 
 		void executeCase() {
 			int savePosition = currentPosition;
-			goToNextSwitchCondition ();
+			goToOIC ();
+			Console.WriteLine("executeCase goToOIC: " + actionList [currentPosition].type + ", " + actionList [currentPosition].location);
 			int lastPosition = currentPosition;
 			currentPosition = savePosition;
 			Console.WriteLine("lastPosition: " + lastPosition);
