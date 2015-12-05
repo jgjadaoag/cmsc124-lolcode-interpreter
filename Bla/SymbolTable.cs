@@ -40,6 +40,7 @@ namespace Bla
 		public void setVar(string name, LOLType type, string value)
 		{
 			variableList [name].setValue(type, value);
+			MainClass.win.refreshSymbol(this);
 		}
 
 		public lolValue getVar(string name) {
@@ -48,6 +49,12 @@ namespace Bla
 
 		public void createVar(string name, LOLType type, string value) {
 			variableList.Add (name, new lolValue (type, value));
+			MainClass.win.refreshSymbol(this);
+		}
+
+		public void createVar(string name, lolValue lv) {
+			variableList.Add (name, lv.getCopy());
+			MainClass.win.refreshSymbol(this);
 		}
 
 		public Dictionary<string, lolValue> getVariableList() {

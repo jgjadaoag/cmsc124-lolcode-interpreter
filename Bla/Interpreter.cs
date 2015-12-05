@@ -527,6 +527,7 @@ namespace Bla
 			int stack = 0;
 
 			while(true){
+				Console.WriteLine("goToMkay: " + tokenList [location].getType ());
 				if (stack == 0 && tokenList [location].getType () == TokenType.MKAY)
 					break;
 				if (tokenList [location].getType () == TokenType.ANY_OF || tokenList [location].getType () == TokenType.ALL_OF || 
@@ -936,6 +937,14 @@ namespace Bla
 		#endregion
 
 		#region Function
+		int goToLineDelimiter(int location) {
+			while(location < tokenList.Count - 1 && tokenList[location].getType() != TokenType.STATEMENT_DELIMETER) {
+				location++;
+			}
+			return location;
+		}
+
+
 		void functionDefinition(int location) {
 			int start = currentPosition;
 			string name = tokenList[location + 1].getValue();
@@ -944,9 +953,7 @@ namespace Bla
 			List<string> parameters = readFormalParameters (location);
 			goToEndBlock ();
 
-
-			 ;
-			if(!functionTable.addFunction(tokenList[location + 1].getValue(), new LolFunction(currentPosition, actionList[currentPosition].location, parameters))){
+			if(!functionTable.addFunction(tokenList[location + 1].getValue(), new LolFunction(start, currentPosition, parameters))){
 				setError("Function is already defined");
 				return;
 			}
@@ -962,8 +969,9 @@ namespace Bla
 				return parameterList;
 			}
 
+			int endLocation = goToLineDelimiter(location);
 			location += 3;
-			while(tokenList[location + 1].getType() == TokenType.AN) {
+			while(location < endLocation) {
 				if(parameterSet.Add(tokenList[location].getValue())) {
 					parameterList.Add(tokenList[location].getValue());
 				} else {
@@ -991,8 +999,46 @@ namespace Bla
 			SymbolTable saveVariable = variableTable;
 			FunctionTable saveFunction = functionTable;
 
+			List<lolValue> paramList = getActualParam(location);
+			if(fun.parameters.Count != paramList.Count) {
+				setError("Wrong number of parameters");
+				return;
+			}
+
+			variableTable = new SymbolTable ();
+			functionTable = new FunctionTable();
+			for(int iii = 0; iii < paramList.Count; iii++) {
+				variableTable.createVar(fun.parameters[iii], paramList[iii]) ;
+			}
+
 			currentPosition = fun.startLocation + 1;
 
+			while(currentPosition < fun.endLocation) {
+				actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+				currentPosition++;
+			}
+
+			currentPosition = savePosition;
+			variableTable = saveVariable;
+			functionTable = saveFunction;
+			MainClass.win.refreshSymbol(variableTable);
+		}
+
+		List<lolValue> getActualParam(int location) {
+			List<lolValue> paramList = new List<lolValue>();
+
+			int locationEnd = goToMkay(location + 1);
+
+			while(currentPosition < actionList.Count - 1 && actionList[currentPosition + 1].location < locationEnd){
+				currentPosition++;
+				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+
+				paramList.Add(lolIt.getCopy());
+			}
+
+			Console.WriteLine("getActualParam: " + tokenList[locationEnd].getType());
+
+			return paramList;
 		}
 
 		void functionReturn(int location) {
