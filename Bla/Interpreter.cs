@@ -54,6 +54,10 @@ namespace Bla
 			this.type = st;
 			this.location = loc;
 		}
+
+		public void printDetails() {
+			Console.WriteLine("Type: " + type + ", " + "Location: " + location);
+		}
 	}
 	public class Interpreter
 	{
@@ -903,7 +907,8 @@ namespace Bla
 				}
 				goToNextSwitchCondition ();
 			}
-			currentPosition++;
+			Console.Write("switchBlock: ");
+			actionList [currentPosition].printDetails();
 		}
 
 		void executeCase() {
