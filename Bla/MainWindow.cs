@@ -117,7 +117,9 @@ public partial class MainWindow: Gtk.Window
 
 				file.Close ();
 				fileChooser.Destroy ();*/
-				
+
+				codeField.Buffer.Text = "";		//to clear code field
+
 				string line = file.ReadLine();
 				string nextLine;
 				while(line != null)
