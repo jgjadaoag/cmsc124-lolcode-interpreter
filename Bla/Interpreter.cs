@@ -1,5 +1,7 @@
 using System;
 using System.Media;
+using System.Text.RegularExpressions;
+using System.Globalization;
 using System.Collections.Generic;
 
 namespace Bla
@@ -595,6 +597,35 @@ namespace Bla
 							count = count + 1;
 							break;
 						//default: holder += str[count];
+					}
+
+					if (str [count + 1] == '(') {
+
+						MainClass.win.displayTextToConsole (str[count + 1]+"");
+						int test = (count + 2) + 5;
+						if(test < str.Length){
+							string hex = "";
+							for(int h = count+2; h<8; h++){
+								hex += str[h];
+							}
+
+							MainClass.win.displayTextToConsole (hex+"");
+
+							Regex reg = new Regex(@"^\\u([0-9A-Fa-f]{4})$");
+							if( reg.IsMatch(hex) ){
+								char c = (char)int.Parse(hex.Substring(2), NumberStyles.HexNumber);
+								holder += c;
+							}
+							else{
+								
+							}
+					
+							count = count + 7;
+
+							if(str[count+1] == ')'){
+								count = count + 1;
+							}
+						}
 					}
 				} else {
 					holder += str [count];

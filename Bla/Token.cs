@@ -167,7 +167,7 @@ namespace Bla
 					return new Token ("\"", TokenType.STRING_DELIMETER);
 				}
 			}
-
+			 
 			TokenType scannedType = identifyToken (input.Substring (currentPosition));
 
 			//If the scanned token has more than one word
@@ -258,7 +258,7 @@ namespace Bla
 					currentPosition += holder.Length;
 					return new Token(holder, TokenType.YARN_LITERAL);
 				} else if(c == '\n'){
-					throw new System.InvalidOperationException ("unterminated yarn");
+					MainClass.win.displayTextToConsole ("Error: Unterminated yarn."); 
 				} else {
 					holder += c;
 				}
