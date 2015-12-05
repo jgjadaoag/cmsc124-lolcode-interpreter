@@ -498,12 +498,13 @@ namespace Bla
 			result = x.getValue();
 
 
-			while(currentPosition < actionList.Count - 1 && actionList[currentPosition + 1].location < locationEnd){
+			while(currentPosition < actionList.Count - 1 && actionList[currentPosition].location < locationEnd){
 				currentPosition++;
+
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 				y = lolIt.getCopy ();
 				y = implicitCast (y, LOLType.TROOF);
-
+			
 				if (result == "WIN" && y.getValue () == "WIN") {
 					result = "WIN";
 				} else
@@ -545,6 +546,7 @@ namespace Bla
 
 			while(currentPosition < actionList.Count - 1 && actionList[currentPosition + 1].location < locationEnd){
 				currentPosition++;
+				Console.WriteLine((actionList [currentPosition].location));
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 				y = lolIt.getCopy ();
 				y = implicitCast (y, LOLType.TROOF);
@@ -927,7 +929,10 @@ namespace Bla
 							newValue = lv.getValue() == "FAIL"? "0": "1";
 							break;
 						case LOLType.YARN:
-							newValue = decimal.Parse(lv.getValue()).ToString();
+							decimal dec;
+							if(decimal.TryParse(lv.getValue().ToString(), out dec) == true)
+								newValue = decimal.Parse(lv.getValue()).ToString();
+							else setError("Unable to cast value");
 							break;
 					}
 					break;
@@ -945,8 +950,11 @@ namespace Bla
 						case LOLType.TROOF:
 							newValue = lv.getValue() == "FAIL"? "0": "1";
 							break;
-						case LOLType.YARN:
-							newValue = int.Parse(lv.getValue()).ToString();
+					case LOLType.YARN:
+							int num;
+							if(int.TryParse(lv.getValue().ToString(), out num) == true)
+								newValue = int.Parse(lv.getValue()).ToString();
+							else setError("Unable to cast value");
 							break;
 					}
 					break;
