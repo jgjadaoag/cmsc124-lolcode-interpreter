@@ -62,6 +62,7 @@ namespace Bla
 		Dictionary <TokenType, LOLType> tokToLolType;
 		int currentPosition;
 		SymbolTable variableTable;
+		FunctionTable functionTable;
 		lolValue lolIt;
 		bool errorFlag;
 		string errorMessage;
@@ -75,6 +76,7 @@ namespace Bla
 			Token t;
 			currentPosition = 0;
 			variableTable = new SymbolTable ();
+			functionTable = new FunctionTable();
 			lolIt = new lolValue (LOLType.NOOB, "");
 			errorFlag = false;
 
@@ -527,7 +529,8 @@ namespace Bla
 			while(true){
 				if (stack == 0 && tokenList [location].getType () == TokenType.MKAY)
 					break;
-				if (tokenList [location].getType () == TokenType.ANY_OF || tokenList [location].getType () == TokenType.ALL_OF || tokenList [location].getType () == TokenType.SMOOSH)
+				if (tokenList [location].getType () == TokenType.ANY_OF || tokenList [location].getType () == TokenType.ALL_OF || 
+						tokenList [location].getType () == TokenType.SMOOSH || tokenList [location].getType () == TokenType.I_IZ)
 					stack++;
 				if (tokenList [location].getType () == TokenType.MKAY) 
 					stack --;
@@ -933,15 +936,63 @@ namespace Bla
 		#endregion
 
 		#region Function
-
 		void functionDefinition(int location) {
+			int start = currentPosition;
+			string name = tokenList[location + 1].getValue();
+			Console.WriteLine ("functionDefinition: " + tokenList[location].getType());
+
+			List<string> parameters = readFormalParameters (location);
 			goToEndBlock ();
+
+
+			 ;
+			if(!functionTable.addFunction(tokenList[location + 1].getValue(), new LolFunction(currentPosition, actionList[currentPosition].location, parameters))){
+				setError("Function is already defined");
+				return;
+			}
 		}
 
+		//accepts location of HOW_IZ_I token
+		List<string> readFormalParameters(int location) {
+			List<string> parameterList = new List<string>();
+			HashSet<string> parameterSet = new HashSet<string>();
+
+			if(tokenList[location + 2].getType() == TokenType.STATEMENT_DELIMETER) {
+				Console.WriteLine("Empty Parameter");
+				return parameterList;
+			}
+
+			location += 3;
+			while(tokenList[location + 1].getType() == TokenType.AN) {
+				if(parameterSet.Add(tokenList[location].getValue())) {
+					parameterList.Add(tokenList[location].getValue());
+				} else {
+					setError("Parameters with same names");
+					return null;
+				}
+
+				location += 3;
+			}
+
+			return parameterList;
+			
+		}
 		void functionEnd(int location) {
 		}
 
 		void functionCall(int location) {
+			LolFunction fun = functionTable.getFunction(tokenList[location + 1].getValue());
+			if(fun == null) {
+				setError("Unknown function");
+				return;
+			}
+
+			int savePosition = currentPosition;
+			SymbolTable saveVariable = variableTable;
+			FunctionTable saveFunction = functionTable;
+
+			currentPosition = fun.startLocation + 1;
+
 		}
 
 		void functionReturn(int location) {

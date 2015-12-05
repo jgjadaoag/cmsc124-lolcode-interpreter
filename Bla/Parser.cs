@@ -835,18 +835,37 @@ namespace Bla
 		}
 
 		bool functionCall() {
+			int actionSave = tempActionOrder.Count;
 			int save = currentPosition;
 
-			return (((currentPosition = save) == save & term (TokenType.I_IZ) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.MKAY)) || 
+			tempActionOrder.Add (new lolStatement(Statement_Types.FUNCTION_CALL, save));
+			if (((currentPosition = save) == save & term (TokenType.I_IZ) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.MKAY)) || 
 				((currentPosition = save) == save & term (TokenType.I_IZ) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.YR) && functionActualArg())
-			);
+			) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 		bool functionActualArg() {
-			int save = currentPosition;
+			int actionSave = tempActionOrder.Count;
 
+			/*
 			return (((currentPosition = save) == save & expression() && term(TokenType.AN) && term(TokenType.YR) && functionActualArg()) ||
 				((currentPosition = save) == save & expression() && term(TokenType.MKAY))
-			);
+			);*/
+			while (expression()) {
+				int save = currentPosition;
+				if((currentPosition = save) == save & term(TokenType.AN) && term(TokenType.YR)) {
+					continue;
+				} else if ((currentPosition = save) == save & term(TokenType.MKAY)) {
+					return true;
+				}
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 
 		#endregion
