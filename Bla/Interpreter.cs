@@ -162,7 +162,7 @@ namespace Bla
 			Console.WriteLine ("=ACTION=LIST================================");
 			Console.WriteLine ("=============================================");
 			foreach (lolStatement ls in actionList) {
-				Console.WriteLine (ls.type.ToString());
+				Console.WriteLine (ls.type.ToString() + ", " + tokenList[ls.location].getValue());
 			}
 			Console.WriteLine ("=============================================");
 			for (currentPosition = 0; currentPosition < actionList.Count && !errorFlag; currentPosition++) {
@@ -586,10 +586,19 @@ namespace Bla
 		#region I/O
 		void output(int location) {
 			//Execute expressions first
+			/*
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-
-			MainClass.win.displayTextToConsole (parseString(lolIt.getValue()));
+			*/
+			concat(location);
+			while(location < tokenList.Count - 1 && tokenList[location].getType() != TokenType.EXCLAMATION && tokenList[location].getType() != TokenType.STATEMENT_DELIMETER) {
+				location++;
+			}
+			if(tokenList[location].getType() == TokenType.EXCLAMATION) {
+				MainClass.win.displayTextToConsoleNoLine (parseString(lolIt.getValue()));
+			} else {
+				MainClass.win.displayTextToConsole (parseString(lolIt.getValue()));
+			}
 		}
 
 		string parseString(string str){

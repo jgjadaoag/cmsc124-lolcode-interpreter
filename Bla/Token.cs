@@ -15,6 +15,7 @@ namespace Bla
 		TYPE_LITERAL,
 		HAI,
 		KTHXBYE,
+		EXCLAMATION,
 		UPPIN,
 		NERFIN,
 		TLDR,
@@ -162,6 +163,7 @@ namespace Bla
 			tokenDetails.Add (TokenType.IM_OUTTA_YR, new Regex (@"^IM OUTTA YR"));
 			tokenDetails.Add (TokenType.TIL, new Regex (@"^TIL$"));
 			tokenDetails.Add (TokenType.WILE, new Regex (@"^WILE$"));
+			tokenDetails.Add (TokenType.EXCLAMATION, new Regex (@"^!$"));
 
 			skipSpace ();
 		}

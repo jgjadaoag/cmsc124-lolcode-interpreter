@@ -118,7 +118,6 @@ namespace Bla
 			} else if ((currentPosition = save) == save & switchBlock ()) {
 			} else if ((currentPosition = save) == save & input ()) {
 			} else if ((currentPosition = save) == save & output ()) {
-			} else if ((currentPosition = save) == save & concatenation ()) {
 			} else if ((currentPosition = save) == save & cast2()){ 
 			} else if ((currentPosition = save) == save & expression ()) {
 			} else if ((currentPosition = save) == save & functionBlock()) {
@@ -186,16 +185,24 @@ namespace Bla
 		bool output(){
 			tempActionOrder.Clear ();
 			int save = currentPosition;
-			if ((currentPosition = save) == save & term (TokenType.VISIBLE) && expression ()) {
-				tempActionOrder.Clear ();
-				tempActionOrder.Add (new lolStatement (Statement_Types.OUTPUT, save));
-				currentPosition = save + 1;
-				expression ();
-			} else {
-				return false;
+
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.OUTPUT, currentPosition));
+
+			if ((currentPosition = save) == save & term (TokenType.VISIBLE) && stringList() && term(TokenType.STATEMENT_DELIMETER)) {
+				currentPosition--;
+				return true;
 			}
 
-			return true;
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			tempActionOrder.Add (new lolStatement (Statement_Types.OUTPUT, save));
+
+			if ((currentPosition = save) == save & term (TokenType.VISIBLE) && stringList() && term(TokenType.EXCLAMATION)) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 		#endregion
 

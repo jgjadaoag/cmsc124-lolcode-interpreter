@@ -98,6 +98,14 @@ public partial class MainWindow: Gtk.Window
 		MainClass.runInterpreter(str);
 	}
 
+	public void displayTextToConsoleNoLine (String stringText)
+	{
+		TextIter insertIter = console.Buffer.EndIter;
+		Console.WriteLine (stringText);
+		console.Buffer.InsertWithTagsByName (ref insertIter, stringText, "colorTag");
+		//console.Buffer.ApplyTag ("word_wrap", console.Buffer.StartIter, console.Buffer.EndIter);
+	}
+
 	public void displayTextToConsole (String stringText)
 	{
 		TextIter insertIter = console.Buffer.EndIter;
