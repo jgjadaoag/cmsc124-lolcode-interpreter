@@ -30,7 +30,11 @@ namespace Bla
 			}*/
 
 			Interpreter interpret = new Interpreter (input);
+			try{
 			interpret.runProgram ();
+			} catch(ApplicationException e) {
+				win.displayTextToConsole (e.Message);
+			}
 
 		}
 	}

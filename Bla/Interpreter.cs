@@ -197,6 +197,7 @@ namespace Bla
 		void setError(string message) {
 			errorFlag = true;
 			errorMessage = message;
+			throw new ApplicationException (errorMessage);
 		}
 		#endregion
 
