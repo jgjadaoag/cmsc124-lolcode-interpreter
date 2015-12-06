@@ -180,11 +180,16 @@ namespace Bla
 					stringRead = true;
 					return new Token ("", TokenType.YARN_LITERAL);
 				} else {
-					currentPosition++;
 					stringFlag = false;
 					stringRead = false;
-					skipSpace ();
-					return new Token ("\"", TokenType.STRING_DELIMETER);
+					if ((currentPosition == input.Length - 1) ||
+						(Char.IsWhiteSpace (this.input [currentPosition + 1])) ||
+						(input[currentPosition + 1] == ',')) {
+						currentPosition++;
+						skipSpace ();
+						return new Token ("\"", TokenType.STRING_DELIMETER);
+					}
+					return new Token ("", TokenType.UNKNOWN);
 				}
 			}
 			 
@@ -272,6 +277,7 @@ namespace Bla
 			
 		private Token readString(string str){
 			string holder = "";
+
 			char previous = '\0';
 			foreach(char c in str){
 				if(c == '"' && previous != ':'){

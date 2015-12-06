@@ -187,7 +187,7 @@ namespace Bla
 			Console.WriteLine ("=ACTION=LIST================================");
 			Console.WriteLine ("=============================================");
 			foreach (lolStatement ls in actionList) {
-				Console.WriteLine (ls.type.ToString() + ", " + tokenList[ls.location].getValue());
+				Console.WriteLine (ls.type.ToString() + ", " + tokenList[ls.location].getValue() + ", " + ls.location );
 			}
 			Console.WriteLine ("=============================================");
 			for (currentPosition = 0; currentPosition < actionList.Count && !errorFlag; currentPosition++) {
@@ -567,7 +567,7 @@ namespace Bla
 			result = x.getValue();
 
 
-			while(currentPosition < actionList.Count - 1 && actionList[currentPosition].location < locationEnd){
+			while(currentPosition < actionList.Count - 1 && actionList[currentPosition + 1].location < locationEnd){
 				currentPosition++;
 
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
@@ -643,6 +643,7 @@ namespace Bla
 			while(location < tokenList.Count - 1 && tokenList[location].getType() != TokenType.EXCLAMATION && tokenList[location].getType() != TokenType.STATEMENT_DELIMETER) {
 				location++;
 			}
+			string value = parseString (lolIt.getValue ());
 			if(tokenList[location].getType() == TokenType.EXCLAMATION) {
 				MainClass.win.displayTextToConsoleNoLine (parseString(lolIt.getValue()));
 			} else {
@@ -676,8 +677,28 @@ namespace Bla
 							holder += ":";
 							count = count + 1;
 							break;
+						case '{':
+							{
+								string name = "";
+								count += 2;
+								while(count < str.Length && str[count] != '}') {
+									Console.Write(str[count] + "");
+									name += str[count];
+									count++;
+								}
+								Console.WriteLine("readParse: " + name);
+								if(count >= str.Length || str[count] != '}') {
+									setError("Unterminated {");
+								} else if(!variableTable.hasVariable(name)) {
+									setError(name + " is not defined");
+								}
+								holder += variableTable.getVar(name).getValue();
+								break;
+							}
 						//default: holder += str[count];
 					}
+
+
 				} else {
 					holder += str [count];
 				}
@@ -726,6 +747,8 @@ namespace Bla
 			result = x.getValue();
 
 
+				Console.Write("Concat: ");
+				actionList [currentPosition].printDetails();
 			while(currentPosition < actionList.Count - 1 && actionList[currentPosition + 1].location < locationEnd){
 				currentPosition++;
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
