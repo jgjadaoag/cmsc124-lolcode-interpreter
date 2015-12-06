@@ -272,9 +272,9 @@ namespace Bla
 			
 		private Token readString(string str){
 			string holder = "";
-			string special = "";
+			char previous = '\0';
 			foreach(char c in str){
-				if(c == '"'){
+				if(c == '"' && previous != ':'){
 					currentPosition += holder.Length;
 					return new Token(holder, TokenType.YARN_LITERAL);
 				} else if(c == '\n'){
@@ -284,6 +284,7 @@ namespace Bla
 				}
 					
 				Console.WriteLine (holder);
+				previous = c;
 			}
 
 			return new Token ("", TokenType.UNKNOWN);

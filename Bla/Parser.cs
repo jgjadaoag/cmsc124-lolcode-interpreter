@@ -921,6 +921,9 @@ namespace Bla
 
 		bool loopBlock() {
 			int actionSave = tempActionOrder.Count;
+			if (currentPosition > tokenList.Count - 1) {
+				return false;
+			}
 			string label = tokenList [currentPosition + 1].getValue();
 			Console.WriteLine("loopBlock: " + label);
 			if (!loopStart()) {
