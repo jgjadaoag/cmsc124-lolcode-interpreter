@@ -150,7 +150,7 @@ namespace Bla
 			actionMap.Add (Statement_Types.FUNCTION_DEFINITION, functionDefinition);
 			actionMap.Add (Statement_Types.FUNCTION_CALL, functionCall);
 			actionMap.Add (Statement_Types.FUNCTION_END, functionEnd);
-			actionMap.Add (Statement_Types.FUNCTION_RETURN, functionEnd);
+			actionMap.Add (Statement_Types.FUNCTION_RETURN, functionReturn);
 			actionMap.Add (Statement_Types.CAST_MAEK, castMaek);
 			actionMap.Add (Statement_Types.CAST_IS_NOW_A, castIsNowA);
 			actionMap.Add (Statement_Types.LOOP_START, loopBlock);
@@ -945,7 +945,28 @@ namespace Bla
 
 		void gtfo(int location) {
 			lolIt.setValue (LOLType.NOOB, "");
-			goToOIC ();
+			int newBlock = 0;
+
+			//Assumes parser is correct and that every opening block is closed
+			while (currentPosition < actionList.Count - 1) {
+				switch (actionList [currentPosition].type) {
+				case Statement_Types.SWITCH:
+				case Statement_Types.IF_THEN_START:
+				case Statement_Types.FUNCTION_DEFINITION:
+				case Statement_Types.LOOP_START:
+					newBlock++;
+					break;
+				case Statement_Types.OIC:
+				case Statement_Types.LOOP_END:
+				case Statement_Types.FUNCTION_END:
+					if (newBlock != 0) {
+						newBlock--;
+						break;
+					}
+					return;
+				}
+				currentPosition++;
+			}
 		}
 		#endregion
 
@@ -1055,11 +1076,38 @@ namespace Bla
 		}
 
 		void functionReturn(int location) {
+			currentPosition++;
+			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+			lolValue lv = lolIt.getCopy();
+			gtfo(location);
+			lolIt.setValue(lv);
 		}
 
 		#endregion
 		#region Loop
+		void goToLoopEnd() {
+			int newBlock = 0;
+
+			while(currentPosition < actionList.Count - 1) {
+				switch (actionList [currentPosition].type) {
+				case Statement_Types.LOOP_START:
+					newBlock++;
+					break;
+				case Statement_Types.LOOP_END:
+					if (newBlock != 0) {
+						newBlock--;
+						break;
+					}
+					return;
+				}
+				currentPosition++;
+			}
+		}
 		void loopBlock(int location) {
+			Console.WriteLine("Inside loopBlock");
+			int savePosition = currentPosition;
+			goToLoopEnd();
+
 		}
 
 		void loopEnd(int location) {

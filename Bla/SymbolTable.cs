@@ -12,6 +12,11 @@ namespace Bla
 			value = v;
 		}
 
+		public void setValue(lolValue lv) {
+			type = lv.getType();
+			value = lv.getValue();
+		}
+
 		public void setValue(LOLType t, string v) {
 			type = t;
 			value = v;

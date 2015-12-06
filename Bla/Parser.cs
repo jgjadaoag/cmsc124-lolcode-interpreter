@@ -122,7 +122,7 @@ namespace Bla
 			} else if ((currentPosition = save) == save & cast2()){ 
 			} else if ((currentPosition = save) == save & expression ()) {
 			} else if ((currentPosition = save) == save & functionBlock()) {
-			} else if ((currentPosition = save) == save & functionCall()) {
+			} else if ((currentPosition = save) == save & functionReturn()) {
 			} else if ((currentPosition = save) == save & loopBlock()) {
 				Console.WriteLine("ITS A LOOP BLOCK");
 			} else {
@@ -214,6 +214,7 @@ namespace Bla
 			} else if ((currentPosition = save) == save & compareOperator ()) {
 			} else if ((currentPosition = save) == save & concatenation ()) {
 			} else if ((currentPosition = save) == save & cast1 ()) {
+			} else if ((currentPosition = save) == save & functionCall()) {
 			} else if ((currentPosition = save) == save & literal ()) {
 				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
 					Console.WriteLine ("Literal statement");
@@ -828,6 +829,16 @@ namespace Bla
 			return false;
 		}
 
+		bool functionReturn() {
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add(new lolStatement(Statement_Types.FUNCTION_RETURN, currentPosition));
+			if (term(TokenType.FOUND_YR) && expression()) {
+				return true;
+			}
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
 		bool functionArg() {
 			int save = currentPosition;
 
@@ -883,6 +894,7 @@ namespace Bla
 			List<lolStatement>  oldTempActionOrder = tempActionOrder;
 			tempActionOrder = new List<lolStatement> ();
 
+			oldTempActionOrder.Add (new lolStatement(Statement_Types.LOOP_START, currentPosition));
 			if (loopStart() && term(TokenType.STATEMENT_DELIMETER) && codeBlock(TokenType.IM_OUTTA_YR, oldTempActionOrder) && term(TokenType.STATEMENT_DELIMETER) && loopEnd(label)) {
 				oldTempActionOrder.Add (new lolStatement(Statement_Types.LOOP_END, currentPosition - 1));
 				tempActionOrder = oldTempActionOrder;
