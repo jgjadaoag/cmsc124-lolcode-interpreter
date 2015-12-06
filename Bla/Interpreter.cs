@@ -696,9 +696,13 @@ namespace Bla
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue x = lolIt.getCopy();
 		
-			Console.WriteLine (x.getValue() + " is a " + x.getType());
-				
 			location+=3;
+			if (tokenList [location].getValue () == "\"") {
+				location += 2;
+			}
+
+			Console.WriteLine (x.getValue ());
+			Console.WriteLine (tokenList [location].getValue ());
 			switch (tokenList [location].getValue ()) {
 				case "YARN":
 				 	x = cast (x, LOLType.YARN);
