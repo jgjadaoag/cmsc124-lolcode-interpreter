@@ -253,14 +253,14 @@ namespace Bla
 		private Token readString(string str){
 			string holder = "";
 			string special = "";
-			foreach(char c in str){
-				if(c == '"'){
+			for(int c=0; c<str.Length; c++){
+				if(str[c] == '"' && str[c+1] == '\n'){
 					currentPosition += holder.Length;
 					return new Token(holder, TokenType.YARN_LITERAL);
-				} else if(c == '\n'){
+				} else if(str[c] == '\n'){
 					MainClass.win.displayTextToConsole ("Error: Unterminated yarn."); 
 				} else {
-					holder += c;
+					holder += str[c];
 				}
 					
 				Console.WriteLine (holder);

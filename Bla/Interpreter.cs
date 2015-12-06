@@ -598,8 +598,9 @@ namespace Bla
 							holder += ":";
 							count = count + 1;
 							break;
-						//default: holder += str[count];
 					}
+
+
 				} else {
 					holder += str [count];
 				}
