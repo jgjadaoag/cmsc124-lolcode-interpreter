@@ -70,26 +70,30 @@ namespace Bla
 				variableTable = st;
 			}
 
-			public void setValue(lolValue lv) {
+			public new void setValue(lolValue lv) {
 				base.setValue (lv);
 				variableTable.setVar ("IT", lv.getType (), lv.getValue ());
 			}
 
-			public void setValue(LOLType t, string v) {
+			public new void setValue(LOLType t, string v) {
 				base.setValue (t, v);
 				variableTable.setVar ("IT", t, v);
 			}
 		}
 
 		delegate void lolAction(int location);
+
 		List <Token> tokenList;
 		List <lolStatement> actionList;
+
 		Dictionary <Statement_Types, lolAction> actionMap;
 		Dictionary <TokenType, LOLType> tokToLolType;
-		int currentPosition;
+
 		SymbolTable variableTable;
 		FunctionTable functionTable;
 		LolIt lolIt;
+
+		int currentPosition;
 		bool errorFlag;
 		string errorMessage;
 
@@ -197,6 +201,7 @@ namespace Bla
 		void setError(string message) {
 			errorFlag = true;
 			errorMessage = message;
+			throw new ApplicationException (errorMessage);
 		}
 		#endregion
 

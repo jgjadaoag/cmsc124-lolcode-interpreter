@@ -29,8 +29,12 @@ namespace Bla
 				win.displayTextToConsole ("Syntax error :(");
 			}*/
 
-			Interpreter interpret = new Interpreter (input);
-			interpret.runProgram ();
+			try{
+				Interpreter interpret = new Interpreter (input);
+				interpret.runProgram ();
+			} catch(ApplicationException e) {
+				win.displayTextToConsole (e.Message);
+			}
 
 		}
 	}
