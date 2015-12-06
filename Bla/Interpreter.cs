@@ -402,11 +402,11 @@ namespace Bla
 		void maximum(int location){
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			lolValue num1 = lolIt.getCopy();
+			lolValue num1 = lolIt.getCopy();	//get 1st operand
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
-			lolValue num2 = lolIt.getCopy();
+			lolValue num2 = lolIt.getCopy();	//get 2nd operand
 
 			if(decimal.Parse (implicitCast(num1, LOLType.NUMBAR).getValue ()) > decimal.Parse (implicitCast(num2, LOLType.NUMBAR).getValue ())){
 				lolIt.setValue(num1);
@@ -419,13 +419,13 @@ namespace Bla
 		void minimum(int location){
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			lolValue num1 = lolIt.getCopy();
+			lolValue num1 = lolIt.getCopy();	//get 1st operand
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
-			lolValue num2 = lolIt.getCopy();
+			lolValue num2 = lolIt.getCopy();	//get 2nd operand
 
-			if(decimal.Parse (implicitCast(num1, LOLType.NUMBAR).getValue ()) > decimal.Parse (implicitCast(num2, LOLType.NUMBAR).getValue ())){
+			if(decimal.Parse (implicitCast(num1, LOLType.NUMBAR).getValue ()) > decimal.Parse (implicitCast(num2, LOLType.NUMBAR).getValue ())){ 
 				lolIt.setValue(num2);
 			}
 			else {
@@ -440,15 +440,15 @@ namespace Bla
 			string result = "";
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			lolValue x = lolIt.getCopy();
+			lolValue x = lolIt.getCopy();	//get 1st operand
 			x = implicitCast (x, LOLType.TROOF);
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
-			lolValue y = lolIt.getCopy();
+			lolValue y = lolIt.getCopy();	//get 2nd operand
 			y = implicitCast (y, LOLType.TROOF);
 
-			if (x.getValue () == "WIN" && y.getValue () == "WIN") {
+			if (x.getValue () == "WIN" && y.getValue () == "WIN") {		//check if both WIN
 				result = "WIN";
 			} else
 				result = "FAIL";
@@ -461,15 +461,15 @@ namespace Bla
 			string result = "";
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			lolValue x = lolIt.getCopy();
+			lolValue x = lolIt.getCopy();	//get 1st operand
 			x = implicitCast (x, LOLType.TROOF);
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
-			lolValue y = lolIt.getCopy();
+			lolValue y = lolIt.getCopy();	//get 2nd operand
 			y = implicitCast (y, LOLType.TROOF);
 
-			if (x.getValue () == "FAIL" && y.getValue () == "FAIL") {
+			if (x.getValue () == "FAIL" && y.getValue () == "FAIL") {	//check if both FAIL
 				result = "FAIL";
 			} else
 				result = "WIN";
@@ -482,16 +482,16 @@ namespace Bla
 			string result = "";
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			lolValue x = lolIt.getCopy();
+			lolValue x = lolIt.getCopy();	//get 1st operand
 			x = implicitCast (x, LOLType.TROOF);
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
-			lolValue y = lolIt.getCopy();
+			lolValue y = lolIt.getCopy();	//get 2nd operand
 			y = implicitCast (y, LOLType.TROOF);
 
-			if (x.getValue () == y.getValue()) {
-				result = "FAIL";
+			if (x.getValue () == y.getValue()) {	//check if equal
+				result = "FAIL";	
 			} else
 				result = "WIN";
 
@@ -503,11 +503,11 @@ namespace Bla
 			string result = "";
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			lolValue x = lolIt.getCopy();
+			lolValue x = lolIt.getCopy();	//get operand
 			x = implicitCast (x, LOLType.TROOF);
 
 			if (x.getValue () == "WIN") {
-				result = "FAIL";
+				result = "FAIL";	//negate
 			} else
 				result = "WIN";
 
@@ -519,13 +519,13 @@ namespace Bla
 			string result = "";
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			lolValue x = lolIt.getCopy();
+			lolValue x = lolIt.getCopy();	//get 1st operand
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
-			lolValue y = lolIt.getCopy();
+			lolValue y = lolIt.getCopy();	//get 2nd operand
 
-			if (x.getValue () == y.getValue() && (isNumberType(x) && isNumberType(y) || x.getType() == y.getType())) {
+			if (x.getValue () == y.getValue() && (isNumberType(x) && isNumberType(y) || x.getType() == y.getType())) {	//check if equal
 				result = "WIN";
 			} else
 				result = "FAIL";
@@ -538,13 +538,13 @@ namespace Bla
 			string result = "";
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			lolValue x = lolIt.getCopy();
+			lolValue x = lolIt.getCopy();	//get 1st operand
 
 			currentPosition++;
 			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
-			lolValue y = lolIt.getCopy();
+			lolValue y = lolIt.getCopy();	//get 2nd operand
 
-			if (x.getValue () == y.getValue() && (isNumberType(x) && isNumberType(y) || x.getType() == y.getType())) {
+			if (x.getValue () == y.getValue() && (isNumberType(x) && isNumberType(y) || x.getType() == y.getType())) {	//check if equal
 				result = "FAIL";
 			} else
 				result = "WIN";
@@ -562,7 +562,7 @@ namespace Bla
 
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			x = lolIt.getCopy();
+			x = lolIt.getCopy();	//get 1st operand
 			x = implicitCast (x, LOLType.TROOF);
 			result = x.getValue();
 
@@ -571,10 +571,10 @@ namespace Bla
 				currentPosition++;
 
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
-				y = lolIt.getCopy ();
+				y = lolIt.getCopy ();	//get next operand
 				y = implicitCast (y, LOLType.TROOF);
 			
-				if (result == "WIN" && y.getValue () == "WIN") {
+				if (result == "WIN" && y.getValue () == "WIN") {	//check if both WIN
 					result = "WIN";
 				} else
 					result = "FAIL";
@@ -610,7 +610,7 @@ namespace Bla
 
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
-			x = lolIt.getCopy();
+			x = lolIt.getCopy();	//get 1st operand
 			x = implicitCast (x, LOLType.TROOF);
 			result = x.getValue();
 
@@ -619,7 +619,7 @@ namespace Bla
 				currentPosition++;
 				Console.WriteLine((actionList [currentPosition].location));
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
-				y = lolIt.getCopy ();
+				y = lolIt.getCopy ();	//get next operand
 				y = implicitCast (y, LOLType.TROOF);
 
 				if (result == "FAIL" && y.getValue () == "FAIL") {
@@ -650,29 +650,29 @@ namespace Bla
 			}
 		}
 
-		string parseString(string str){
+		string parseString(string str){		//for special characters
 			string holder = "";
 
 			for (int count = 0; count < str.Length; count++) {
 				if (str [count] == ':') {
 					switch (str [count + 1]) {
-						case ')':
+						case ')':		//new line
 							holder += "\n";
 							count = count + 1;
 							break;
-						case '>':
+						case '>':		//tab
 							holder += "\t";
 							count = count + 1;
 							break;
-						case 'o':
+						case 'o':		//beep
 							SystemSounds.Beep.Play ();
 							count = count + 1;
 							break;
-						case '"':
+						case '"':		//double quote
 							holder += "\"";
 							count = count + 1;
 							break;
-						case ':':
+						case ':':		//colon
 							holder += ":";
 							count = count + 1;
 							break;
@@ -741,10 +741,12 @@ namespace Bla
 		void castMaek(int location){	
 			Console.WriteLine ("Casting...");
 
+			//get the value to be casted
 			currentPosition++;
 			actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
 			lolValue x = lolIt.getCopy();
 		
+			//get the position of the type to be casted to
 			location+=3;
 			if (tokenList [location].getValue () == "\"") {
 				location += 2;
@@ -777,7 +779,7 @@ namespace Bla
 			Console.WriteLine ("Casting...");
 			lolValue x = null;
 
-			location+=2;
+			location+=2;	//get the position of the type to be casted to
 			switch (tokenList [location].getValue ()) {
 				case "YARN":
 				x = cast (lolIt, LOLType.YARN);
@@ -1263,11 +1265,11 @@ namespace Bla
 
 		lolValue cast(lolValue lv, LOLType toType) {
 			string newValue = "";
-			switch(toType) {
+			switch(toType) {	//the type to be casted to
 				case LOLType.NOOB:
 					break;
 				case LOLType.NUMBAR:
-					switch (lv.getType()) {
+					switch (lv.getType()) {		//getting the original type
 						case LOLType.NOOB:
 							newValue = "0";
 							break;
@@ -1289,7 +1291,7 @@ namespace Bla
 					}
 					break;
 				case LOLType.NUMBR:
-					switch (lv.getType()) {
+					switch (lv.getType()) {		//getting the original type	
 						case LOLType.NOOB:
 							newValue = "0";
 							break;
@@ -1316,7 +1318,7 @@ namespace Bla
 					}
 					break;
 				case LOLType.TROOF:
-					switch (lv.getType()) {
+					switch (lv.getType()) {		//getting the original type
 						case LOLType.NOOB:
 							newValue = "FAIL";
 							break;
