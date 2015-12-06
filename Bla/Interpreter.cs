@@ -798,30 +798,37 @@ namespace Bla
 
 		void castIsNowA(int location){	
 			Console.WriteLine ("Casting...");
-			lolValue x = null;
+			string name = tokenList[location].getValue();
+			if(!variableTable.hasVariable(name)) {
+				setError(name + " is not declared");
+			}
+			lolValue lv = variableTable.getVar(name);
+			
 
 			location+=2;
 			switch (tokenList [location].getValue ()) {
 				case "YARN":
-				x = cast (lolIt, LOLType.YARN);
+				lv = cast (lv, LOLType.YARN);
 				break;
 				case "NUMBR":
-				x = cast (lolIt, LOLType.NUMBR);
+				lv = cast (lv, LOLType.NUMBR);
 				break;
 				case "NUMBAR":
-				x = cast (lolIt, LOLType.NUMBAR);
+				lv = cast (lv, LOLType.NUMBAR);
 				break;
 				case "TROOF":
-				x = cast (lolIt, LOLType.TROOF);
+				lv = cast (lv, LOLType.TROOF);
 				break;
 				case "NOOB":
-				x = cast (lolIt, LOLType.NOOB);
+				lv = cast (lv, LOLType.NOOB);
 				break;
+				default:
+					setError("Invalid type");
+					break;
 			}
 
-			lolIt.setValue(x.getType(), x.getValue());	
+			variableTable.setVar(name, lv.getType(), lv.getValue());
 			MainClass.win.refreshSymbol (variableTable);
-			Console.WriteLine (x.getValue() + " is now a " + x.getType());
 		}
 		#endregion
 
@@ -1328,11 +1335,7 @@ namespace Bla
 						case LOLType.YARN:
 							decimal dec;
 							if (decimal.TryParse (lv.getValue ().ToString (), out dec) == true) {
-								newValue = decimal.Parse (lv.getValue ()).ToString ();
-						
-								int num;
-								if (int.TryParse (newValue, out num) == true)
-									newValue = int.Parse (lv.getValue ()).ToString ();
+								newValue = Math.Floor(decimal.Parse (lv.getValue ())).ToString();
 							}
 							else setError("Unable to cast value");
 							break;
