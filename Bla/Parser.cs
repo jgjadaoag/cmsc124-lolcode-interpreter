@@ -797,7 +797,6 @@ namespace Bla
 			int actionSave = tempActionOrder.Count;
 			if (!functionStart ()) {
 				tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
-
 				return false;
 			}
 
@@ -890,12 +889,15 @@ namespace Bla
 			int actionSave = tempActionOrder.Count;
 			string label = tokenList [currentPosition + 1].getValue();
 			Console.WriteLine("loopBlock: " + label);
+			if (!loopStart()) {
+				tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+				return false;
+			}
 			
 			List<lolStatement>  oldTempActionOrder = tempActionOrder;
 			tempActionOrder = new List<lolStatement> ();
 
-			oldTempActionOrder.Add (new lolStatement(Statement_Types.LOOP_START, currentPosition));
-			if (loopStart() && term(TokenType.STATEMENT_DELIMETER) && codeBlock(TokenType.IM_OUTTA_YR, oldTempActionOrder) && term(TokenType.STATEMENT_DELIMETER) && loopEnd(label)) {
+			if (term(TokenType.STATEMENT_DELIMETER) && codeBlock(TokenType.IM_OUTTA_YR, oldTempActionOrder) && term(TokenType.STATEMENT_DELIMETER) && loopEnd(label)) {
 				oldTempActionOrder.Add (new lolStatement(Statement_Types.LOOP_END, currentPosition - 1));
 				tempActionOrder = oldTempActionOrder;
 				return true;
@@ -910,15 +912,15 @@ namespace Bla
 			int save = currentPosition;
 			int actionSave = tempActionOrder.Count;
 			
+			tempActionOrder.Add( new lolStatement(Statement_Types.LOOP_START, save));
 			if ((currentPosition = save) == save & term(TokenType.IM_IN_YR) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.UPPIN) && term(TokenType.YR) && term(TokenType.VARIABLE_IDENTIFIER) && loopCondition()) {
-				tempActionOrder.Add (new lolStatement(Statement_Types.LOOP_START, save));
 				return true;
 			}
 
 			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
 
+			tempActionOrder.Add( new lolStatement(Statement_Types.LOOP_START, save));
 			if ((currentPosition = save) == save & term(TokenType.IM_IN_YR) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.NERFIN) && term(TokenType.YR) && term(TokenType.VARIABLE_IDENTIFIER) && loopCondition()) {
-				tempActionOrder.Add (new lolStatement(Statement_Types.LOOP_START, save));
 				return true;
 			}
 			

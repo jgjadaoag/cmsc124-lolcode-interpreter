@@ -949,6 +949,9 @@ namespace Bla
 
 			//Assumes parser is correct and that every opening block is closed
 			while (currentPosition < actionList.Count - 1) {
+				Console.Write("gtfo: ");
+				actionList [currentPosition].printDetails();
+
 				switch (actionList [currentPosition].type) {
 				case Statement_Types.SWITCH:
 				case Statement_Types.IF_THEN_START:
@@ -1106,8 +1109,57 @@ namespace Bla
 		void loopBlock(int location) {
 			Console.WriteLine("Inside loopBlock");
 			int savePosition = currentPosition;
-			goToLoopEnd();
+			currentPosition++;
+			gtfo(location);
+			int lastPosition = currentPosition - 1;
+			currentPosition = savePosition;
+			Console.Write("loopBlock: ");
+			actionList [savePosition + 1].printDetails();
+			Console.Write("loopBlock: ");
+			actionList [lastPosition].printDetails();
+			Console.WriteLine("loopBlock: " + tokenList[location + 2].getValue());
+			Console.WriteLine("loopBlock: " + tokenList[location + 4].getValue());
+			Console.WriteLine("loopBlock: " + tokenList[location + 5].getValue());
 
+
+			bool til = tokenList[location + 5].getType() == TokenType.TIL;
+			bool broken = false;
+			while(!broken && condition(savePosition, til)) {
+				while(currentPosition < lastPosition ) {
+					if(actionList[currentPosition].type == Statement_Types.GTFO) {
+						broken = true;
+						Console.WriteLine("BROKEN");
+						break;
+					}
+					actionMap [actionList[currentPosition].type] (actionList[currentPosition].location);
+					Console.Write("loopBlock loop: ");
+					actionList [currentPosition].printDetails();
+					currentPosition++;
+				}
+				update(location);
+			}
+			currentPosition = lastPosition;
+
+		}
+
+		bool condition(int savePosition, bool til) {
+			currentPosition = savePosition + 1;
+			actionMap[actionList[currentPosition].type] (actionList[currentPosition].location);
+			if(til) {
+				return implicitCast(lolIt, LOLType.TROOF).getValue() == "FAIL";
+			} else {
+				return implicitCast(lolIt, LOLType.TROOF).getValue() == "WIN";
+			}
+		}
+
+		void update(int location) {
+			lolValue ctr = variableTable.getVar(tokenList[location + 4].getValue());
+
+			if (tokenList[location + 2].getType() == TokenType.NERFIN) {
+				variableTable.setVar(tokenList[location + 4].getValue(), LOLType.NUMBR, int.Parse(implicitCast(ctr, LOLType.NUMBR).getValue()) - 1 + "");
+			} else {
+				variableTable.setVar(tokenList[location + 4].getValue(), LOLType.NUMBR, int.Parse(implicitCast(ctr, LOLType.NUMBR).getValue()) + 1 + "");
+			}
 		}
 
 		void loopEnd(int location) {
