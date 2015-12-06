@@ -693,7 +693,6 @@ namespace Bla
 									setError(name + " is not defined");
 								}
 								holder += variableTable.getVar(name).getValue();
-								count++;
 								break;
 							}
 						//default: holder += str[count];
