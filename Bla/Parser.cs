@@ -260,7 +260,7 @@ namespace Bla
 			} 
 
 			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
-			tempActionOrder.Add (new lolStatement (Statement_Types.CONCAT, currentPosition));
+			tempActionOrder.Add (new lolStatement (Statement_Types.CONCAT, save));
 
 			if ((currentPosition = save) == save & term (TokenType.SMOOSH) && stringList () && term(TokenType.STATEMENT_DELIMETER)) {
 				currentPosition--;
