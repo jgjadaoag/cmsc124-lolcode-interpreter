@@ -255,19 +255,24 @@ namespace Bla
 			lolValue add2 = lolIt.getCopy();
 
 			LOLType sumType = LOLType.NUMBR;
+			decimal dec;
+			if (decimal.TryParse (add1.getValue (), out dec) == true && decimal.TryParse (add2.getValue (), out dec) == true) {	//check if operation is valid
+				if (add1.getType () == LOLType.NUMBAR || add2.getType () == LOLType.NUMBAR) {
+					add1 = implicitCast (add1, LOLType.NUMBAR);
+					add2 = implicitCast (add2, LOLType.NUMBAR);
+					sum = decimal.Parse (add1.getValue ()) + decimal.Parse (add2.getValue ());
+					sumType = LOLType.NUMBAR;
+				} else {
+					add1 = implicitCast (add1, LOLType.NUMBR);
+					add2 = implicitCast (add2, LOLType.NUMBR);
+					sum = int.Parse (add1.getValue ()) + int.Parse (add2.getValue ());
+				}
 
-			if (add1.getType () == LOLType.NUMBAR || add2.getType () == LOLType.NUMBAR) {
-				add1 = implicitCast (add1, LOLType.NUMBAR);
-				add2 = implicitCast (add2, LOLType.NUMBAR);
-				sum = decimal.Parse(add1.getValue ()) + decimal.Parse (add2.getValue ());
-				sumType = LOLType.NUMBAR;
+				lolIt.setValue (sumType, sum.ToString ());
 			} else {
-				add1 = implicitCast (add1, LOLType.NUMBR);
-				add2 = implicitCast (add2, LOLType.NUMBR);
-				sum = int.Parse (add1.getValue ()) + int.Parse (add2.getValue ());
+				setError ("Invalid operation!");
 			}
 
-			lolIt.setValue (sumType, sum.ToString());
 			//MainClass.win.displayTextToConsole (""+sum);
 		}
 
@@ -282,16 +287,21 @@ namespace Bla
 			lolValue d2 = lolIt.getCopy();
 
 			LOLType sumType = LOLType.NUMBR;
+			decimal dec;
+			if (decimal.TryParse (d1.getValue (), out dec) == true && decimal.TryParse (d2.getValue (), out dec) == true) {	//check if operation is valid
+				if (d1.getType () == LOLType.NUMBAR || d2.getType () == LOLType.NUMBAR) {
+					diff = decimal.Parse (d1.getValue ()) - decimal.Parse (d2.getValue ());
+					sumType = LOLType.NUMBAR;
+				} else {
+					diff = int.Parse (d1.getValue ()) - int.Parse (d2.getValue ());
+				}
 
-			if (d1.getType () == LOLType.NUMBAR || d2.getType () == LOLType.NUMBAR) {
-				diff = decimal.Parse(d1.getValue ()) - decimal.Parse (d2.getValue ());
-				sumType = LOLType.NUMBAR;
+				lolIt.setValue (sumType, diff.ToString ());
+				Console.WriteLine (diff);
 			} else {
-				diff = int.Parse (d1.getValue ()) - int.Parse (d2.getValue ());
+				setError ("Invalid operation!");
 			}
 
-			lolIt.setValue (sumType, diff.ToString());
-			Console.WriteLine(diff);
 			//MainClass.win.displayTextToConsole (""+diff);
 		}
 
@@ -307,14 +317,20 @@ namespace Bla
 
 			LOLType sumType = LOLType.NUMBR;
 
-			if (d1.getType () == LOLType.NUMBAR || d2.getType () == LOLType.NUMBAR) {
-				prod = decimal.Parse(d1.getValue ()) * decimal.Parse (d2.getValue ());
-				sumType = LOLType.NUMBAR;
+			decimal dec;
+			if (decimal.TryParse (d1.getValue (), out dec) == true && decimal.TryParse (d2.getValue (), out dec) == true) {	//check if operation is valid
+				if (d1.getType () == LOLType.NUMBAR || d2.getType () == LOLType.NUMBAR) {
+					prod = decimal.Parse (d1.getValue ()) * decimal.Parse (d2.getValue ());
+					sumType = LOLType.NUMBAR;
+				} else {
+					prod = int.Parse (d1.getValue ()) * int.Parse (d2.getValue ());
+				}
+
+				lolIt.setValue (sumType, prod.ToString());
 			} else {
-				prod = int.Parse (d1.getValue ()) * int.Parse (d2.getValue ());
+				setError ("Invalid operation!");
 			}
 
-			lolIt.setValue (sumType, prod.ToString());
 			//MainClass.win.displayTextToConsole (""+prod);
 		}
 
@@ -330,21 +346,25 @@ namespace Bla
 
 			LOLType sumType = LOLType.NUMBR;
 
-			if (decimal.Parse (d2.getValue ()) != 0) {
-				if (d1.getType () == LOLType.NUMBAR || d2.getType () == LOLType.NUMBAR) {
-					quo = decimal.Parse (d1.getValue ()) / decimal.Parse (d2.getValue ());
-					sumType = LOLType.NUMBAR;
-				}else {
-					quo = int.Parse (d1.getValue ()) / int.Parse (d2.getValue ());
-					sumType = LOLType.NUMBAR;
-				}
+			decimal dec;
+			if (decimal.TryParse (d1.getValue (), out dec) == true && decimal.TryParse (d2.getValue (), out dec) == true) {	//check if operation is valid
+				if (decimal.Parse (d2.getValue ()) != 0) {
+					if (d1.getType () == LOLType.NUMBAR || d2.getType () == LOLType.NUMBAR) {
+						quo = decimal.Parse (d1.getValue ()) / decimal.Parse (d2.getValue ());
+						sumType = LOLType.NUMBAR;
+					}else {
+						quo = int.Parse (d1.getValue ()) / int.Parse (d2.getValue ());
+						sumType = LOLType.NUMBAR;
+					}
 
-				lolIt.setValue (sumType, quo.ToString ());
-				//MainClass.win.displayTextToConsole ("" + quo);
+					lolIt.setValue (sumType, quo.ToString ());
+				} else {
+					setError ("Invalid operation: Division by zero");
+				} 
 			} else {
-				setError ("Invalid operation: Division by zero");
-			} 
 				
+				setError ("Invalid operation!");
+			}
 		}
 
 		void modulo(int location){
@@ -358,17 +378,20 @@ namespace Bla
 			lolValue d2 = lolIt.getCopy();
 
 			LOLType sumType = LOLType.NUMBR;
+			decimal dec;
+			if (decimal.TryParse (d1.getValue (), out dec) == true && decimal.TryParse (d2.getValue (), out dec) == true) {	//check if operation is valid
+				if (decimal.Parse (d2.getValue ()) != 0) {
+					
+					quo = decimal.Parse (d1.getValue ()) % decimal.Parse (d2.getValue ());
+					sumType = LOLType.NUMBAR;
 
-			if (decimal.Parse (d2.getValue ()) != 0) {
-				
-				quo = decimal.Parse (d1.getValue ()) % decimal.Parse (d2.getValue ());
-				sumType = LOLType.NUMBAR;
-
-				lolIt.setValue (sumType, quo.ToString ());
+					lolIt.setValue (sumType, quo.ToString ());
+				} else {
+					setError ("Invalid operation: Division by zero");
+				} 
 			} else {
-				setError ("Invalid operation: Division by zero");
-			} 
-				
+				setError ("Invalid operation!");
+			}				
 		}
 
 		void maximum(int location){
