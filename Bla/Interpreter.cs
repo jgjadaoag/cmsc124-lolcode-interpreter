@@ -63,6 +63,24 @@ namespace Bla
 	}
 	public class Interpreter
 	{
+		class LolIt : lolValue
+		{
+			SymbolTable variableTable;
+			public LolIt(LOLType t, string v, SymbolTable st) : base(t, v) {
+				variableTable = st;
+			}
+
+			public void setValue(lolValue lv) {
+				base.setValue (lv);
+				variableTable.setVar ("IT", lv.getType (), lv.getValue ());
+			}
+
+			public void setValue(LOLType t, string v) {
+				base.setValue (t, v);
+				variableTable.setVar ("IT", t, v);
+			}
+		}
+
 		delegate void lolAction(int location);
 		List <Token> tokenList;
 		List <lolStatement> actionList;
@@ -71,7 +89,7 @@ namespace Bla
 		int currentPosition;
 		SymbolTable variableTable;
 		FunctionTable functionTable;
-		lolValue lolIt;
+		LolIt lolIt;
 		bool errorFlag;
 		string errorMessage;
 
@@ -85,7 +103,9 @@ namespace Bla
 			currentPosition = 0;
 			variableTable = new SymbolTable ();
 			functionTable = new FunctionTable();
-			lolIt = new lolValue (LOLType.NOOB, "");
+			lolIt = new LolIt (LOLType.NOOB, "", variableTable);
+			variableTable.createVar ("IT", lolIt);
+
 			errorFlag = false;
 
 			while(!ts.end()){
@@ -360,10 +380,10 @@ namespace Bla
 			lolValue num2 = lolIt.getCopy();
 
 			if(decimal.Parse (implicitCast(num1, LOLType.NUMBAR).getValue ()) > decimal.Parse (implicitCast(num2, LOLType.NUMBAR).getValue ())){
-				lolIt = num1.getCopy();
+				lolIt.setValue(num1);
 			}
 			else {
-				lolIt = num2.getCopy();
+				lolIt.setValue(num2);
 			}		
 		}
 
@@ -377,10 +397,10 @@ namespace Bla
 			lolValue num2 = lolIt.getCopy();
 
 			if(decimal.Parse (implicitCast(num1, LOLType.NUMBAR).getValue ()) > decimal.Parse (implicitCast(num2, LOLType.NUMBAR).getValue ())){
-				lolIt = num2.getCopy();
+				lolIt.setValue(num2);
 			}
 			else {
-				lolIt = num1.getCopy();
+				lolIt.setValue(num1);
 			}		
 		}
 		#endregion
