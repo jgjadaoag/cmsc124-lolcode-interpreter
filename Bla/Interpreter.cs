@@ -721,8 +721,6 @@ namespace Bla
 				location += 2;
 			}
 
-			Console.WriteLine (x.getValue ());
-			Console.WriteLine (tokenList [location].getValue ());
 			switch (tokenList [location].getValue ()) {
 				case "YARN":
 				 	x = cast (x, LOLType.YARN);
@@ -1254,10 +1252,15 @@ namespace Bla
 						case LOLType.TROOF:
 							newValue = lv.getValue() == "FAIL"? "0": "1";
 							break;
-					case LOLType.YARN:
-							int num;
-							if(int.TryParse(lv.getValue().ToString(), out num) == true)
-								newValue = int.Parse(lv.getValue()).ToString();
+						case LOLType.YARN:
+							decimal dec;
+							if (decimal.TryParse (lv.getValue ().ToString (), out dec) == true) {
+								newValue = decimal.Parse (lv.getValue ()).ToString ();
+						
+								int num;
+								if (int.TryParse (newValue, out num) == true)
+									newValue = int.Parse (lv.getValue ()).ToString ();
+							}
 							else setError("Unable to cast value");
 							break;
 					}
