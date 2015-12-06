@@ -695,6 +695,23 @@ namespace Bla
 								holder += variableTable.getVar(name).getValue();
 								break;
 							}
+						case '(':
+							{
+								string number = "";
+								count += 2;
+							while(count < str.Length && str[count] != ')') {
+									Console.Write(str[count] + "");
+									number += str[count];
+									count++;
+								}
+								int temp;
+							if(int.TryParse(number, System.Globalization.NumberStyles.HexNumber, null, out temp)) {
+									holder += (char) int.Parse(number, System.Globalization.NumberStyles.HexNumber);
+									break;
+								}
+								setError("Coudln't parse " + number);
+							break;
+							}
 						//default: holder += str[count];
 					}
 
