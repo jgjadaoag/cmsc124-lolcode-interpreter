@@ -72,6 +72,7 @@
     <Compile Include="SymbolTable.cs" />
     <Compile Include="LOLType.cs" />
     <Compile Include="Interpreter.cs" />
+    <Compile Include="FunctionTable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

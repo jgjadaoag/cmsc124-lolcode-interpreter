@@ -49,6 +49,7 @@ namespace Bla
 			ifBlockDelimeter = new List<TokenType> ();
 			ifBlockDelimeter.Add (TokenType.NO_WAI);
 			ifBlockDelimeter.Add (TokenType.OIC);
+			ifBlockDelimeter.Add (TokenType.MEBBE);
 
 			caseBlockDelimeter = new List<TokenType> ();
 			caseBlockDelimeter.Add (TokenType.OMG);
@@ -118,9 +119,12 @@ namespace Bla
 			} else if ((currentPosition = save) == save & switchBlock ()) {
 			} else if ((currentPosition = save) == save & input ()) {
 			} else if ((currentPosition = save) == save & output ()) {
-			} else if ((currentPosition = save) == save & concatenation ()) {
 			} else if ((currentPosition = save) == save & cast2()){ 
 			} else if ((currentPosition = save) == save & expression ()) {
+			} else if ((currentPosition = save) == save & functionBlock()) {
+			} else if ((currentPosition = save) == save & functionReturn()) {
+			} else if ((currentPosition = save) == save & loopBlock()) {
+				Console.WriteLine("ITS A LOOP BLOCK");
 			} else {
 				return false;
 			}
@@ -182,16 +186,24 @@ namespace Bla
 		bool output(){
 			tempActionOrder.Clear ();
 			int save = currentPosition;
-			if ((currentPosition = save) == save & term (TokenType.VISIBLE) && expression ()) {
-				tempActionOrder.Clear ();
-				tempActionOrder.Add (new lolStatement (Statement_Types.OUTPUT, save));
-				currentPosition = save + 1;
-				expression ();
-			} else {
-				return false;
+
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add (new lolStatement (Statement_Types.OUTPUT, currentPosition));
+
+			if ((currentPosition = save) == save & term (TokenType.VISIBLE) && stringList() && term(TokenType.STATEMENT_DELIMETER)) {
+				currentPosition--;
+				return true;
 			}
 
-			return true;
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			tempActionOrder.Add (new lolStatement (Statement_Types.OUTPUT, save));
+
+			if ((currentPosition = save) == save & term (TokenType.VISIBLE) && stringList() && term(TokenType.EXCLAMATION)) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
 		}
 		#endregion
 
@@ -210,6 +222,7 @@ namespace Bla
 			} else if ((currentPosition = save) == save & compareOperator ()) {
 			} else if ((currentPosition = save) == save & concatenation ()) {
 			} else if ((currentPosition = save) == save & cast1 ()) {
+			} else if ((currentPosition = save) == save & functionCall()) {
 			} else if ((currentPosition = save) == save & literal ()) {
 				if (tokenList [save - 1].getType () == TokenType.STATEMENT_DELIMETER) {
 					Console.WriteLine ("Literal statement");
@@ -336,6 +349,11 @@ namespace Bla
 			if (ifThenStart () && term (TokenType.STATEMENT_DELIMETER) && ifTrueBlock () && term (TokenType.STATEMENT_DELIMETER)) {
 				while (currentPosition < tokenList.Count && toContinue) {
 					switch (tokenList [currentPosition].getType ()) {
+					case TokenType.MEBBE:
+						if(!(elseIfBlock() && term(TokenType.STATEMENT_DELIMETER))) {
+							return false;
+						}
+						continue;
 					case TokenType.NO_WAI:
 						if (ifFalseBlock () && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.OIC)) {
 							tempActionOrder.Add (new lolStatement (Statement_Types.OIC, currentPosition - 1));
@@ -377,6 +395,27 @@ namespace Bla
 			tempActionOrder = new List<lolStatement> ();
 
 			if (term (TokenType.YA_RLY) && term (TokenType.STATEMENT_DELIMETER) && codeBlock(ifBlockDelimeter, oldTempActionOrder)) {
+				tempActionOrder = oldTempActionOrder;
+				return true;
+			}
+
+			tempActionOrder = oldTempActionOrder;
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		bool elseIfBlock() {
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add(new lolStatement(Statement_Types.ELSE_IF, currentPosition));
+			if (!(term(TokenType.MEBBE) && expression())) {
+				tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+				return false;
+			}
+			
+			List<lolStatement>  oldTempActionOrder = tempActionOrder;
+			tempActionOrder = new List<lolStatement> ();
+
+			if (term(TokenType.STATEMENT_DELIMETER) && codeBlock(ifBlockDelimeter, oldTempActionOrder)) {
 				tempActionOrder = oldTempActionOrder;
 				return true;
 			}
@@ -786,6 +825,165 @@ namespace Bla
 		}
 		#endregion
 
+		#region Function
+
+		bool functionBlock() {
+			int actionSave = tempActionOrder.Count;
+			if (!functionStart ()) {
+				tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+				return false;
+			}
+
+			List<lolStatement>  oldTempActionOrder = tempActionOrder;
+			tempActionOrder = new List<lolStatement> ();
+
+			if (term (TokenType.STATEMENT_DELIMETER) && codeBlock (TokenType.IF_U_SAY_SO, oldTempActionOrder) && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.IF_U_SAY_SO)) {
+				Console.WriteLine ("FUNCTION KOMPLIITO");
+				oldTempActionOrder.Add (new lolStatement(Statement_Types.FUNCTION_END, currentPosition - 1));
+				tempActionOrder = oldTempActionOrder;
+				return true;
+			}
+
+			tempActionOrder = oldTempActionOrder;
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+
+			return false;
+		}
+
+		bool functionStart() {
+			int save = currentPosition;
+
+			if (((currentPosition = save) == save & term(TokenType.HOW_IZ_I) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.YR) && functionArg()) ||
+				((currentPosition = save) == save & term (TokenType.HOW_IZ_I) && term (TokenType.VARIABLE_IDENTIFIER))){
+				tempActionOrder.Add (new lolStatement(Statement_Types.FUNCTION_DEFINITION, save));
+				return true;
+			}
+
+			return false;
+		}
+
+		bool functionReturn() {
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add(new lolStatement(Statement_Types.FUNCTION_RETURN, currentPosition));
+			if (term(TokenType.FOUND_YR) && expression()) {
+				return true;
+			}
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		bool functionArg() {
+			int save = currentPosition;
+
+			return (((currentPosition = save) == save & term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.AN) && term(TokenType.YR) && functionArg()) ||
+				((currentPosition = save) == save & term(TokenType.VARIABLE_IDENTIFIER))
+			);
+		}
+
+		bool functionCall() {
+			int actionSave = tempActionOrder.Count;
+			int save = currentPosition;
+
+			tempActionOrder.Add (new lolStatement(Statement_Types.FUNCTION_CALL, save));
+			if (((currentPosition = save) == save & term (TokenType.I_IZ) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.MKAY)) || 
+				((currentPosition = save) == save & term (TokenType.I_IZ) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.YR) && functionActualArg())
+			) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+		bool functionActualArg() {
+			int actionSave = tempActionOrder.Count;
+
+			/*
+			return (((currentPosition = save) == save & expression() && term(TokenType.AN) && term(TokenType.YR) && functionActualArg()) ||
+				((currentPosition = save) == save & expression() && term(TokenType.MKAY))
+			);*/
+			while (expression()) {
+				int save = currentPosition;
+				if((currentPosition = save) == save & term(TokenType.AN) && term(TokenType.YR)) {
+					continue;
+				} else if ((currentPosition = save) == save & term(TokenType.MKAY)) {
+					return true;
+				}
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		#endregion
+
+
+		#region Loops
+
+		bool loopBlock() {
+			int actionSave = tempActionOrder.Count;
+			if (currentPosition > tokenList.Count - 1) {
+				return false;
+			}
+			string label = tokenList [currentPosition + 1].getValue();
+			Console.WriteLine("loopBlock: " + label);
+			if (!loopStart()) {
+				tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+				return false;
+			}
+			
+			List<lolStatement>  oldTempActionOrder = tempActionOrder;
+			tempActionOrder = new List<lolStatement> ();
+
+			if (term(TokenType.STATEMENT_DELIMETER) && codeBlock(TokenType.IM_OUTTA_YR, oldTempActionOrder) && term(TokenType.STATEMENT_DELIMETER) && loopEnd(label)) {
+				oldTempActionOrder.Add (new lolStatement(Statement_Types.LOOP_END, currentPosition - 1));
+				tempActionOrder = oldTempActionOrder;
+				return true;
+			}
+
+			tempActionOrder = oldTempActionOrder;
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		bool loopStart() {
+			int save = currentPosition;
+			int actionSave = tempActionOrder.Count;
+			
+			tempActionOrder.Add( new lolStatement(Statement_Types.LOOP_START, save));
+			if ((currentPosition = save) == save & term(TokenType.IM_IN_YR) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.UPPIN) && term(TokenType.YR) && term(TokenType.VARIABLE_IDENTIFIER) && loopCondition()) {
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+
+			tempActionOrder.Add( new lolStatement(Statement_Types.LOOP_START, save));
+			if ((currentPosition = save) == save & term(TokenType.IM_IN_YR) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.NERFIN) && term(TokenType.YR) && term(TokenType.VARIABLE_IDENTIFIER) && loopCondition()) {
+				return true;
+			}
+			
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		bool loopCondition() {
+			int save = currentPosition;
+			return (((currentPosition = save) == save & term(TokenType.WILE) && expression()) ||
+					((currentPosition = save) == save & term(TokenType.TIL) && expression())
+				);
+		}
+
+		bool loopEnd(string label) {
+			Console.WriteLine("loopEnd: " + label);
+			if(term(TokenType.IM_OUTTA_YR) && term(TokenType.VARIABLE_IDENTIFIER)) {
+					Console.WriteLine("loopEnd: " + tokenList [currentPosition - 1].getValue() );
+				if( tokenList [currentPosition - 1].getValue() == label) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		#endregion
 		private Tuple<LOLType, string> createValue(LOLType type, string value) {
 			return new Tuple<LOLType, string> (type, value);
 		}

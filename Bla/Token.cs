@@ -15,6 +15,7 @@ namespace Bla
 		TYPE_LITERAL,
 		HAI,
 		KTHXBYE,
+		EXCLAMATION,
 		UPPIN,
 		NERFIN,
 		TLDR,
@@ -33,6 +34,9 @@ namespace Bla
 		OMG, 
 		OMGWTF,
 		GTFO,
+		YR,
+		TIL,
+		WILE,
 		STRING_DELIMETER,
 		STATEMENT_DELIMETER,
 		AN,
@@ -42,6 +46,12 @@ namespace Bla
 		BTW,
 		OBTW,
 		I_HAS_A,
+		IM_IN_YR,
+		IM_OUTTA_YR,
+		HOW_IZ_I,
+		IF_U_SAY_SO,
+		I_IZ,
+		FOUND_YR,
 		SUM_OF,
 		DIFF_OF,
 		PRODUKT_OF,
@@ -144,6 +154,16 @@ namespace Bla
 			tokenDetails.Add (TokenType.TROOF_LITERAL, new Regex (@"^(WIN|FAIL)$"));
 			tokenDetails.Add (TokenType.TYPE_LITERAL, new Regex (@"^(YARN|NUMBR|NUMBAR|TROOF|NOOB)"));
 			tokenDetails.Add (TokenType.STATEMENT_DELIMETER, new Regex (@"^(\n|,)$"));
+			tokenDetails.Add (TokenType.HOW_IZ_I, new Regex (@"^HOW IZ I"));
+			tokenDetails.Add (TokenType.I_IZ, new Regex (@"^I IZ"));
+			tokenDetails.Add (TokenType.IF_U_SAY_SO, new Regex (@"^IF U SAY SO"));
+			tokenDetails.Add (TokenType.FOUND_YR, new Regex (@"^FOUND YR"));
+			tokenDetails.Add (TokenType.YR, new Regex (@"^YR$"));
+			tokenDetails.Add (TokenType.IM_IN_YR, new Regex (@"^IM IN YR"));
+			tokenDetails.Add (TokenType.IM_OUTTA_YR, new Regex (@"^IM OUTTA YR"));
+			tokenDetails.Add (TokenType.TIL, new Regex (@"^TIL$"));
+			tokenDetails.Add (TokenType.WILE, new Regex (@"^WILE$"));
+			tokenDetails.Add (TokenType.EXCLAMATION, new Regex (@"^!$"));
 
 			skipSpace ();
 		}
@@ -252,18 +272,20 @@ namespace Bla
 			
 		private Token readString(string str){
 			string holder = "";
-			string special = "";
-			for(int c=0; c<str.Length; c++){
-				if(str[c] == '"' && str[c+1] == '\n'){
+
+			char previous = '\0';
+			foreach(char c in str){
+				if(c == '"' && previous != ':'){
 					currentPosition += holder.Length;
 					return new Token(holder, TokenType.YARN_LITERAL);
-				} else if(str[c] == '\n'){
+				} else if(c == '\n'){
 					MainClass.win.displayTextToConsole ("Error: Unterminated yarn."); 
 				} else {
-					holder += str[c];
+					holder += c;
 				}
 					
 				Console.WriteLine (holder);
+				previous = c;
 			}
 
 			return new Token ("", TokenType.UNKNOWN);
