@@ -123,6 +123,8 @@ namespace Bla
 			} else if ((currentPosition = save) == save & expression ()) {
 			} else if ((currentPosition = save) == save & functionBlock()) {
 			} else if ((currentPosition = save) == save & functionCall()) {
+			} else if ((currentPosition = save) == save & loopBlock()) {
+				Console.WriteLine("ITS A LOOP BLOCK");
 			} else {
 				return false;
 			}
@@ -870,6 +872,67 @@ namespace Bla
 
 		#endregion
 
+
+		#region Loops
+
+		bool loopBlock() {
+			int actionSave = tempActionOrder.Count;
+			string label = tokenList [currentPosition + 1].getValue();
+			Console.WriteLine("loopBlock: " + label);
+			
+			List<lolStatement>  oldTempActionOrder = tempActionOrder;
+			tempActionOrder = new List<lolStatement> ();
+
+			if (loopStart() && term(TokenType.STATEMENT_DELIMETER) && codeBlock(TokenType.IM_OUTTA_YR, oldTempActionOrder) && term(TokenType.STATEMENT_DELIMETER) && loopEnd(label)) {
+				oldTempActionOrder.Add (new lolStatement(Statement_Types.LOOP_END, currentPosition - 1));
+				tempActionOrder = oldTempActionOrder;
+				return true;
+			}
+
+			tempActionOrder = oldTempActionOrder;
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		bool loopStart() {
+			int save = currentPosition;
+			int actionSave = tempActionOrder.Count;
+			
+			if ((currentPosition = save) == save & term(TokenType.IM_IN_YR) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.UPPIN) && term(TokenType.YR) && term(TokenType.VARIABLE_IDENTIFIER) && loopCondition()) {
+				tempActionOrder.Add (new lolStatement(Statement_Types.LOOP_START, save));
+				return true;
+			}
+
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+
+			if ((currentPosition = save) == save & term(TokenType.IM_IN_YR) && term(TokenType.VARIABLE_IDENTIFIER) && term(TokenType.NERFIN) && term(TokenType.YR) && term(TokenType.VARIABLE_IDENTIFIER) && loopCondition()) {
+				tempActionOrder.Add (new lolStatement(Statement_Types.LOOP_START, save));
+				return true;
+			}
+			
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		bool loopCondition() {
+			int save = currentPosition;
+			return (((currentPosition = save) == save & term(TokenType.WILE) && expression()) ||
+					((currentPosition = save) == save & term(TokenType.TIL) && expression())
+				);
+		}
+
+		bool loopEnd(string label) {
+			Console.WriteLine("loopEnd: " + label);
+			if(term(TokenType.IM_OUTTA_YR) && term(TokenType.VARIABLE_IDENTIFIER)) {
+					Console.WriteLine("loopEnd: " + tokenList [currentPosition - 1].getValue() );
+				if( tokenList [currentPosition - 1].getValue() == label) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		#endregion
 		private Tuple<LOLType, string> createValue(LOLType type, string value) {
 			return new Tuple<LOLType, string> (type, value);
 		}

@@ -34,6 +34,8 @@ namespace Bla
 		OMGWTF,
 		GTFO,
 		YR,
+		TIL,
+		WILE,
 		STRING_DELIMETER,
 		STATEMENT_DELIMETER,
 		AN,
@@ -43,6 +45,8 @@ namespace Bla
 		BTW,
 		OBTW,
 		I_HAS_A,
+		IM_IN_YR,
+		IM_OUTTA_YR,
 		HOW_IZ_I,
 		IF_U_SAY_SO,
 		I_IZ,
@@ -154,6 +158,10 @@ namespace Bla
 			tokenDetails.Add (TokenType.IF_U_SAY_SO, new Regex (@"^IF U SAY SO"));
 			tokenDetails.Add (TokenType.FOUND_YR, new Regex (@"^FOUND YR"));
 			tokenDetails.Add (TokenType.YR, new Regex (@"^YR$"));
+			tokenDetails.Add (TokenType.IM_IN_YR, new Regex (@"^IM IN YR"));
+			tokenDetails.Add (TokenType.IM_OUTTA_YR, new Regex (@"^IM OUTTA YR"));
+			tokenDetails.Add (TokenType.TIL, new Regex (@"^TIL$"));
+			tokenDetails.Add (TokenType.WILE, new Regex (@"^WILE$"));
 
 			skipSpace ();
 		}

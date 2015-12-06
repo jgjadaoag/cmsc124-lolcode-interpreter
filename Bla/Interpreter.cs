@@ -44,7 +44,9 @@ namespace Bla
 		FUNCTION_CALL,
 		FUNCTION_RETURN,
 		CAST_MAEK,
-		CAST_IS_NOW_A
+		CAST_IS_NOW_A,
+		LOOP_START,
+		LOOP_END
 	}
 
 	public class lolStatement {
@@ -151,6 +153,8 @@ namespace Bla
 			actionMap.Add (Statement_Types.FUNCTION_RETURN, functionEnd);
 			actionMap.Add (Statement_Types.CAST_MAEK, castMaek);
 			actionMap.Add (Statement_Types.CAST_IS_NOW_A, castIsNowA);
+			actionMap.Add (Statement_Types.LOOP_START, loopBlock);
+			actionMap.Add (Statement_Types.LOOP_END, loopEnd);
 		}
 
 		public void runProgram() {
@@ -1053,6 +1057,13 @@ namespace Bla
 		void functionReturn(int location) {
 		}
 
+		#endregion
+		#region Loop
+		void loopBlock(int location) {
+		}
+
+		void loopEnd(int location) {
+		}
 		#endregion
 
 		#region Helper functions
