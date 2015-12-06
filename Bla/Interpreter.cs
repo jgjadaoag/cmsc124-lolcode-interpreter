@@ -175,6 +175,7 @@ namespace Bla
 			actionMap.Add (Statement_Types.CAST_IS_NOW_A, castIsNowA);
 			actionMap.Add (Statement_Types.LOOP_START, loopBlock);
 			actionMap.Add (Statement_Types.LOOP_END, loopEnd);
+			actionMap.Add (Statement_Types.ELSE_IF, elseIf);
 		}
 
 		public void runProgram() {
@@ -780,8 +781,10 @@ namespace Bla
 				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
 			} else {
 				currentPosition += 2;
-				goToNextIfCondition ();
-				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+				while(actionList [currentPosition].type != Statement_Types.OIC) {
+					goToNextIfCondition ();
+					actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+				}
 				if (actionList [currentPosition].type == Statement_Types.OIC) {
 					return;
 				}
@@ -789,6 +792,25 @@ namespace Bla
 			if(currentPosition + 1 < actionList.Count)
 				currentPosition++;
 			goToOIC ();
+		}
+
+		void elseIf(int location) {
+			currentPosition++;
+			actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			if(implicitCast(lolIt, LOLType.TROOF).getValue() == "FAIL") {
+				return;
+			}
+			
+			int savePosition = currentPosition;
+			goToNextIfCondition ();
+			int lastPosition = currentPosition;
+			currentPosition = savePosition;
+
+			while (currentPosition + 1 < lastPosition) {
+				currentPosition++;
+				actionMap [actionList [currentPosition].type] (actionList [currentPosition].location);
+			}
+			goToOIC();
 		}
 
 		void goToOIC() {
