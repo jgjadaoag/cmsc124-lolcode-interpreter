@@ -49,6 +49,7 @@ namespace Bla
 			ifBlockDelimeter = new List<TokenType> ();
 			ifBlockDelimeter.Add (TokenType.NO_WAI);
 			ifBlockDelimeter.Add (TokenType.OIC);
+			ifBlockDelimeter.Add (TokenType.MEBBE);
 
 			caseBlockDelimeter = new List<TokenType> ();
 			caseBlockDelimeter.Add (TokenType.OMG);
@@ -348,6 +349,11 @@ namespace Bla
 			if (ifThenStart () && term (TokenType.STATEMENT_DELIMETER) && ifTrueBlock () && term (TokenType.STATEMENT_DELIMETER)) {
 				while (currentPosition < tokenList.Count && toContinue) {
 					switch (tokenList [currentPosition].getType ()) {
+					case TokenType.MEBBE:
+						if(!(elseIfBlock() && term(TokenType.STATEMENT_DELIMETER))) {
+							return false;
+						}
+						continue;
 					case TokenType.NO_WAI:
 						if (ifFalseBlock () && term (TokenType.STATEMENT_DELIMETER) && term (TokenType.OIC)) {
 							tempActionOrder.Add (new lolStatement (Statement_Types.OIC, currentPosition - 1));
@@ -389,6 +395,27 @@ namespace Bla
 			tempActionOrder = new List<lolStatement> ();
 
 			if (term (TokenType.YA_RLY) && term (TokenType.STATEMENT_DELIMETER) && codeBlock(ifBlockDelimeter, oldTempActionOrder)) {
+				tempActionOrder = oldTempActionOrder;
+				return true;
+			}
+
+			tempActionOrder = oldTempActionOrder;
+			tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+			return false;
+		}
+
+		bool elseIfBlock() {
+			int actionSave = tempActionOrder.Count;
+			tempActionOrder.Add(new lolStatement(Statement_Types.ELSE_IF, currentPosition));
+			if (!(term(TokenType.MEBBE) && expression())) {
+				tempActionOrder.RemoveRange(actionSave, tempActionOrder.Count - actionSave);
+				return false;
+			}
+			
+			List<lolStatement>  oldTempActionOrder = tempActionOrder;
+			tempActionOrder = new List<lolStatement> ();
+
+			if (term(TokenType.STATEMENT_DELIMETER) && codeBlock(ifBlockDelimeter, oldTempActionOrder)) {
 				tempActionOrder = oldTempActionOrder;
 				return true;
 			}
